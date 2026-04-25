@@ -114,7 +114,7 @@
                                             <input type="text"
                                                    name="phone_number"
                                                    class="form-control @error('phone_number') is-invalid @enderror"
-                                                   value="{{ old('phone_number', $user->profile->phone_number) ?? 'N?A' }}">
+                                                   value="{{ old('phone_number', $user->profile?->phone_number) ?? 'N?A' }}">
 
                                             @error('phone_number')
                                                 <div class="invalid-feedback">
@@ -132,7 +132,7 @@
                                         <td class="py-4 pe-4">
                                             <textarea name="address"
                                                       rows="3"
-                                                      class="form-control @error('address') is-invalid @enderror">{{ old('address', $user->profile->address) }}</textarea>
+                                                      class="form-control @error('address') is-invalid @enderror">{{ old('address', $user->profile?->address) }}</textarea>
 
                                             @error('address')
                                                 <div class="invalid-feedback">
@@ -145,12 +145,12 @@
                                     <!-- Gender -->
                                     <select name="gender" class="form-select @error('gender') is-invalid @enderror">
                                         <option value="male"
-                                            {{ old('gender', $user->profile->gender) == 'male' ? 'selected' : '' }}>
+                                            {{ old('gender', $user->profile?->gender) == 'male' ? 'selected' : '' }}>
                                             Male
                                         </option>
 
                                         <option value="female"
-                                            {{ old('gender', $user->profile->gender) == 'female' ? 'selected' : '' }}>
+                                            {{ old('gender', $user->profile?->gender) == 'female' ? 'selected' : '' }}>
                                             Female
                                         </option>
                                     </select>
@@ -165,7 +165,7 @@
                                             <input type="date"
                                                    name="birthdate"
                                                    class="form-control @error('birthdate') is-invalid @enderror"
-                                                   value="{{ old('birthdate', $user->profile->birthdate) }}">
+                                                   value="{{ old('birthdate', $user->profile?->birthdate) }}">
 
                                             @error('birthdate')
                                                 <div class="invalid-feedback">
@@ -271,8 +271,8 @@
 
                     <div class="card-body p-3 text-center">
 
-                        @if($user->profile->avatar)
-                            <img src="{{ asset('storage/' . $user->profile->avatar) }}"
+                        @if($user->profile?->avatar)
+                            <img src="{{ asset('storage/' . $user->profile?->avatar) }}"
                                 class="img-fluid rounded-3 shadow-sm w-100 object-fit-cover"
                                 style="height: 250px;">
                         @else

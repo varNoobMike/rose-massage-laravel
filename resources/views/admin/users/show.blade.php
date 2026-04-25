@@ -99,7 +99,7 @@
                                         Phone Number
                                     </td>
                                     <td class="py-4 pe-4">
-                                        {{ $user->profile->phone_number ?? 'N/A' }}
+                                        {{ $user->profile?->phone_number ?? 'N/A' }}
                                     </td>
                                 </tr>
 
@@ -108,7 +108,7 @@
                                         Address
                                     </td>
                                     <td class="py-4 pe-4">
-                                        {{ $user->profile->address ?? 'N/A' }}
+                                        {{ $user->profile?->address ?? 'N/A' }}
                                     </td>
                                 </tr>
 
@@ -117,7 +117,7 @@
                                         Gender
                                     </td>
                                     <td class="py-4 pe-4">
-                                        {{ ucfirst($user->profile->gender ?? 'N/A') }}
+                                        {{ ucfirst($user->profile?->gender ?? 'N/A') }}
                                     </td>
                                 </tr>
 
@@ -126,8 +126,8 @@
                                         Birthdate
                                     </td>
                                     <td class="py-4 pe-4">
-                                        {{ $user->profile->birthdate 
-                                            ? \Carbon\Carbon::parse($user->profile->birthdate)->format('M d, Y')
+                                        {{ $user->profile?->birthdate 
+                                            ? \Carbon\Carbon::parse($user->profile?->birthdate)->format('M d, Y')
                                             : 'N/A'
                                         }}
                                     </td>
@@ -221,8 +221,8 @@
 
                 <div class="card-body p-3">
 
-                    @if($user->profile->avatar)
-                        <img src="{{ asset('storage/' . $user->profile->avatar) }}"
+                    @if($user->profile?->avatar)
+                        <img src="{{ asset('storage/' . $user->profile?->avatar) }}"
                              class="img-fluid rounded-3 shadow-sm w-100 object-fit-cover"
                              style="height: 250px;">
                     @else

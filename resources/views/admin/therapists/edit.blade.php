@@ -2,13 +2,13 @@
 
 @section('page-title', 'Edit')
 
-@section('breadcrumb-parent', 'User #' . $user->id)
-@section('breadcrumb-parent-url', route('users.show', $user->id))
+@section('breadcrumb-parent', 'Therapist #' . $user->id)
+@section('breadcrumb-parent-url', route('therapists.show', $user->id))
 
 @section('content')
 <div class="container-fluid">
 
-    <form action="{{ route('users.update', $user->id) }}"
+    <form action="{{ route('therapists.update', $user->id) }}"
           method="POST"
           enctype="multipart/form-data">
 
@@ -19,7 +19,7 @@
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
             <h2 class="fw-bold text-dark mb-0 h4">
                 <i class="bi bi-pencil-square text-primary me-2"></i>
-                Edit User #{{ $user->id }}
+                Edit Therapist #{{ $user->id }}
             </h2>
         </div>
 
@@ -168,88 +168,6 @@
                                                    value="{{ old('birthdate', $user->profile?->birthdate) }}">
 
                                             @error('birthdate')
-                                                <div class="invalid-feedback">
-                                                    {{ $message }}
-                                                </div>
-                                            @enderror
-                                        </td>
-                                    </tr>
-
-                                    <!-- Password -->
-                                    <tr class="border-bottom border-light">
-                                        <td class="ps-4 py-4 text-muted small fw-bold text-uppercase">
-                                            Password
-                                        </td>
-                                        <td class="py-4 pe-4">
-
-                                            <input type="password"
-                                                   name="password"
-                                                   class="form-control @error('birthdate') is-invalid @enderror"
-                                                   value="{{ old('password') }}"
-                                                   placeholder="********">
-
-                                            @error('password')
-                                                <div class="invalid-feedback">
-                                                    {{ $message }}
-                                                </div>
-                                            @enderror
-                                        </td>
-                                    </tr>
-
-                                    <!-- Password Confirmation -->
-                                    <tr class="border-bottom border-light">
-                                        <td class="ps-4 py-4 text-muted small fw-bold text-uppercase">
-                                            Confirm Password
-                                        </td>
-                                        <td class="py-4 pe-4">
-
-                                            <input type="password"
-                                                   name="password_confirmation"
-                                                   class="form-control @error('birthdate') is-invalid @enderror"
-                                                   value=""
-                                                   placeholder="********">
-
-                                            @error('password')
-                                                <div class="invalid-feedback">
-                                                    {{ $message }}
-                                                </div>
-                                            @enderror
-                                        </td>
-                                    </tr>
-
-
-                                    <!-- Role -->
-                                    <tr>
-                                        <td class="ps-4 py-4 text-muted small fw-bold text-uppercase">
-                                            Role
-                                        </td>
-                                        <td class="py-4 pe-4">
-                                            <select name="role"
-                                                    class="form-select @error('role') is-invalid @enderror">
-
-                                                <option value="client"
-                                                    {{ old('role', $user->role) == 'client' ? 'selected' : '' }}>
-                                                    Client
-                                                </option>
-
-                                                <option value="therapist"
-                                                    {{ old('role', $user->role) == 'therapist' ? 'selected' : '' }}>
-                                                    Therapist
-                                                </option>
-
-                                                <option value="receptionist"
-                                                    {{ old('role', $user->role) == 'receptionist' ? 'selected' : '' }}>
-                                                    Receptionist
-                                                </option>
-
-                                                <option value="owner"
-                                                    {{ old('role', $user->role) == 'owner' ? 'selected' : '' }}>
-                                                    Owner
-                                                </option>
-
-                                            </select>
-
-                                            @error('role')
                                                 <div class="invalid-feedback">
                                                     {{ $message }}
                                                 </div>

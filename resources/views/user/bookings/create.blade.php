@@ -20,16 +20,29 @@
 
 <div class="row g-4">
 
-     @if(session('error'))
+    {{-- GLOBAL ERRORS --}}
+    @if ($errors->any())
+        <div class="col-12">
+            <div class="alert alert-danger alert-dismissible fade show">
+                <strong>Please fix the following:</strong>
+                <ul class="mb-0 mt-2">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="col-12">
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
                 {{ session('error') }}
-
-                <button 
-                    type="button" 
-                    class="btn-close" 
-                    data-bs-dismiss="alert">
-                </button>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
+        </div>
     @endif
 
     {{-- LEFT FORM --}}
@@ -46,12 +59,37 @@
 
                         <div class="col-md-6">
                             <label class="form-label fw-bold">Date</label>
-                            <input type="date" id="dateInput" name="booking_date" class="form-control" required>
+
+                            <input type="date"
+                                id="dateInput"
+                                name="booking_date"
+                                min="{{ now()->format('Y-m-d') }}"
+                                class="form-control @error('booking_date') is-invalid @enderror"
+                                value="{{ old('booking_date') }}"
+                                required>
+
+                            @error('booking_date')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
                         </div>
 
                         <div class="col-md-6">
                             <label class="form-label fw-bold">Time</label>
-                            <input type="time" id="timeInput" name="start_time" class="form-control" required>
+
+                            <input type="time"
+                                id="timeInput"
+                                name="start_time"
+                                class="form-control @error('start_time') is-invalid @enderror"
+                                value="{{ old('start_time') }}"
+                                required>
+
+                            @error('start_time')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
                         </div>
 
                     </div>
@@ -60,7 +98,7 @@
                     <div class="mb-3">
                         <label class="form-label fw-bold">Service</label>
 
-                        <select id="serviceSelect" class="form-select">
+                        <select id="serviceSelect" class="form-select @error('services') is-invalid @enderror">
                             <option value="">Select service</option>
 
                             @foreach($services as $service)
@@ -73,19 +111,34 @@
                                 </option>
                             @endforeach
                         </select>
+
+                        @error('services')
+                            <div class="text-danger small mt-1">
+                                {{ $message }}
+                            </div>
+                        @enderror
                     </div>
 
                     <button type="button" id="addServiceBtn" class="btn btn-primary w-100 mb-3">
                         + Add Service
                     </button>
 
-                    {{-- THIS IS IMPORTANT (Laravel structured inputs) --}}
+                    {{-- STRUCTURED INPUTS --}}
                     <div id="servicesContainer"></div>
 
                     {{-- NOTES --}}
                     <div class="mb-3">
                         <label class="form-label fw-bold">Notes</label>
-                        <textarea name="notes" class="form-control" rows="3"></textarea>
+
+                        <textarea name="notes"
+                            class="form-control @error('notes') is-invalid @enderror"
+                            rows="3">{{ old('notes') }}</textarea>
+
+                        @error('notes')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                        @enderror
                     </div>
 
                     <button type="submit" id="submitBtn" class="btn btn-success w-100 fw-bold" disabled>
@@ -184,13 +237,10 @@ $(function () {
                 </div>
             `;
 
-            // ✅ IMPORTANT: Laravel structured input
             $('#servicesContainer').append(`
                 <input type="hidden" name="services[${i}][id]" value="${item.id}">
-                <input type="hidden" name="services[${i}][name]" value="${item.name}">
-                <input type="hidden" name="services[${i}][price]" value="${item.price}">
-                <input type="hidden" name="services[${i}][duration]" value="${item.duration}">
             `);
+
         });
 
         $('#cartList').html(html);
@@ -201,7 +251,6 @@ $(function () {
 
         $('#summaryDuration').text(duration + ' min');
 
-        // enable submit
         let valid =
             cart.length > 0 &&
             $('#dateInput').val() &&
@@ -217,9 +266,9 @@ $(function () {
 
         if (!opt.val()) return;
 
-        let id = opt.val();
+        let id = parseInt(opt.val());
 
-        if (cart.find(x => x.id === id)) {
+        if (cart.find(x => x.id == id)) {
             alert('Already added');
             return;
         }

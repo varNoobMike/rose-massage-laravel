@@ -12,6 +12,9 @@ use App\Models\Spa;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\NewBookingNotification;
+
 
 class BookingController extends Controller
 {
@@ -110,7 +113,7 @@ class BookingController extends Controller
         $user = $this->currentUser();
 
         return match ($user->role) {
-            'admin, receptionist' => view('admin.bookings.create'), // to be implemented the admin create booking
+            'admin', 'receptionist' => view('admin.bookings.create'), // to be implemented the admin create booking
             'client' => view('user.bookings.create', [
                 'services' => Service::where('status', 'active')->latest()->get(),
             ]),
@@ -119,6 +122,7 @@ class BookingController extends Controller
     }
 
 
+    /*
     public function store(Request $request)
     {
 
@@ -192,6 +196,14 @@ class BookingController extends Controller
                 return $booking;
             });
 
+            $recipients = User::whereIn('role', [
+                'admin',
+                'owner',
+                'receptionist'
+            ])->get();
+
+            Notification::send($recipients, new NewBookingNotification($booking));
+
             return redirect()
                 ->route('bookings.show', $booking->id)
                 ->with('success', 'Booking created successfully!');
@@ -201,7 +213,102 @@ class BookingController extends Controller
 
             return back()
                 ->withInput()
-                ->with('error', 'Booking failed. Please try again.');
+                // ->with('error', 'Booking failed. Please try again.');
+                ->with('error', $e->getMessage());
+        }
+    }
+    */
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'services' => 'required|array|min:1',
+            'services.*.id' => 'required|exists:services,id',
+            'booking_date' => 'required|date|after_or_equal:today',
+            'start_time' => 'required|date_format:H:i',
+            'notes' => 'nullable|string|max:500',
+        ]);
+
+        try {
+            $user = $this->currentUser();
+
+            $services = array_values($request->services); // 🔥 FIX INDEX ISSUE
+
+            if (count($services) === 0) {
+                return back()->with('error', 'Please select services.');
+            }
+
+            $startTime = \Carbon\Carbon::parse($request->start_time);
+
+            $totalAmount = 0;
+            $totalDuration = 0;
+
+            foreach ($services as $item) {
+                $service = Service::findOrFail($item['id']);
+                $totalAmount += $service->price;
+                $totalDuration += $service->duration_minutes;
+            }
+
+            $endTime = $startTime->copy()->addMinutes($totalDuration);
+
+            $booking = DB::transaction(function () use (
+                $request,
+                $user,
+                $services,
+                $startTime,
+                $endTime,
+                $totalAmount
+            ) {
+                $firstService = Service::findOrFail($services[0]['id']);
+
+                $booking = Booking::create([
+                    'client_id' => $user->id,
+                    'spa_id' => $firstService->spa_id,
+                    'booking_date' => $request->booking_date,
+                    'start_time' => $startTime->format('H:i:s'),
+                    'end_time' => $endTime->format('H:i:s'),
+                    'status' => 'pending',
+                    'total_amount' => $totalAmount,
+                    'therapist_assigned' => 0,
+                    'notes' => $request->notes,
+                ]);
+
+                foreach ($services as $item) {
+                    $service = Service::findOrFail($item['id']);
+
+                    BookingItem::create([
+                        'booking_id' => $booking->id,
+                        'service_id' => $service->id,
+                        'therapist_id' => null,
+                        'service_name' => $service->name,
+                        'service_duration_minutes' => $service->duration_minutes,
+                        'service_price' => $service->price,
+                        'notes' => $request->notes,
+                    ]);
+                }
+
+                return $booking;
+            });
+
+            // notifications AFTER transaction (safe)
+            $recipients = User::whereIn('role', [
+                'admin',
+                'owner',
+                'receptionist',
+                'client'
+            ])->get();
+
+            Notification::send($recipients, new NewBookingNotification($booking));
+
+            return redirect()
+                ->route('bookings.show', $booking->id)
+                ->with('success', 'Booking created successfully!');
+        } catch (\Exception $e) {
+            Log::error($e);
+
+            return back()
+                ->withInput()
+                ->with('error', 'Booking failed: ' . $e->getMessage());
         }
     }
 

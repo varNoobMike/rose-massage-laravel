@@ -2,8 +2,10 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ReceptionistController;
 use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\TherapistController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Mail;
@@ -112,6 +114,24 @@ Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'inde
     ->name('dashboard');
 
 /**
+ * Notifications Routes 
+ */
+Route::prefix('/notifications')->group(function () {
+
+    Route::get('/', [NotificationController::class, 'index'])
+        ->name('notifications.index');
+
+
+    // mark single notification as read
+    Route::post('/{notification}/read', [NotificationController::class, 'markAsRead'])
+        ->name('notifications.read');
+
+    // mark all as read
+    Route::post('/read-all', [NotificationController::class, 'markAllAsRead'])
+        ->name('notifications.readAll');
+});
+
+/**
  * Receptionists
  */
 Route::prefix('/receptionists')->group(function () {
@@ -135,6 +155,18 @@ Route::prefix('/services')->group(function () {
     Route::put('/{service}', [ServiceController::class, 'update'])->name('services.update');
 });
 
+
+/**
+ * Therapists
+ */
+Route::prefix('/therapists')->group(function () {
+    Route::get('/', [TherapistController::class, 'index'])->name('therapists.index');
+    Route::get('/create', [TherapistController::class, 'create'])->name('therapists.create');
+    Route::post('/', [TherapistController::class, 'store'])->name('therapists.store');
+    Route::get('/{user}', [TherapistController::class, 'show'])->name('therapists.show');
+    Route::get('/{user}/edit', [TherapistController::class, 'edit'])->name('therapists.edit');
+    Route::put('/{user}', [TherapistController::class, 'update'])->name('therapists.update');
+});
 
 /**
  * Users Routes 

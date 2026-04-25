@@ -27,7 +27,7 @@
         /* Topbar */
         .topbar {
             background: white;
-            height: 70px;
+            height: 80px;*
             border-bottom: 1px solid #e9ecef;
             z-index: 1030;
         }
@@ -55,7 +55,7 @@
             background: #f8f9fa;
         }
 
-        .sidebar .nav-link.active {
+        .sidebar .nav-link.active, .offcanvas .nav-link.active {
             background: var(--bs-primary);
             border-radius: 8px;
             color: white;
@@ -83,96 +83,107 @@
 <body>
 
 <!-- TOPBAR -->
-<nav class="navbar topbar fixed-top px-4 shadow-sm">
-    <div class="container-fluid">
+<nav class="navbar topbar fixed-top px-4 pb-5 shadow-sm">
+    <div class="container-fluid d-flex align-items-center h-100">
 
-        <!-- Mobile menu -->
-        <button class="btn d-lg-none"
-                data-bs-toggle="offcanvas"
-                data-bs-target="#mobileSidebar">
-            <i class="bi bi-list fs-4"></i>
-        </button>
+        <!-- Left: Mobile menu + logo -->
+        <div class="d-flex align-items-center gap-3">
 
-        <!-- Logo -->
-        <span class="fw-bold fs-5">
-            <i class="bi bi-flower1 text-primary"></i> Spa Admin
-        </span>
-
-        <!-- Right dropdown -->
-        <div class="dropdown ms-auto">
-
-            <button class="btn border-0 d-flex align-items-center gap-2"
-                    data-bs-toggle="dropdown">
-
-                {{-- Avatar --}}
-                @if(auth()->user()->profile?->avatar)
-                    <img src="{{ asset('storage/' . auth()->user()->profile->avatar) }}"
-                        class="rounded-circle shadow-sm"
-                        width="42"
-                        height="42"
-                        style="object-fit: cover;">
-                @else
-                    <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center shadow-sm"
-                        style="width:42px; height:42px;">
-                        <i class="bi bi-person-fill"></i>
-                    </div>
-                @endif
-
-                {{-- Name --}}
-                <div class="text-start d-none d-md-block">
-                    <div class="fw-semibold text-dark small">
-                        {{ auth()->user()->name }}
-                    </div>
-                    <div class="text-muted small">
-                        {{ ucfirst(auth()->user()->role) }}
-                    </div>
-                </div>
-
-                <i class="bi bi-chevron-down text-muted small"></i>
+            <!-- Mobile menu -->
+            <button class="btn d-lg-none p-0 d-flex align-items-center justify-content-center"
+                    data-bs-toggle="offcanvas"
+                    data-bs-target="#mobileSidebar">
+                <i class="bi bi-list fs-3"></i>
             </button>
 
-            <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3 p-2"
-                style="min-width: 280px;">
+            <!-- Logo -->
+            <span class="fw-bold fs-5 d-flex align-items-center gap-2">
+                <i class="bi bi-flower1 text-primary"></i>
+                Spa Admin
+            </span>
+        </div>
 
-                {{-- User info header --}}
-                <li class="px-3 py-2 border-bottom mb-2">
-                    <div class="fw-bold">
-                        {{ auth()->user()->name }}
-                    </div>
+        <!-- Right actions -->
+        <div class="d-flex align-items-center gap-3 ms-auto">
 
-                    <div class="text-muted small">
-                        {{ auth()->user()->email }}
-                    </div>
+            <!-- Notification Bell -->
+            @php
+                $unreadCount = auth()->user()->unreadNotifications->count();
+            @endphp
 
-                    <span class="badge bg-light text-primary mt-2">
-                        {{ ucfirst(auth()->user()->role) }}
+            <a href="{{ route('notifications.index') }}"
+                class="btn position-relative border-0 bg-transparent d-flex align-items-center justify-content-center">
+                
+                <i class="bi bi-bell fs-5 text-dark"></i>
+
+                @if($unreadCount > 0)
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                        {{ $unreadCount }}
                     </span>
-                </li>
+                @endif
+            </a>
 
-                {{-- Profile --}}
-                <li>
-                    <a class="dropdown-item rounded"
-                    href="#">
-                        <i class="bi bi-person me-2"></i>
-                        My Profile
-                    </a>
-                </li>
+            <!-- User dropdown -->
+            <div class="dropdown d-flex align-items-center">
 
-                {{-- Logout --}}
-                <li>
-                    <form method="POST"
-                        action="{{ route('logout') }}">
-                        @csrf
+                <button class="btn border-0 d-flex align-items-center gap-2"
+                        data-bs-toggle="dropdown">
 
-                        <button class="dropdown-item text-danger rounded">
-                            <i class="bi bi-box-arrow-right me-2"></i>
-                            Logout
-                        </button>
-                    </form>
-                </li>
+                    {{-- Avatar --}}
+                    @if(auth()->user()->profile?->avatar)
+                        <img src="{{ asset('storage/' . auth()->user()->profile->avatar) }}"
+                             class="rounded-circle shadow-sm"
+                             width="42"
+                             height="42"
+                             style="object-fit: cover;">
+                    @else
+                        <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center shadow-sm"
+                             style="width:42px; height:42px;">
+                            <i class="bi bi-person-fill"></i>
+                        </div>
+                    @endif
 
-            </ul>
+                    {{-- Name --}}
+                    <div class="text-start d-none d-md-block lh-sm">
+                        <div class="fw-semibold text-dark small">
+                            {{ auth()->user()->name }}
+                        </div>
+                        <div class="text-muted small">
+                            {{ ucfirst(auth()->user()->role) }}
+                        </div>
+                    </div>
 
+                    <i class="bi bi-chevron-down text-muted small"></i>
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3 p-2"
+                    style="min-width: 280px;">
+
+                    <li class="px-3 py-2 border-bottom mb-2">
+                        <div class="fw-bold">{{ auth()->user()->name }}</div>
+                        <div class="text-muted small">{{ auth()->user()->email }}</div>
+                        <span class="badge bg-light text-primary mt-2">
+                            {{ ucfirst(auth()->user()->role) }}
+                        </span>
+                    </li>
+
+                    <li>
+                        <a class="dropdown-item rounded" href="#">
+                            <i class="bi bi-person me-2"></i> My Profile
+                        </a>
+                    </li>
+
+                    <li>
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button class="dropdown-item text-danger rounded">
+                                <i class="bi bi-box-arrow-right me-2"></i> Logout
+                            </button>
+                        </form>
+                    </li>
+
+                </ul>
+            </div>
         </div>
 
     </div>
@@ -230,21 +241,13 @@
 
              @if(auth()->user()->role === 'owner' || auth()->user()->role === 'receptionist')
             <li class="nav-item">
-                <a href=""
-                   class="nav-link {{ request()->routeIs('admin.therapists*') ? 'active' : '' }}">
+                <a href="{{ route('therapists.index') }}"
+                   class="nav-link {{ request()->routeIs('therapists*') ? 'active' : '' }}">
                     <i class="bi bi-people me-2"></i>
                     Therapists
                 </a>
             </li>
             @endif
-
-            <li class="nav-item">
-                <a href=""
-                   class="nav-link {{ request()->routeIs('admin.customers*') ? 'active' : '' }}">
-                    <i class="bi bi-person me-2"></i>
-                    Clents
-                </a>
-            </li>
 
         </ul>
     </div>
@@ -255,8 +258,9 @@
      tabindex="-1"
      id="mobileSidebar">
 
-    <div class="offcanvas-header">
-        <h5 class="offcanvas-title">
+    <div class="offcanvas-header border-bottom">
+        <h5 class="offcanvas-title fw-bold d-flex align-items-center gap-2">
+            <i class="bi bi-flower1 text-primary"></i>
             Spa Admin
         </h5>
 
@@ -266,55 +270,60 @@
         </button>
     </div>
 
-    <div class="offcanvas-body">
+    <div class="offcanvas-body p-3">
 
         <ul class="nav flex-column">
 
             <li class="nav-item">
-                <a href=""
-                   class="nav-link">
-                    Dashboard
+                <a href="{{ route('dashboard') }}"
+                   class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
+                    <i class="bi bi-grid me-2"></i> Dashboard
                 </a>
             </li>
 
             @if(auth()->user()->role === 'admin')
-                <li class="nav-item">
-                    <a href="{{ route('users.index') }}"
-                    class="nav-link">
-                        Users
-                    </a>
-                </li>
+            <li class="nav-item">
+                <a href="{{ route('users.index') }}"
+                   class="nav-link {{ request()->routeIs('users.index') ? 'active' : '' }}">
+                    <i class="bi bi-people me-2"></i> Users
+                </a>
+            </li>
             @endif
 
             <li class="nav-item">
                 <a href="{{ route('bookings.index') }}"
-                   class="nav-link">
-                    Bookings
+                   class="nav-link {{ request()->routeIs('bookings*') ? 'active' : '' }}">
+                    <i class="bi bi-calendar-check me-2"></i> Bookings
                 </a>
             </li>
 
             <li class="nav-item">
                 <a href="{{ route('services.index') }}"
-                   class="nav-link">
-                    Services
+                   class="nav-link {{ request()->routeIs('services.*') ? 'active' : '' }}">
+                    <i class="bi bi-heart me-2"></i> Services
                 </a>
             </li>
 
+            @if(auth()->user()->role === 'owner')
             <li class="nav-item">
-                <a href=""
-                   class="nav-link">
-                    Therapists
+                <a href="{{ route('receptionists.index') }}"
+                   class="nav-link {{ request()->routeIs('receptionists.*') ? 'active' : '' }}">
+                    <i class="bi bi-people me-2"></i> Receptionists
                 </a>
             </li>
+            @endif
 
+            @if(auth()->user()->role === 'owner' || auth()->user()->role === 'receptionist')
             <li class="nav-item">
-                <a href=""
-                   class="nav-link">
-                    Customers
+                <a href="{{ route('therapists.index') }}"
+                   class="nav-link {{ request()->routeIs('therapists*') ? 'active' : '' }}">
+                    <i class="bi bi-people me-2"></i> Therapists
                 </a>
             </li>
+            @endif
 
         </ul>
+
     </div>
 </div>
 

@@ -1,8 +1,8 @@
 @extends('layouts.admin')
 
-@section('page-title', 'Receptionist #' . $user->id)
-@section('breadcrumb-parent', 'Receptionists')
-@section('breadcrumb-parent-url', route('receptionists.index'))
+@section('page-title', 'Therapist #' . $user->id)
+@section('breadcrumb-parent', 'Therapists')
+@section('breadcrumb-parent-url', route('therapists.index'))
 
 @section('content')
 <div class="container-fluid">
@@ -11,11 +11,11 @@
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
         <h2 class="fw-bold text-dark mb-0 h4">
             <i class="bi bi-person-circle text-primary me-2"></i>
-            Receptionist #{{ $user->id }}
+            Therapist #{{ $user->id }}
         </h2>
 
         <div class="d-flex gap-2">
-            <a href="{{ route('receptionists.edit', $user->id) }}"
+            <a href="{{ route('therapists.edit', $user->id) }}"
                class="btn btn-primary px-4 shadow-sm fw-bold rounded">
                 <i class="bi bi-pencil-square me-2"></i>
                 Edit
@@ -99,7 +99,7 @@
                                         Phone Number
                                     </td>
                                     <td class="py-4 pe-4">
-                                        {{ $user->profile?->phone_number ?  $user->profile?->phone_number : 'N/A' }}
+                                        {{ $user->profile?->phone_number ?? 'N/A' }}
                                     </td>
                                 </tr>
 
@@ -126,7 +126,7 @@
                                         Birthdate
                                     </td>
                                     <td class="py-4 pe-4">
-                                        {{ $user->profile?->birthdate 
+                                        {{ $user->profile->birthdate 
                                             ? \Carbon\Carbon::parse($user->profile?->birthdate)->format('M d, Y')
                                             : 'N/A'
                                         }}
