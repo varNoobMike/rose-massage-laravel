@@ -114,17 +114,25 @@
                 @auth
 
                 <!-- ANNOUNCEMENTS -->
-                <div class="dropdown d-none d-lg-block">
-                    <a class="icon-btn nav-link" data-bs-toggle="dropdown">
+                <div class="d-none d-lg-block position-relative">
+
+                    @php
+                        $announcementCount = \App\Models\Announcement::where('is_active', true)->count();
+                    @endphp
+
+                    <a href="{{ route('announcements.index') }}"
+                    class="icon-btn nav-link">
+
                         <i class="bi bi-megaphone"></i>
-                        <span class="badge bg-danger badge-dot">2</span>
+
+                        @if($announcementCount > 0)
+                            <span class="badge bg-danger badge-dot">
+                                {{ $announcementCount }}
+                            </span>
+                        @endif
+
                     </a>
 
-                    <ul class="dropdown-menu dropdown-menu-end" style="width:260px;">
-                        <li class="px-3 py-2 fw-bold">Announcements</li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li class="px-3 py-2 small">🎉 Promo available</li>
-                    </ul>
                 </div>
 
                 <!-- NOTIFICATIONS -->
@@ -194,6 +202,36 @@
 </nav>
 
 <!-- ================= CONTENT ================= -->
+<!-- Breadcrumb -->
+<div class="bg-white border-bottom py-2">
+    <div class="container">
+
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0 bg-transparent p-0">
+
+                <li class="breadcrumb-item">
+                    <a href="/" class="text-decoration-none text-muted">
+                        Home
+                    </a>
+                </li>
+
+                @hasSection('breadcrumb-parent')
+                    <li class="breadcrumb-item">
+                        <a href="@yield('breadcrumb-parent-url')" class="text-decoration-none text-muted">
+                            @yield('breadcrumb-parent')
+                        </a>
+                    </li>
+                @endif
+
+                <li class="breadcrumb-item active text-primary fw-semibold">
+                    @yield('page-title', 'Dashboard')
+                </li>
+
+            </ol>
+        </nav>
+
+    </div>
+</div>
 <main class="py-5">
     <div class="container">
         @yield('content')
@@ -203,7 +241,7 @@
 <!-- ================= FOOTER ================= -->
 <footer class="border-top py-4">
     <div class="container text-center text-muted small">
-        © {{ date('Y') }} ROSE WELLNESS
+        © {{ date('Y') }} ROSE MASSAGE SERVICES
     </div>
 </footer>
 

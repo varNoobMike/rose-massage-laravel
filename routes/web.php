@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\NotificationController;
@@ -92,6 +93,18 @@ Route::get('/user/home', [App\Http\Controllers\HomeController::class, 'index'])
     ->name('user.home');
 
 /**
+ * Announcement Routes 
+ */
+Route::prefix('/announcement')->group(function () {
+    Route::get('/', [AnnouncementController::class, 'index'])->name('announcements.index');
+    Route::get('/create', [AnnouncementController::class, 'create'])->name('announcements.create');
+    Route::post('/', [AnnouncementController::class, 'store'])->name('announcements.store');
+    Route::get('/{announcement}', [AnnouncementController::class, 'show'])->name('announcements.show');
+    Route::get('/{announcement}/edit', [AnnouncementController::class, 'edit'])->name('announcements.edit');
+    Route::put('/{announcement}', [AnnouncementController::class, 'update'])->name('announcements.update');
+});
+
+/**
  * Booking Routes 
  */
 Route::prefix('/bookings')->middleware('auth')->group(function () {
@@ -154,7 +167,6 @@ Route::prefix('/services')->group(function () {
     Route::get('/{service}/edit', [ServiceController::class, 'edit'])->name('services.edit');
     Route::put('/{service}', [ServiceController::class, 'update'])->name('services.update');
 });
-
 
 /**
  * Therapists

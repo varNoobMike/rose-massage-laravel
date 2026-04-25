@@ -123,6 +123,23 @@
                 @endif
             </a>
 
+            @php
+                $announcementCount = \App\Models\Announcement::where('is_active', true)->count();
+            @endphp
+
+            <a href="{{ route('announcements.index') }}"
+            class="btn position-relative border-0 bg-transparent d-flex align-items-center justify-content-center">
+
+                <i class="bi bi-megaphone fs-5 text-dark"></i>
+
+                @if($announcementCount > 0)
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">
+                        {{ $announcementCount }}
+                    </span>
+                @endif
+
+            </a>
+
             <!-- User dropdown -->
             <div class="dropdown d-flex align-items-center">
 
