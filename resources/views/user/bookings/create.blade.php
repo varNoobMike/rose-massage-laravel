@@ -1,0 +1,273 @@
+@extends('layouts.user')
+
+@section('page-title', 'Book')
+
+@section('breadcrumb-parent', 'Bookings')
+@section('breadcrumb-parent-url', route('bookings.index'))
+
+@section('content')
+
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+    <div>
+        <h3 class="fw-bold mb-1">Book Services</h3>
+        <p class="text-muted mb-0">Select services and confirm booking.</p>
+    </div>
+
+    <a href="{{ route('bookings.index') }}" class="btn btn-outline-secondary rounded-pill px-4">
+        <i class="bi bi-arrow-left me-2"></i> Back
+    </a>
+</div>
+
+<div class="row g-4">
+
+     @if(session('error'))
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                {{ session('error') }}
+
+                <button 
+                    type="button" 
+                    class="btn-close" 
+                    data-bs-dismiss="alert">
+                </button>
+            </div>
+    @endif
+
+    {{-- LEFT FORM --}}
+    <div class="col-lg-7">
+
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-4">
+
+                <form action="{{ route('bookings.store') }}" method="POST" id="bookingForm">
+                    @csrf
+
+                    {{-- DATE / TIME --}}
+                    <div class="row g-3 mb-3">
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Date</label>
+                            <input type="date" id="dateInput" name="booking_date" class="form-control" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Time</label>
+                            <input type="time" id="timeInput" name="start_time" class="form-control" required>
+                        </div>
+
+                    </div>
+
+                    {{-- SERVICE SELECT --}}
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Service</label>
+
+                        <select id="serviceSelect" class="form-select">
+                            <option value="">Select service</option>
+
+                            @foreach($services as $service)
+                                <option value="{{ $service->id }}"
+                                    data-name="{{ $service->name }}"
+                                    data-price="{{ $service->price }}"
+                                    data-duration="{{ $service->duration_minutes }}">
+                                    {{ $service->name }}
+                                    ({{ $service->duration_minutes }} min • ₱{{ number_format($service->price,2) }})
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <button type="button" id="addServiceBtn" class="btn btn-primary w-100 mb-3">
+                        + Add Service
+                    </button>
+
+                    {{-- THIS IS IMPORTANT (Laravel structured inputs) --}}
+                    <div id="servicesContainer"></div>
+
+                    {{-- NOTES --}}
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Notes</label>
+                        <textarea name="notes" class="form-control" rows="3"></textarea>
+                    </div>
+
+                    <button type="submit" id="submitBtn" class="btn btn-success w-100 fw-bold" disabled>
+                        Confirm Booking
+                    </button>
+
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+
+    {{-- RIGHT SUMMARY --}}
+    <div class="col-lg-5">
+
+        <div class="card shadow-sm border-0 sticky-top" style="top:100px;">
+            <div class="card-body">
+
+                <h5 class="fw-bold mb-3">Booking Summary</h5>
+
+                <div class="mb-2">
+                    <span class="text-muted">Date:</span>
+                    <span class="fw-bold" id="summaryDate">—</span>
+                </div>
+
+                <div class="mb-2">
+                    <span class="text-muted">Time:</span>
+                    <span class="fw-bold" id="summaryTime">—</span>
+                </div>
+
+                <hr>
+
+                <div id="cartList" class="text-muted small">
+                    <div class="text-center py-3">No services selected</div>
+                </div>
+
+                <hr>
+
+                <div class="d-flex justify-content-between">
+                    <span class="fw-bold">Total</span>
+                    <span class="fw-bold text-primary" id="summaryTotal">₱0.00</span>
+                </div>
+
+                <div class="d-flex justify-content-between mt-2">
+                    <span class="text-muted">Duration</span>
+                    <span class="fw-bold" id="summaryDuration">0 min</span>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+@endsection
+
+@section('page-scripts')
+<script>
+$(function () {
+
+    let cart = [];
+
+    function render() {
+
+        let total = 0;
+        let duration = 0;
+
+        let html = '';
+
+        if (cart.length === 0) {
+            html = `<div class="text-center py-3 text-muted">No services selected</div>`;
+        }
+
+        $('#servicesContainer').html('');
+
+        cart.forEach((item, i) => {
+
+            total += item.price;
+            duration += item.duration;
+
+            html += `
+                <div class="d-flex justify-content-between mb-2">
+                    <div>
+                        <div class="fw-semibold">${item.name}</div>
+                        <small class="text-muted">${item.duration} min</small>
+                    </div>
+
+                    <div class="text-end">
+                        <div>₱${item.price.toFixed(2)}</div>
+                        <button type="button" class="btn btn-sm btn-link text-danger remove" data-index="${i}">
+                            remove
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            // ✅ IMPORTANT: Laravel structured input
+            $('#servicesContainer').append(`
+                <input type="hidden" name="services[${i}][id]" value="${item.id}">
+                <input type="hidden" name="services[${i}][name]" value="${item.name}">
+                <input type="hidden" name="services[${i}][price]" value="${item.price}">
+                <input type="hidden" name="services[${i}][duration]" value="${item.duration}">
+            `);
+        });
+
+        $('#cartList').html(html);
+
+        $('#summaryTotal').text(
+            '₱' + total.toLocaleString('en-PH', { minimumFractionDigits: 2 })
+        );
+
+        $('#summaryDuration').text(duration + ' min');
+
+        // enable submit
+        let valid =
+            cart.length > 0 &&
+            $('#dateInput').val() &&
+            $('#timeInput').val();
+
+        $('#submitBtn').prop('disabled', !valid);
+    }
+
+    // ADD SERVICE
+    $('#addServiceBtn').click(function () {
+
+        let opt = $('#serviceSelect option:selected');
+
+        if (!opt.val()) return;
+
+        let id = opt.val();
+
+        if (cart.find(x => x.id === id)) {
+            alert('Already added');
+            return;
+        }
+
+        cart.push({
+            id: id,
+            name: opt.data('name'),
+            price: parseFloat(opt.data('price')),
+            duration: parseInt(opt.data('duration'))
+        });
+
+        $('#serviceSelect').val('');
+
+        render();
+    });
+
+    // REMOVE SERVICE
+    $(document).on('click', '.remove', function () {
+        cart.splice($(this).data('index'), 1);
+        render();
+    });
+
+    // DATE/TIME
+    $('#dateInput, #timeInput').on('change', function () {
+
+        $('#summaryDate').text($('#dateInput').val() || '—');
+        $('#summaryTime').text($('#timeInput').val() || '—');
+
+        render();
+    });
+
+    // FINAL SUBMIT VALIDATION
+    $('#bookingForm').submit(function (e) {
+
+        if (cart.length === 0) {
+            e.preventDefault();
+            alert('Please add at least one service.');
+            return;
+        }
+
+        if (!$('#dateInput').val() || !$('#timeInput').val()) {
+            e.preventDefault();
+            alert('Please select date and time.');
+            return;
+        }
+
+    });
+
+});
+</script>
+@endsection

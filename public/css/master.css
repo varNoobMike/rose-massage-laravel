@@ -1,0 +1,126 @@
+/* ================= BRAND SYSTEM ================= */
+:root {
+    --brand-pink: #813D69;
+    --brand-green: #2D4F3F;
+    --brand-bg: #FAF7F9;
+    --text-main: #212529;
+}
+
+/* ================= GLOBAL ================= */
+body {
+    background: var(--brand-bg);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: var(--text-main);
+}
+
+/* ================= NAV ================= */
+.nav-link {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #495057;
+    transition: 0.2s;
+}
+
+.nav-link:hover,
+.nav-link:focus {
+    color: var(--brand-pink);
+}
+
+.nav-link.active {
+    color: var(--brand-pink) !important;
+    border-bottom: 2px solid var(--brand-pink);
+}
+
+/* ================= BUTTONS ================= */
+.btn-primary-custom {
+    background: var(--brand-green);
+    color: #fff;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    letter-spacing: 1px;
+    border: none;
+}
+
+.btn-primary-custom:hover {
+    opacity: 0.9;
+}
+
+.btn-outline-custom {
+    border: 1px solid #ccc;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+}
+
+/* ================= CARDS ================= */
+.card-clean {
+    background: #fff;
+    border: 1px solid rgba(0,0,0,0.05);
+    border-radius: 10px;
+}
+
+/* ================= ADMIN SIDEBAR ================= */
+.sidebar {
+    width: 260px;
+    min-height: 100vh;
+    background: #fff;
+    border-right: 1px solid rgba(0,0,0,0.05);
+}
+
+/* ================= UTIL ================= */
+.brand-title {
+    letter-spacing: 3px;
+    font-weight: 800;
+}
+
+.brand-sub {
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+/* ================= SIDEBAR (REAL DASHBOARD STYLE) ================= */
+
+.sidebar {
+    width: 260px;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    background: #fff;
+    border-right: 1px solid rgba(0,0,0,0.05);
+}
+
+/* Sidebar links */
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    color: #495057;
+    font-weight: 600;
+    text-decoration: none;
+    transition: 0.2s;
+}
+
+/* Hover */
+.sidebar-link:hover {
+    background: rgba(0,0,0,0.03);
+    color: var(--brand-pink);
+}
+
+/* Active (important!) */
+.sidebar-link.active {
+    background: rgba(129, 61, 105, 0.08);
+    color: var(--brand-pink);
+    border-left: 3px solid var(--brand-pink);
+}
+
+/* Icons */
+.sidebar-link i {
+    width: 18px;
+    height: 18px;
+}
