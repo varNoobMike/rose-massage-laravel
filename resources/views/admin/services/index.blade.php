@@ -2,50 +2,28 @@
 
 @section('page-title', 'Services')
 
-@section('content')
-<div class="container-fluid">
+@section('page-header', true)
+@section('page-header-title-indexpage', 'Services')
+@section('page-header-subtitle', 'Manage spa service menus')
 
-    <!-- Header -->
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
-        <div>
-            <h3 class="fw-bold mb-1">Services</h3>
-            <p class="text-muted mb-0">
-                Review and manage treatment pricing, duration, and availability.
-            </p>
-        </div>
+@section('page-header-actions')
+    <a href="{{ route('services.index') }}" class="btn btn-outline-secondary px-4 shadow-sm">
+        <i class="bi bi-arrow-repeat me-2"></i> Sync
+    </a>
+    <a href="{{ route('services.create') }}" class="btn btn-primary px-4 shadow-sm"> 
+        <i class="bi bi-plus-lg me-2"></i> New
+    </a>
+@endsection
 
-        <div class="d-flex gap-2">
-
-            <!-- SYNC BUTTON -->
-            <a href="{{ route('services.index') }}"
-                class="btn btn-outline-primary rounded-pill px-4"
-                title="Sync all bookings">
-                <i class="bi bi-arrow-repeat me-2"></i>
-                Sync
-            </a>
-
-            <!-- NEW BUTTON -->
-            <a href="{{ route('services.create') }}"
-            class="btn btn-primary rounded-pill px-4">
-                <i class="bi bi-plus-lg me-2"></i>
-                New
-            </a>
-
-        </div>
-
-    </div>
-
-    <!-- Filters -->
-    <div class="card shadow-sm border-0 mb-4 rounded">
-        <div class="card-body">
-
-            <form action="{{ route('services.index') }}" method="GET">
+@section('filter-area', true)
+@section('filter-form')
+ <form action="{{ route('services.index') }}" method="GET">
                 <div class="row g-3">
 
                     <div class="col-md-6">
                         <input type="text"
                                name="search"
-                               class="form-control rounded"
+                               class="form-control"
                                placeholder="Search service name, id..."
                                value="{{ request('search') }}">
                     </div>
@@ -55,7 +33,7 @@
                             $status = request('status', 'active');
                         @endphp
 
-                        <select name="status" class="form-select rounded">
+                        <select name="status" class="form-select">
 
                             <option value="all" {{ $status == 'all' ? 'selected' : '' }}>
                                 All Status
@@ -73,24 +51,23 @@
                     </div>
 
                     <div class="col-md-3 d-flex gap-2">
-                        <button class="btn btn-dark w-100 rounded">
+                        <button class="btn btn-dark w-100">
                             Filter
                         </button>
 
                         <a href="{{ route('services.index') }}"
-                           class="btn btn-outline-secondary w-100 rounded">
+                           class="btn btn-outline-secondary w-100">
                             Clear
                         </a>
                     </div>
 
                 </div>
             </form>
+@endsection
 
-        </div>
-    </div>
-
+@section('content')
     <!-- Table -->
-    <div class="card shadow-sm border-0">
+    <div class="card shadow-sm border">
 
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">
@@ -156,11 +133,11 @@
                             <!-- STATUS -->
                             <td class="text-center">
                                 @if($service->status === 'active')
-                                    <span class="badge bg-success rounded">
+                                    <span class="badge bg-success">
                                         Active
                                     </span>
                                 @else
-                                    <span class="badge bg-secondary rounded">
+                                    <span class="badge bg-secondary">
                                         Inactive
                                     </span>
                                 @endif
@@ -171,12 +148,12 @@
                                 <div class="btn-group gap-2">
 
                                     <a href="{{ route('services.show', $service->id) }}"
-                                       class="btn btn-sm btn-outline-secondary rounded">
+                                       class="btn btn-sm btn-secondary">
                                         <i class="bi bi-eye"></i>
                                     </a>
 
                                     <a href="{{ route('services.edit', $service->id) }}"
-                                       class="btn btn-sm btn-outline-primary rounded">
+                                       class="btn btn-sm btn-primary">
                                         <i class="bi bi-pencil"></i>
                                     </a>
 
@@ -222,5 +199,4 @@
         @endif
 
     </div>
-</div>
 @endsection

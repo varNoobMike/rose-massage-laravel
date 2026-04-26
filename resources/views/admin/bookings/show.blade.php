@@ -4,49 +4,22 @@
 @section('breadcrumb-parent', 'Bookings')
 @section('breadcrumb-parent-url', route('bookings.index'))
 
+@section('page-header', true)
+@section('page-header-title-showpage', 'Booking #' . $booking->id)
+@section('page-header-subtitle', 'Review and manage this booking')
+@section('page-header-actions')
+    <a href="{{ route('bookings.edit', $booking->id) }}" class="btn btn-primary px-4 shadow-sm">
+        <i class="bi bi-pencil-square me-2"></i> Edit
+    </a>
+@endsection
+
 @section('content')
-<div class="container-fluid">
-
-    <!-- Header -->
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
-        <h2 class="fw-bold text-dark mb-0 h4">
-            <i class="bi bi-calendar2-check text-primary me-2"></i>
-            Booking #{{ $booking->id }}
-        </h2>
-
-        <div class="d-flex gap-2">
-            <a href="{{ route('bookings.edit', $booking->id) }}"
-               class="btn btn-primary px-4 shadow-sm fw-bold rounded">
-                <i class="bi bi-pencil-square me-2"></i> Edit
-            </a>
-        </div>
-    </div>
-
     <div class="row g-4">
-
-        <!-- Alert -->
-        @if(session('success'))
-                <div class="col-12">  
-                    <div class="alert alert-success alert-dismissible fade show shadow-sm rounded" role="alert">
-                        {{ session('success') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                </div>
-        @endif
-
-        @if(session('error'))
-                <div class="col-12">  
-                    <div class="alert alert-danger alert-dismissible fade show shadow-sm rounded" role="alert">
-                        {{ session('error') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                </div>
-        @endif
 
         <!-- LEFT: BOOKING INFO -->
         <div class="col-12 col-lg-8">
 
-            <div class="card border-0 shadow-sm rounded-3">
+            <div class="card shadow-sm border">
 
                 <div class="card-header bg-white py-3 border-bottom">
                     <div class="d-flex justify-content-between align-items-center">
@@ -162,7 +135,7 @@
                                     @elseif($status == 'completed') bg-secondary
                                     @elseif($status == 'cancelled') bg-danger
                                     @endif
-                                    rounded-pill px-3 py-2 text-uppercase small">
+                                      px-3 py-2 text-uppercase small">
 
                                     {{ $status }}
 
@@ -181,7 +154,7 @@
         <!-- RIGHT: BOOKING ITEMS -->
         <div class="col-12 col-lg-4">
 
-            <div class="card border-0 shadow-sm rounded-3">
+            <div class="card shadow-sm border">
 
                 <div class="card-header bg-white py-3 border-bottom text-center">
                     <h6 class="mb-0 fw-bold text-uppercase small text-muted">
@@ -253,5 +226,4 @@
         </div>
 
     </div>
-</div>
 @endsection

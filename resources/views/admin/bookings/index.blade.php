@@ -2,90 +2,70 @@
 
 @section('page-title', 'Bookings')
 
-@section('content')
-<div class="container-fluid">
+@section('page-header', true)
+@section('page-header-title-indexpage', 'Bookings')
+@section('page-header-subtitle', 'Manage massage appointments')
 
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
-        <div>
-            <h3 class="fw-bold mb-1">Bookings</h3>
-            <p class="text-muted mb-0">
-                View and manage appointments.
-            </p>
-        </div>
+@section('page-header-actions')
+    <a href="{{ route('bookings.index') }}" class="btn btn-outline-secondary px-4 shadow-sm">
+        <i class="bi bi-arrow-repeat me-2"></i> Sync
+    </a>
+    <a href="{{ route('bookings.create') }}" class="btn btn-primary px-4 shadow-sm d-none"> <!-- Disable for now, future features -->
+        <i class="bi bi-plus-lg me-2"></i> New
+    </a>
+@endsection
 
-        <div class="d-flex gap-2">
 
-            <!-- SYNC BUTTON -->
-            <a href="{{ route('bookings.index') }}"
-                class="btn btn-outline-primary rounded-pill px-4"
-                title="Sync all bookings">
-                <i class="bi bi-arrow-repeat me-2"></i>
-                Sync
-            </a>
+@section('filter-area', true)
+@section('filter-form')
+    <form action="{{ route('bookings.index') }}" method="GET">
+        <div class="row g-3">
 
-            <!-- NEW BUTTON -->
-            <a href="{{ route('bookings.create') }}"
-            class="btn btn-primary rounded-pill px-4">
-                <i class="bi bi-plus-lg me-2"></i>
-                New
-            </a>
+            <div class="col-md-5">
+                <input type="text"
+                    name="search"
+                    class="form-control"
+                    placeholder="Search booking client name, id, email..."
+                    value="{{ request('search') }}">
+            </div>
 
-        </div>
-        
-    </div>
+            <div class="col-md-2">
+                <input type="date"
+                    name="date"
+                    class="form-control"
+                    value="{{ request('date') }}">
+            </div>
 
-    <!-- Filters -->
-    <div class="card shadow-sm border-0 mb-4 rounded">
-        <div class="card-body">
-
-            <form action="{{ route('bookings.index') }}" method="GET">
-                <div class="row g-3">
-
-                    <div class="col-md-5">
-                        <input type="text"
-                               name="search"
-                               class="form-control rounded"
-                               placeholder="Search booking client name, id, email..."
-                               value="{{ request('search') }}">
-                    </div>
-
-                    <div class="col-md-2">
-                        <input type="date"
-                               name="date"
-                               class="form-control rounded"
-                               value="{{ request('date') }}">
-                    </div>
-
-                    <div class="col-md-2">
-                        <select name="status" class="form-select rounded">
-                            <option value="">All Status</option>
-                            <option value="pending">Pending</option>
-                            <option value="confirmed">Confirmed</option>
-                            <option value="active">Active</option>
-                            <option value="completed">Completed</option>
-                            <option value="cancelled">Cancelled</option>
-                        </select>
-                    </div>
+            <div class="col-md-2">
+                <select name="status" class="form-select">
+                    <option value="">All Status</option>
+                    <option value="pending">Pending</option>
+                    <option value="confirmed">Confirmed</option>
+                    <option value="active">Active</option>
+                    <option value="completed">Completed</option>
+                    <option value="cancelled">Cancelled</option>
+                </select>
+            </div>
 
                     <div class="col-md-3 d-flex gap-2">
-                        <button class="btn btn-dark w-100 rounded">
+                        <button class="btn btn-dark w-100">
                             Filter
                         </button>
 
                         <a href="{{ route('bookings.index') }}"
-                           class="btn btn-outline-secondary w-100 rounded">
+                           class="btn btn-outline-secondary w-100">
                             Clear
                         </a>
                     </div>
 
-                </div>
-            </form>
-
         </div>
-    </div>
+    </form>
+@endsection
+
+@section('content')
 
     <!-- Table -->
-    <div class="card shadow-sm border-0">
+    <div class="card shadow-sm border">
         <div class="table-responsive">
 
             <table class="table table-hover align-middle mb-0">
@@ -216,7 +196,7 @@
                             @elseif($status == 'completed') bg-secondary
                             @elseif($status == 'cancelled') bg-danger
                             @endif
-                            rounded-pill px-3 py-2 text-uppercase small">
+                                px-3 py-2 text-uppercase small">
                             {{ $status }}
                         </span>
 
@@ -228,12 +208,12 @@
                         <div class="btn-group gap-2">
 
                             <a href="{{ route('bookings.show', $booking->id) }}"
-                            class="btn btn-sm btn-outline-secondary rounded">
+                            class="btn btn-sm btn-secondary">
                                 <i class="bi bi-eye"></i>
                             </a>
 
                             <a href="{{ route('bookings.edit', $booking->id) }}"
-                            class="btn btn-sm btn-outline-primary rounded">
+                            class="btn btn-sm btn-primary">
                                 <i class="bi bi-pencil"></i>
                             </a>
 
@@ -278,5 +258,5 @@
         @endif
 
     </div>
-</div>
+
 @endsection

@@ -5,45 +5,23 @@
 @section('breadcrumb-parent', 'Service #' . $service->id)
 @section('breadcrumb-parent-url', route('services.show', $service->id))
 
+@section('page-header', true)
+@section('page-header-title-showpage', 'Edit Service #' . $service->id)
+@section('page-header-subtitle', 'Update, manage, or reschedule this service')
+
 @section('content')
-<div class="container-fluid">
     <form action="{{ route('services.update', $service->id) }}" id="editServiceForm" method="POST" enctype="multipart/form-data">
         @csrf
         @method('PUT')
 
-        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
-            <h2 class="fw-bold text-dark mb-0 h4">
-                <i class="bi bi-pencil-square text-primary me-2"></i>Edit Service # {{ $service->id }}
-            </h2>
-        </div>
-
         <div class="row g-4">
-
-            <!-- Alert -->
-            @if(session('success'))
-                    <div class="col-12">  
-                        <div class="alert alert-success alert-dismissible fade show shadow-sm rounded" role="alert">
-                            {{ session('success') }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-                    </div>
-            @endif
-
-            @if(session('error'))
-                    <div class="col-12">  
-                        <div class="alert alert-danger alert-dismissible fade show shadow-sm rounded" role="alert">
-                            {{ session('error') }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-                    </div>
-            @endif
 
             {{-- Left Column --}}
             <div class="col-12 col-lg-8">
-                <div class="card border-0 shadow-sm rounded-3">
+                <div class="card shadow-sm border">
                     <div class="card-header bg-white py-3 border-bottom">
                         <div class="d-flex justify-content-between align-items-center">
-                            <h6 class="mb-0 fw-bold text-uppercase small text-muted tracking-wider">Treatment Specifications</h6>
+                            <h6 class="mb-0 fw-bold text-uppercase small text-muted tracking-wider">Service Information</h6>
                             <span class="badge bg-light text-primary border px-3 py-2">ID: #{{ str_pad($service->id, 4, '0', STR_PAD_LEFT) }}</span>
                         </div>
                     </div>
@@ -94,7 +72,7 @@
 
             {{-- Right Column --}}
             <div class="col-12 col-lg-4">
-                <div class="card border-0 shadow-sm rounded-3 mb-4 text-center">
+                <div class="card shadow-sm border mb-4 text-center">
                     <div class="card-body p-4">
                         <small class="text-uppercase text-muted fw-bold mb-3 d-block tracking-wider">Visibility Status</small>
                         <select name="status" class="form-select border-2 fw-bold text-center">
@@ -105,13 +83,13 @@
                     </div>
                 </div>
 
-                <div class="card border-0 shadow-sm rounded-3 overflow-hidden">
+                <div class="card shadow-sm border overflow-hidden">
                     <div class="card-header bg-white py-3 border-bottom text-center">
                         <h6 class="mb-0 fw-bold small text-muted text-uppercase tracking-wider">Marketing Image</h6>
                     </div>
                     <div class="card-body p-3 text-center">
                         @if($service->image)
-                            <img src="{{ asset('storage/' . $service->image) }}" class="img-fluid rounded-3 shadow-sm w-100 object-fit-cover mb-3" style="height: 180px;">
+                            <img src="{{ asset('storage/' . $service->image) }}" class="img-fluid shadow-sm w-100 object-fit-cover mb-3" style="height: 180px;">
                         @endif
                         <div class="text-start">
                             <label class="form-label x-small fw-bold text-uppercase text-muted">Upload New Cover</label>
@@ -126,20 +104,20 @@
         </div>
 
         {{-- GLOBAL ACTION BUTTONS --}}
-        <div class="card border-0 shadow-sm mt-4">
+        <div class="card shadow-sm border mt-4">
             <div class="card-body">
 
                 <div class="d-flex flex-column flex-md-row gap-2 justify-content-end">
 
                     <a href="{{ route('services.edit', $service->id) }}"
-                            class="btn btn-outline-secondary px-4">
+                            class="btn btn-outline-secondary px-4 shadow-sm">
                         Reset Changes
                     </a>
 
                     <button type="submit"
-                            class="btn btn-primary px-4 fw-bold">
+                            class="btn btn-primary px-4 fw-bold shadow-sm">
                         <i class="bi bi-save me-2"></i>
-                        Save All Changes
+                        Save Changes
                     </button>
 
                 </div>
@@ -148,5 +126,4 @@
         </div>
 
     </form>
-</div>
 @endsection

@@ -5,8 +5,11 @@
 @section('breadcrumb-parent', 'Users')
 @section('breadcrumb-parent-url', route('users.index'))
 
+@section('page-header', true)
+@section('page-header-title-showpage', 'Create User')
+@section('page-header-subtitle', 'Create new user account')
+
 @section('content')
-<div class="container-fluid">
 
     <form action="{{ route('users.store') }}"
           method="POST"
@@ -14,39 +17,12 @@
 
         @csrf
 
-        <!-- Header -->
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="fw-bold text-dark mb-0 h4">
-                <i class="bi bi-person-plus text-primary me-2"></i>
-                Create New User
-            </h2>
-        </div>
-
         <div class="row g-4">
-
-            <!-- Alerts -->
-            @if(session('success'))
-                <div class="col-12">
-                    <div class="alert alert-success alert-dismissible fade show shadow-sm rounded">
-                        {{ session('success') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                </div>
-            @endif
-
-            @if(session('error'))
-                <div class="col-12">
-                    <div class="alert alert-danger alert-dismissible fade show shadow-sm rounded">
-                        {{ session('error') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                </div>
-            @endif
 
             <!-- LEFT -->
             <div class="col-lg-8">
 
-                <div class="card border-0 shadow-sm rounded-3">
+                <div class="card shadow-sm border">
                     <div class="card-header bg-white py-3 border-bottom">
                         <h6 class="mb-0 fw-bold text-uppercase small text-muted">
                             User Information
@@ -160,7 +136,7 @@
             <div class="col-lg-4">
 
                 <!-- Role -->
-                <div class="card border-0 shadow-sm rounded-3 mb-4">
+                <div class="card shadow-sm border mb-4">
                     <div class="card-body">
                         <small class="text-uppercase text-muted fw-bold d-block mb-3">
                             User Role
@@ -200,7 +176,7 @@
                 </div>
 
                 <!-- Status -->
-                <div class="card border-0 shadow-sm rounded-3 mb-4">
+                <div class="card shadow-sm border mb-4">
                     <div class="card-body">
                         <small class="text-uppercase text-muted fw-bold d-block mb-3">
                             Account Status
@@ -230,7 +206,7 @@
                 </div>
 
                 <!-- Profile Image -->
-                <div class="card border-0 shadow-sm rounded-3">
+                <div class="card shadow-sm border">
                     <div class="card-header bg-white py-3 border-bottom text-center">
                         <h6 class="mb-0 fw-bold small text-muted text-uppercase">
                             Profile Image
@@ -273,7 +249,7 @@
                     <button type="submit"
                             class="btn btn-primary px-4 fw-bold">
                         <i class="bi bi-check2-circle me-2"></i>
-                        Create User
+                        Save User
                     </button>
 
                 </div>
@@ -282,5 +258,4 @@
         </div>
 
     </form>
-</div>
 @endsection

@@ -4,57 +4,22 @@
 @section('breadcrumb-parent', 'Users')
 @section('breadcrumb-parent-url', route('users.index'))
 
+@section('page-header', true)
+@section('page-header-title-showpage', 'User #' . $user->id)
+@section('page-header-subtitle', 'Review and manage this user')
+@section('page-header-actions')
+    <a href="{{ route('users.edit', $user->id) }}" class="btn btn-primary px-4 shadow-sm">
+        <i class="bi bi-pencil-square me-2"></i> Edit
+    </a>
+@endsection
+
 @section('content')
-<div class="container-fluid">
-
-    <!-- Header -->
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
-        <h2 class="fw-bold text-dark mb-0 h4">
-            <i class="bi bi-person-circle text-primary me-2"></i>
-            User #{{ $user->id }}
-        </h2>
-
-        <div class="d-flex gap-2">
-            <a href="{{ route('users.edit', $user->id) }}"
-               class="btn btn-primary px-4 shadow-sm fw-bold rounded">
-                <i class="bi bi-pencil-square me-2"></i>
-                Edit
-            </a>
-        </div>
-    </div>
-
     <div class="row g-4">
-
-        {{-- ALERTS --}}
-        @if(session('success'))
-            <div class="col-12">
-                <div class="alert alert-success alert-dismissible fade show shadow-sm rounded">
-                    {{ session('success') }}
-                    <button type="button"
-                            class="btn-close"
-                            data-bs-dismiss="alert">
-                    </button>
-                </div>
-            </div>
-        @endif
-
-        @if(session('error'))
-            <div class="col-12">
-                <div class="alert alert-danger alert-dismissible fade show shadow-sm rounded">
-                    {{ session('error') }}
-                    <button type="button"
-                            class="btn-close"
-                            data-bs-dismiss="alert">
-                    </button>
-                </div>
-            </div>
-        @endif
-
 
         <!-- LEFT SIDE -->
         <div class="col-12 col-lg-8">
 
-            <div class="card border-0 shadow-sm rounded-3">
+            <div class="card shadow-sm border">
                 <div class="card-header bg-white py-3 border-bottom">
                     <div class="d-flex justify-content-between align-items-center">
 
@@ -177,12 +142,11 @@
             </div>
         </div>
 
-
         <!-- RIGHT SIDE -->
         <div class="col-12 col-lg-4">
 
             <!-- STATUS CARD -->
-            <div class="card border-0 shadow-sm rounded-3 mb-4 text-center">
+            <div class="card shadow-sm border mb-4 text-center">
                 <div class="card-body p-4">
 
                     <small class="text-uppercase text-muted fw-bold mb-3 d-block">
@@ -212,7 +176,7 @@
 
 
             <!-- PROFILE IMAGE -->
-            <div class="card border-0 shadow-sm rounded-3 overflow-hidden">
+            <div class="card shadow-sm border overflow-hidden">
                 <div class="card-header bg-white py-3 border-bottom text-center">
                     <h6 class="mb-0 fw-bold small text-muted text-uppercase">
                         Profile Image
@@ -223,10 +187,10 @@
 
                     @if($user->profile?->avatar)
                         <img src="{{ asset('storage/' . $user->profile?->avatar) }}"
-                             class="img-fluid rounded-3 shadow-sm w-100 object-fit-cover"
+                             class="img-fluid shadow-sm w-100 object-fit-cover"
                              style="height: 250px;">
                     @else
-                        <div class="bg-light rounded-3 text-center py-5 border border-dashed">
+                        <div class="bg-light text-center py-5 border border-dashed">
                             <i class="bi bi-person text-muted fs-1 opacity-25"></i>
                         </div>
                     @endif
@@ -237,5 +201,4 @@
         </div>
 
     </div>
-</div>
 @endsection

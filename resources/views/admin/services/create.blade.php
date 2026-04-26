@@ -5,48 +5,24 @@
 @section('breadcrumb-parent', 'Services')
 @section('breadcrumb-parent-url', route('services.index'))
 
-@section('content')
-<div class="container-fluid">
+@section('page-header', true)
+@section('page-header-title-showpage', 'Create Service')
+@section('page-header-subtitle', 'Create new service')
 
+@section('content')
     <form action="{{ route('services.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
 
-        <!-- Header -->
-        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
-            <h2 class="fw-bold text-dark mb-0 h4">
-                <i class="bi bi-plus-circle text-primary me-2"></i>Create Service
-            </h2>
-        </div>
-
-        <div class="row g-4">
-
-            <!-- Alert -->
-            @if(session('success'))
-                    <div class="col-12">  
-                        <div class="alert alert-success alert-dismissible fade show shadow-sm rounded" role="alert">
-                            {{ session('success') }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-                    </div>
-            @endif
-
-            @if(session('error'))
-                    <div class="col-12">  
-                        <div class="alert alert-danger alert-dismissible fade show shadow-sm rounded" role="alert">
-                            {{ session('error') }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-                    </div>
-            @endif
+        <div class="row g-4">        
 
             {{-- LEFT --}}
             <div class="col-12 col-lg-8">
 
-                <div class="card border-0 shadow-sm rounded-3">
+                <div class="card shadow-sm border">
 
                     <div class="card-header bg-white py-3 border-bottom">
                         <h6 class="mb-0 fw-bold text-uppercase small text-muted">
-                            Treatment Specifications
+                            Service Information
                         </h6>
                     </div>
 
@@ -135,7 +111,7 @@
             <div class="col-12 col-lg-4">
 
                 <!-- STATUS -->
-                <div class="card border-0 shadow-sm rounded-3 mb-4 text-center">
+                <div class="card shadow-sm border mb-4 text-center">
                     <div class="card-body p-4">
 
                         <small class="text-uppercase text-muted fw-bold d-block mb-3">
@@ -163,7 +139,7 @@
                 </div>
 
                 <!-- IMAGE -->
-                <div class="card border-0 shadow-sm rounded-3 overflow-hidden">
+                <div class="card shadow-sm border overflow-hidden">
 
                     <div class="card-header bg-white py-3 border-bottom text-center">
                         <h6 class="mb-0 fw-bold small text-muted text-uppercase">
@@ -198,20 +174,20 @@
         </div>
 
         {{-- GLOBAL ACTION BUTTONS --}}
-        <div class="card border-0 shadow-sm mt-4">
+        <div class="card shadow-sm border mt-4">
             <div class="card-body">
 
                 <div class="d-flex flex-column flex-md-row gap-2 justify-content-end">
 
                     <a href="{{ route('services.create') }}"
-                            class="btn btn-outline-secondary px-4">
+                            class="btn btn-outline-secondary px-4 shadow-sm">
                         Reset Changes
                     </a>
 
                     <button type="submit"
-                            class="btn btn-primary px-4 fw-bold">
+                            class="btn btn-primary px-4 fw-bold shadow-sm">
                         <i class="bi bi-check2-circle me-2"></i>
-                        Create Service
+                        Save Service
                     </button>
 
                 </div>
@@ -220,6 +196,4 @@
         </div>
 
     </form>
-
-</div>
 @endsection

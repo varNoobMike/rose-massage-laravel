@@ -2,51 +2,26 @@
 
 @section('page-title', 'Notifications')
 
-@section('content')
-<div class="container-fluid">
+@section('page-header', true)
+@section('page-header-title-indexpage', 'Notifications')
+@section('page-header-subtitle', 'View booking and system alerts')
 
-    <!-- Header -->
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
-        <div>
-            <h3 class="fw-bold mb-1">Notifications</h3>
-            <p class="text-muted mb-0">
-                Review booking alerts, updates, and system notifications.
-            </p>
-        </div>
+@section('page-header-actions')
+    <a href="{{ route('notifications.index') }}" class="btn btn-outline-secondary px-4 shadow-sm">
+        <i class="bi bi-arrow-repeat me-2"></i> Sync
+    </a>
+@endsection
 
-        <div class="d-flex gap-2">
-
-            <!-- Mark all as read -->
-            <form action="{{ route('notifications.readAll') }}" method="POST">
-                @csrf
-                <button class="btn btn-outline-primary rounded-pill px-4">
-                    <i class="bi bi-check2-all me-2"></i>
-                    Mark All Read
-                </button>
-            </form>
-
-            <!-- Refresh -->
-            <a href="{{ route('notifications.index') }}"
-               class="btn btn-primary rounded-pill px-4">
-                <i class="bi bi-arrow-repeat me-2"></i>
-                Refresh
-            </a>
-
-        </div>
-    </div>
-
-    <!-- Filters -->
-    <div class="card shadow-sm border-0 mb-4 rounded">
-        <div class="card-body">
-
-            <form action="{{ route('notifications.index') }}" method="GET">
+@section('filter-area', true)
+@section('filter-form')
+<form action="{{ route('notifications.index') }}" method="GET">
                 <div class="row g-3">
 
                     <!-- Search -->
                     <div class="col-md-6">
                         <input type="text"
                                name="search"
-                               class="form-control rounded"
+                               class="form-control"
                                placeholder="Search message..."
                                value="{{ request('search') }}">
                     </div>
@@ -57,7 +32,7 @@
                             $status = request('status', 'all');
                         @endphp
 
-                        <select name="status" class="form-select rounded">
+                        <select name="status" class="form-select">
                             <option value="all" {{ $status == 'all' ? 'selected' : '' }}>
                                 All Notifications
                             </option>
@@ -74,24 +49,23 @@
 
                     <!-- Actions -->
                     <div class="col-md-3 d-flex gap-2">
-                        <button class="btn btn-dark w-100 rounded">
+                        <button class="btn btn-dark w-100">
                             Filter
                         </button>
 
                         <a href="{{ route('notifications.index') }}"
-                           class="btn btn-outline-secondary w-100 rounded">
+                           class="btn btn-outline-secondary w-100">
                             Clear
                         </a>
                     </div>
 
                 </div>
             </form>
+@endsection
 
-        </div>
-    </div>
-
+@section('content')
     <!-- Table -->
-    <div class="card shadow-sm border-0">
+    <div class="card shadow-sm border">
 
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">
@@ -147,11 +121,11 @@
                             <!-- Status -->
                             <td class="text-center">
                                 @if($notification->read_at)
-                                    <span class="badge bg-secondary rounded">
+                                    <span class="badge bg-secondary">
                                         Read
                                     </span>
                                 @else
-                                    <span class="badge bg-success rounded">
+                                    <span class="badge bg-success">
                                         Unread
                                     </span>
                                 @endif
@@ -165,7 +139,7 @@
                                         <form action="{{ route('notifications.read', $notification->id) }}"
                                               method="POST">
                                             @csrf
-                                            <button class="btn btn-sm btn-outline-primary rounded">
+                                            <button class="btn btn-sm btn-primary">
                                                 <i class="bi bi-check-lg"></i>
                                             </button>
                                         </form>
@@ -173,7 +147,7 @@
 
                                     @if(isset($notification->data['booking_id']))
                                         <a href="{{ route('bookings.show', $notification->data['booking_id']) }}"
-                                           class="btn btn-sm btn-outline-secondary rounded">
+                                           class="btn btn-sm btn-secondary">
                                             <i class="bi bi-eye"></i>
                                         </a>
                                     @endif
@@ -220,5 +194,4 @@
         @endif
 
     </div>
-</div>
 @endsection

@@ -4,18 +4,11 @@
 @section('breadcrumb-parent', 'Booking #' . $booking->id)
 @section('breadcrumb-parent-url', route('bookings.show', $booking->id))
 
-@section('content')
-<div class="container-fluid">
+@section('page-header', true)
+@section('page-header-title-showpage', 'Edit Booking #' . $booking->id)
+@section('page-header-subtitle', 'Update, manage, or reschedule this booking')
 
-    <div class="mb-4">
-        <h2 class="fw-bold h4">
-            <i class="bi bi-pencil-square text-primary me-2"></i>
-            Edit Booking #{{ $booking->id }}
-        </h2>
-        <p class="text-muted mb-0">
-            Update booking details, manage services, and assign therapists.
-        </p>
-    </div>
+@section('content')
 
     <form method="POST"
           action="{{ route('bookings.update', $booking->id) }}"
@@ -25,38 +18,11 @@
 
         <div class="row g-4">
 
-            <!-- Alert -->
-            @if(session('success'))
-                    <div class="col-12">  
-                        <div class="alert alert-success alert-dismissible fade show shadow-sm rounded" role="alert">
-                            {{ session('success') }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-                    </div>
-            @endif
-
-            @if(session('error'))
-                    <div class="col-12">  
-                        <div class="alert alert-danger alert-dismissible fade show shadow-sm rounded" role="alert">
-                            {{ session('error') }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-                    </div>
-            @endif
-
-            <!-- Alert -->
-            @if(session('error'))
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                {{ session('error') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-            @endif
-
             {{-- LEFT --}}
             <div class="col-lg-8">
 
-                <div class="card border-0 shadow-sm">
-                    <div class="card-header bg-white border-bottom">
+                <div class="card shadow-sm border">
+                    <div class="card-header py-3 bg-white border-bottom">
                         <h6 class="mb-0 fw-bold text-uppercase small text-muted">
                             Booking Information
                         </h6>
@@ -137,8 +103,8 @@
             {{-- RIGHT --}}
             <div class="col-lg-4">
 
-                <div class="card border-0 shadow-sm">
-                    <div class="card-header bg-white border-bottom text-center">
+                <div class="card shadow-sm border">
+                    <div class="card-header py-3 bg-white border-bottom text-center">
                         <h6 class="mb-0 fw-bold text-uppercase small text-muted">
                             Manage Services
                         </h6>
@@ -149,7 +115,7 @@
                         <div id="serviceItemsContainer">
 
                             @foreach($booking->items as $index => $item)
-                            <div class="service-item border rounded p-3 mb-3">
+                            <div class="service-item border p-3 mb-3">
 
                                 <input type="hidden"
                                        name="existing_items[{{ $index }}][id]"
@@ -216,20 +182,20 @@
         </div>
 
         {{-- GLOBAL ACTION BUTTONS --}}
-        <div class="card border-0 shadow-sm mt-4">
+        <div class="card shadow-sm border mt-4">
             <div class="card-body">
 
                 <div class="d-flex flex-column flex-md-row gap-2 justify-content-end">
 
                     <a href="{{ route('bookings.edit', $booking->id) }}"
-                            class="btn btn-outline-secondary px-4">
+                            class="btn btn-outline-secondary px-4 shadow-sm">
                         Reset Changes
                     </a>
 
                     <button type="submit"
-                            class="btn btn-primary px-4 fw-bold">
+                            class="btn btn-primary px-4 fw-bold shadow-sm">
                         <i class="bi bi-save me-2"></i>
-                        Save All Changes
+                        Save Changes
                     </button>
 
                 </div>
@@ -239,7 +205,6 @@
 
     </form>
 
-</div>
 @endsection
 
 

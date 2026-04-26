@@ -2,56 +2,36 @@
 
 @section('page-title', 'Announcements')
 
-@section('content')
-<div class="container-fluid">
+@section('page-header', true)
+@section('page-header-title-indexpage', 'Announcements')
+@section('page-header-subtitle', 'Manage client announcements')
 
-    <!-- Header -->
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
-        <div>
-            <h3 class="fw-bold mb-1">Announcements</h3>
-            <p class="text-muted mb-0">
-                Manage promos, updates, pricing changes, and spa notices.
-            </p>
-        </div>
+@section('page-header-actions')
+    <a href="{{ route('announcements.index') }}" class="btn btn-outline-secondary px-4 shadow-sm">
+        <i class="bi bi-arrow-repeat me-2"></i> Sync
+    </a>
+    <a href="{{ route('announcements.create') }}" class="btn btn-primary px-4 shadow-sm"> 
+        <i class="bi bi-plus-lg me-2"></i> New
+    </a>
+@endsection
 
-        <div class="d-flex gap-2">
-
-            <!-- Create -->
-            <a href="{{ route('announcements.create') }}"
-               class="btn btn-primary rounded-pill px-4">
-                <i class="bi bi-plus-lg me-2"></i>
-                New Announcement
-            </a>
-
-            <!-- Refresh -->
-            <a href="{{ route('announcements.index') }}"
-               class="btn btn-outline-secondary rounded-pill px-4">
-                <i class="bi bi-arrow-repeat me-2"></i>
-                Refresh
-            </a>
-
-        </div>
-    </div>
-
-    <!-- Filters -->
-    <div class="card shadow-sm border-0 mb-4 rounded">
-        <div class="card-body">
-
-            <form action="{{ route('announcements.index') }}" method="GET">
+@section('filter-area', true)
+@section('filter-form')
+    <form action="{{ route('announcements.index') }}" method="GET">
                 <div class="row g-3">
 
                     <!-- Search -->
                     <div class="col-md-6">
                         <input type="text"
                                name="search"
-                               class="form-control rounded"
+                               class="form-control"
                                placeholder="Search announcements..."
                                value="{{ request('search') }}">
                     </div>
 
                     <!-- Type -->
                     <div class="col-md-3">
-                        <select name="type" class="form-select rounded">
+                        <select name="type" class="form-select">
                             <option value="">All Types</option>
                             <option value="promo" {{ request('type') == 'promo' ? 'selected' : '' }}>Promo</option>
                             <option value="update" {{ request('type') == 'update' ? 'selected' : '' }}>Update</option>
@@ -62,24 +42,23 @@
 
                     <!-- Actions -->
                     <div class="col-md-3 d-flex gap-2">
-                        <button class="btn btn-dark w-100 rounded">
+                        <button class="btn btn-dark w-100">
                             Filter
                         </button>
 
                         <a href="{{ route('announcements.index') }}"
-                           class="btn btn-outline-secondary w-100 rounded">
+                           class="btn btn-outline-secondary w-100">
                             Clear
                         </a>
                     </div>
 
                 </div>
-            </form>
+    </form>
+@endsection
 
-        </div>
-    </div>
-
+@section('content')
     <!-- Table -->
-    <div class="card shadow-sm border-0">
+    <div class="card shadow-sm border">
 
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">
@@ -158,13 +137,13 @@
 
                                     <!-- View -->
                                     <a href="{{ route('announcements.show', $announcement->id) }}"
-                                       class="btn btn-sm btn-outline-secondary rounded">
+                                       class="btn btn-sm btn-secondary">
                                         <i class="bi bi-eye"></i>
                                     </a>
 
                                     <!-- Edit -->
                                     <a href="{{ route('announcements.edit', $announcement->id) }}"
-                                       class="btn btn-sm btn-outline-primary rounded">
+                                       class="btn btn-sm btn-primary">
                                         <i class="bi bi-pencil"></i>
                                     </a>
 
@@ -211,5 +190,4 @@
         @endif
 
     </div>
-</div>
 @endsection

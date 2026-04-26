@@ -5,46 +5,21 @@
 @section('breadcrumb-parent', 'Announcements')
 @section('breadcrumb-parent-url', route('announcements.index'))
 
-@section('content')
-<div class="container-fluid">
+@section('page-header', true)
+@section('page-header-title-showpage', 'Edit Announcement #' . $announcement->id)
+@section('page-header-subtitle', 'Update, manage, this announcement')
 
+@section('content')
     <form action="{{ route('announcements.update', $announcement->id) }}" method="POST">
         @csrf
         @method('PUT')
 
-        <!-- Header -->
-        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
-            <h2 class="fw-bold text-dark mb-0 h4">
-                <i class="bi bi-pencil-square text-primary me-2"></i>
-                Edit Announcement
-            </h2>
-        </div>
-
         <div class="row g-4">
-
-            <!-- Alerts -->
-            @if(session('success'))
-                <div class="col-12">
-                    <div class="alert alert-success alert-dismissible fade show shadow-sm rounded">
-                        {{ session('success') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                </div>
-            @endif
-
-            @if(session('error'))
-                <div class="col-12">
-                    <div class="alert alert-danger alert-dismissible fade show shadow-sm rounded">
-                        {{ session('error') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                </div>
-            @endif
 
             {{-- LEFT SIDE --}}
             <div class="col-12 col-lg-8">
 
-                <div class="card border-0 shadow-sm rounded-3">
+                <div class="card shadow-sm border">
 
                     <div class="card-header bg-white py-3 border-bottom">
                         <h6 class="mb-0 fw-bold text-uppercase small text-muted">
@@ -169,7 +144,7 @@
             <div class="col-12 col-lg-4">
 
                 <!-- STATUS -->
-                <div class="card border-0 shadow-sm rounded-3 mb-4 text-center">
+                <div class="card shadow-sm border mb-4 text-center">
                     <div class="card-body p-4">
 
                         <small class="text-uppercase text-muted fw-bold d-block mb-3">
@@ -200,7 +175,7 @@
                 </div>
 
                 <!-- SCHEDULE -->
-                <div class="card border-0 shadow-sm rounded-3">
+                <div class="card shadow-sm border">
                     <div class="card-header bg-white py-3 border-bottom text-center">
                         <h6 class="mb-0 fw-bold small text-muted text-uppercase">
                             Schedule Settings
@@ -235,20 +210,20 @@
         </div>
 
         <!-- ACTION BUTTONS -->
-        <div class="card border-0 shadow-sm mt-4">
+        <div class="card shadow-sm border mt-4">
             <div class="card-body">
 
                 <div class="d-flex flex-column flex-md-row gap-2 justify-content-end">
 
                     <a href="{{ route('announcements.show', $announcement->id) }}"
-                       class="btn btn-outline-secondary px-4">
+                       class="btn btn-outline-secondary px-4 shadow-sm">
                         Cancel
                     </a>
 
                     <button type="submit"
-                            class="btn btn-primary px-4 fw-bold">
-                        <i class="bi bi-check2-circle me-2"></i>
-                        Update Announcement
+                            class="btn btn-primary px-4 fw-bold shadow-sm">
+                        <i class="bi bi-save me-2"></i>
+                        Save Changes
                     </button>
 
                 </div>
@@ -257,6 +232,4 @@
         </div>
 
     </form>
-
-</div>
 @endsection

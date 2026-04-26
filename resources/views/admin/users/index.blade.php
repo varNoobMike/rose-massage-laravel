@@ -2,44 +2,22 @@
 
 @section('page-title', 'Users')
 
-@section('content')
-<div class="container-fluid">
+@section('page-header', true)
+@section('page-header-title-indexpage', 'Users')
+@section('page-header-subtitle', 'Manage user accounts')
 
-    <!-- Header -->
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
-        <div>
-            <h3 class="fw-bold mb-1">Users</h3>
-            <p class="text-muted mb-0">
-                Manage clients, therapists, and staff accounts.
-            </p>
-        </div>
+@section('page-header-actions')
+    <a href="{{ route('users.index') }}" class="btn btn-outline-secondary px-4 shadow-sm">
+        <i class="bi bi-arrow-repeat me-2"></i> Sync
+    </a>
+    <a href="{{ route('users.create') }}" class="btn btn-primary px-4 shadow-sm "> 
+        <i class="bi bi-plus-lg me-2"></i> New
+    </a>
+@endsection
 
-        <div class="d-flex gap-2">
-
-            <!-- SYNC BUTTON -->
-            <a href="{{ route('users.index') }}"
-                class="btn btn-outline-primary rounded-pill px-4"
-                title="Sync all bookings">
-                <i class="bi bi-arrow-repeat me-2"></i>
-                Sync
-            </a>
-
-            <!-- NEW BUTTON -->
-            <a href="{{ route('users.create') }}"
-            class="btn btn-primary rounded-pill px-4">
-                <i class="bi bi-plus-lg me-2"></i>
-                New
-            </a>
-
-        </div>
-
-    </div>
-
-    <!-- Filters -->
-    <div class="card shadow-sm border-0 mb-4 rounded">
-        <div class="card-body">
-
-            <form action="{{ route('users.index') }}" method="GET">
+@section('filter-area', true)
+@section('filter-form')
+    <form action="{{ route('users.index') }}" method="GET">
                 <div class="row g-3">
 
                     @php
@@ -51,14 +29,14 @@
                     <div class="col-md-5">
                         <input type="text"
                             name="search"
-                            class="form-control rounded"
+                            class="form-control"
                             placeholder="Search name, email, ID..."
                             value="{{ request('search') }}">
                     </div>
 
                     <!-- Role -->
                     <div class="col-md-2">
-                        <select name="role" class="form-select rounded">
+                        <select name="role" class="form-select">
 
                             <option value=""
                                 {{ empty($role) ? 'selected' : '' }}>
@@ -90,7 +68,7 @@
 
                     <!-- Status -->
                     <div class="col-md-2">
-                        <select name="status" class="form-select rounded">
+                        <select name="status" class="form-select">
 
                             <option value="all"
                                 {{ $status == 'all' ? 'selected' : '' }}>
@@ -112,24 +90,24 @@
 
                     <!-- Buttons -->
                     <div class="col-md-3 d-flex gap-2">
-                        <button class="btn btn-dark w-100 rounded">
+                        <button class="btn btn-dark w-100">
                             Filter
                         </button>
 
                         <a href="{{ route('users.index') }}"
-                        class="btn btn-outline-secondary w-100 rounded">
+                        class="btn btn-outline-secondary w-100">
                             Clear
                         </a>
                     </div>
 
                 </div>
-            </form>
+    </form>
+@endsection
 
-        </div>
-    </div>
-
+@section('content')
+    
     <!-- Table -->
-    <div class="card shadow-sm border-0">
+    <div class="card shadow-sm border">
 
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">
@@ -157,9 +135,9 @@
                             <td>
                                 <div class="d-flex align-items-center">
 
-                                    @if($user->image)
+                                    @if($user->profile?->avatar)
                                         <img
-                                            src="{{ asset('storage/' . $user->image) }}"
+                                            src="{{ asset('storage/' . $user->profile?->avatar) }}"
                                             class="rounded-circle me-3 object-fit-cover"
                                             width="45"
                                             height="45"
@@ -194,11 +172,11 @@
                             <!-- STATUS -->
                             <td class="text-center">
                                 @if($user->status === 'active')
-                                    <span class="badge bg-success rounded">
+                                    <span class="badge bg-success">
                                         Active
                                     </span>
                                 @else
-                                    <span class="badge bg-secondary rounded">
+                                    <span class="badge bg-secondary">
                                         Inactive
                                     </span>
                                 @endif
@@ -209,12 +187,12 @@
                                 <div class="btn-group gap-2">
 
                                     <a href="{{ route('users.show', $user->id) }}"
-                                       class="btn btn-sm btn-outline-secondary rounded">
+                                       class="btn btn-sm btn-secondary">
                                         <i class="bi bi-eye"></i>
                                     </a>
 
                                     <a href="{{ route('users.edit', $user->id) }}"
-                                       class="btn btn-sm btn-outline-primary rounded">
+                                       class="btn btn-sm btn-primary">
                                         <i class="bi bi-pencil"></i>
                                     </a>
 
@@ -260,5 +238,4 @@
         @endif
 
     </div>
-</div>
 @endsection
