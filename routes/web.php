@@ -63,7 +63,7 @@ Route::post('/email/verification-notification', function (Request $request) {
 /**
  * Home Route - The landing page of the application, accessible to all users. 
  */
-Route::get('/', [App\Http\Controllers\HomeController::class, 'index']);
+Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 
 /**
@@ -86,11 +86,20 @@ Route::controller(AuthController::class)->group(function () {
     });
 });
 
+
 Route::get('/user', [App\Http\Controllers\HomeController::class, 'index'])
     ->name('user');
 
 Route::get('/user/home', [App\Http\Controllers\HomeController::class, 'index'])
     ->name('user.home');
+
+Route::get('/about', [App\Http\Controllers\ContactController::class, 'index'])
+    ->name('about.index');
+
+Route::get('/contact', [App\Http\Controllers\ContactController::class, 'index'])
+    ->name('contact.index');
+
+
 
 /**
  * Announcement Routes 

@@ -10,7 +10,7 @@
     <a href="{{ route('announcements.index') }}" class="btn btn-outline-secondary px-4 shadow-sm">
         <i class="bi bi-arrow-repeat me-2"></i> Sync
     </a>
-    <a href="{{ route('announcements.create') }}" class="btn btn-primary px-4 shadow-sm"> 
+    <a href="{{ route('announcements.create') }}" class="btn btn-primary px-4 shadow-sm">
         <i class="bi bi-plus-lg me-2"></i> New
     </a>
 @endsection
@@ -18,41 +18,37 @@
 @section('filter-area', true)
 @section('filter-form')
     <form action="{{ route('announcements.index') }}" method="GET">
-                <div class="row g-3">
+        <div class="row g-3">
 
-                    <!-- Search -->
-                    <div class="col-md-6">
-                        <input type="text"
-                               name="search"
-                               class="form-control"
-                               placeholder="Search announcements..."
-                               value="{{ request('search') }}">
-                    </div>
+            <!-- Search -->
+            <div class="col-md-6">
+                <input type="text" name="search" class="form-control" placeholder="Search announcements..."
+                    value="{{ request('search') }}">
+            </div>
 
-                    <!-- Type -->
-                    <div class="col-md-3">
-                        <select name="type" class="form-select">
-                            <option value="">All Types</option>
-                            <option value="promo" {{ request('type') == 'promo' ? 'selected' : '' }}>Promo</option>
-                            <option value="update" {{ request('type') == 'update' ? 'selected' : '' }}>Update</option>
-                            <option value="alert" {{ request('type') == 'alert' ? 'selected' : '' }}>Alert</option>
-                            <option value="info" {{ request('type') == 'info' ? 'selected' : '' }}>Info</option>
-                        </select>
-                    </div>
+            <!-- Type -->
+            <div class="col-md-3">
+                <select name="type" class="form-select">
+                    <option value="">All Types</option>
+                    <option value="promo" {{ request('type') == 'promo' ? 'selected' : '' }}>Promo</option>
+                    <option value="update" {{ request('type') == 'update' ? 'selected' : '' }}>Update</option>
+                    <option value="alert" {{ request('type') == 'alert' ? 'selected' : '' }}>Alert</option>
+                    <option value="info" {{ request('type') == 'info' ? 'selected' : '' }}>Info</option>
+                </select>
+            </div>
 
-                    <!-- Actions -->
-                    <div class="col-md-3 d-flex gap-2">
-                        <button class="btn btn-dark w-100">
-                            Filter
-                        </button>
+            <!-- Actions -->
+            <div class="col-md-3 d-flex gap-2">
+                <button class="btn btn-dark w-100">
+                    Filter
+                </button>
 
-                        <a href="{{ route('announcements.index') }}"
-                           class="btn btn-outline-secondary w-100">
-                            Clear
-                        </a>
-                    </div>
+                <a href="{{ route('announcements.index') }}" class="btn btn-outline-secondary w-100">
+                    Clear
+                </a>
+            </div>
 
-                </div>
+        </div>
     </form>
 @endsection
 
@@ -82,7 +78,7 @@
                                 <div class="d-flex align-items-center">
 
                                     <div class="bg-light rounded d-flex align-items-center justify-content-center me-3"
-                                         style="width:50px; height:50px;">
+                                        style="width:50px; height:50px;">
                                         <i class="bi bi-megaphone text-primary fs-5"></i>
                                     </div>
 
@@ -101,19 +97,19 @@
 
                             <!-- Type -->
                             <td class="text-center">
-                                <span class="badge
-                                    @if($announcement->type == 'promo') bg-success
+                                <span
+                                    class="badge
+                                    @if ($announcement->type == 'promo') bg-success
                                     @elseif($announcement->type == 'update') bg-primary
                                     @elseif($announcement->type == 'alert') bg-danger
-                                    @else bg-secondary
-                                    @endif">
+                                    @else bg-secondary @endif">
                                     {{ ucfirst($announcement->type) }}
                                 </span>
                             </td>
 
                             <!-- Status -->
                             <td class="text-center">
-                                @if($announcement->is_active)
+                                @if ($announcement->is_active)
                                     <span class="badge bg-success">Active</span>
                                 @else
                                     <span class="badge bg-secondary">Inactive</span>
@@ -137,13 +133,13 @@
 
                                     <!-- View -->
                                     <a href="{{ route('announcements.show', $announcement->id) }}"
-                                       class="btn btn-sm btn-secondary">
+                                        class="btn btn-sm btn-secondary">
                                         <i class="bi bi-eye"></i>
                                     </a>
 
                                     <!-- Edit -->
                                     <a href="{{ route('announcements.edit', $announcement->id) }}"
-                                       class="btn btn-sm btn-primary">
+                                        class="btn btn-sm btn-primary">
                                         <i class="bi bi-pencil"></i>
                                     </a>
 
@@ -173,7 +169,7 @@
         </div>
 
         <!-- Pagination -->
-        @if($announcements->hasPages())
+        @if ($announcements->hasPages())
             <div class="card-footer bg-white">
                 <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
 

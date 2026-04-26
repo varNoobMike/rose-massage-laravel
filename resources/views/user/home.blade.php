@@ -2,116 +2,430 @@
 
 @section('title', 'Rose Sanctuary | A Journey to Peace')
 
+@section('page-styles')
+    <style>
+        #hero {
+            position: relative;
+            min-height: 75vh;
+            background: linear-gradient(rgba(93, 68, 107, 0.5), rgba(45, 41, 48, 0.6)),
+                url('https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&q=80&w=2000');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+    </style>
+@endsection
+
 @section('content')
-
-<div class="position-relative overflow-hidden" style="height: 95vh; background-color: var(--bg);">
-    
-    <div class="position-absolute top-0 start-0 w-100 h-100">
-        <div class="position-absolute w-100 h-100 z-1" 
-             style="background: linear-gradient(to bottom, rgba(253,251,250,0.4) 0%, rgba(253,251,250,0.1) 50%, rgba(253,251,250,0.8) 100%);">
+    <!-- Hero -->
+    <section id="hero" class="d-flex align-items-center justify-content-center">
+        <div class="container text-center text-white">
+            <h1 class="display-2 fw-bold">Relax, Refresh, Rejuvenate</h1>
+            <p class="lead">Lorem ipsum dolor sit amet.</p>
         </div>
-        
-        <div class="w-100 h-100" 
-             style="background: url('https://images.unsplash.com/photo-1540555700478-4be289fbecee?auto=format&fit=crop&q=80&w=1600') center/cover no-repeat; opacity: 0.8;">
+    </section>
+
+    <!-- Services -->
+    <section class="pt-5 pb-5">
+
+        <div class="pt-3 container px-lg-5">
+
+            <!-- Header -->
+            <div class="text-center mb-4 mb-lg-5">
+                <h1 class="fw-bold display-5 mb-0">Our Services</h1>
+                <p class="text-muted mb-0">Browse our massage spa offers</p>
+            </div>
+
+            <!-- Card Grid -->
+            <div class="row g-4 justify-content-center">
+
+                @forelse($services as $service)
+                    <div class="col-12 col-md-6 col-lg-4">
+
+                        <div class="card h-100 border-0 shadow-sm overflow-hidden">
+
+                            <!-- IMAGE -->
+                            <img src="{{ asset('storage/' . $service->image) }}" alt="{{ $service->name }}" class="w-100"
+                                style="height: 280px; object-fit: cover;">
+
+                            <!-- BODY -->
+                            <div class="card-body p-4 text-center">
+
+                                <h5 class="fw-semibold mb-2">
+                                    {{ $service->name }}
+                                </h5>
+
+                                <p class="text-primary fw-bold fs-5 mb-3">
+                                    ₱{{ number_format($service->price, 2) }}
+                                </p>
+
+                                <a href="{{ route('bookings.create', ['service' => $service->id]) }}"
+                                    class="btn btn-outline-primary w-100">
+                                    Book Now
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                @empty
+
+                    <div class="col-12 text-center py-5">
+                        <p class="text-muted mb-0">No services available yet</p>
+                    </div>
+                @endforelse
+
+            </div>
+
+            <!-- VIEW ALL CTA -->
+            <div class="text-center mt-4 mt-lg-5">
+
+                <a href="{{ route('services.index') }}" class="btn btn-primary shadow-sm px-4 py-2">
+
+                    View All Services
+                    <i class="bi bi-arrow-right ms-2"></i>
+
+                </a>
+
+            </div>
+
         </div>
-    </div>
 
-    <div class="container h-100 position-relative z-2">
-        <div class="row h-100 align-items-center justify-content-center">
-            <div class="col-lg-8 text-center reveal">
-                
-                <span class="d-block text-uppercase small tracking-widest mb-4" style="color: var(--accent); font-weight: 500;">
-                    Siquijor’s Premier Healing Space
-                </span>
+    </section>
 
-                <h1 class="display-2 mb-4" style="line-height: 1.1;">
-                    Find Your <span class="fst-italic text-zen-serif">Inner Stillness</span>
-                </h1>
+    <!-- Why Choose Us -->
+    <section class="pt-5 pb-5">
 
-                <div class="row justify-content-center">
-                    <div class="col-md-10">
-                        <p class="lead text-muted mb-5 fw-light" style="font-size: 1.15rem; letter-spacing: 0.02em;">
-                            Transcend the everyday. Immerse yourself in a sanctuary where 
-                            traditional Filipino healing meets modern clinical wellness. 
-                            Your journey to restoration begins with a single breath.
+        <div class="pt-5 container px-lg-5">
+
+            <!-- Header -->
+            <div class="text-center mb-4 mb-lg-5">
+                <h2 class="fw-bold display-5 mb-0">Why Choose Us</h2>
+                <p class="text-muted mb-0">
+                    Professional care designed for your body and mind
+                </p>
+            </div>
+
+            <!-- Card Grid -->
+            <div class="row g-4 justify-content-center">
+
+                <!-- Card 1 -->
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="card h-100 border-0 shadow-sm text-center p-4">
+
+                        <i class="bi bi-person-check fs-1 text-primary mb-3"></i>
+
+                        <h5 class="fw-semibold mb-2">Expert Massage Therapists</h5>
+
+                        <p class="text-muted mb-0">
+                            Skilled professionals trained to deliver safe and effective massage techniques.
                         </p>
+
                     </div>
                 </div>
 
-                <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center align-items-center">
-                    <a href="{{ route('services.index') }}" class="btn btn-rose shadow-sm">
-                        Explore Rituals
-                    </a>
-                    <a href="#about" class="btn btn-link text-decoration-none text-muted small tracking-widest text-uppercase">
-                        Our Philosophy <i class="bi bi-arrow-right ms-1"></i>
-                    </a>
+                <!-- Card 2 -->
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="card h-100 border-0 shadow-sm text-center p-4">
+
+                        <i class="bi bi-flower1 fs-1 text-primary mb-3"></i>
+
+                        <h5 class="fw-semibold mb-2">Premium Oils & Products</h5>
+
+                        <p class="text-muted mb-0">
+                            We use high-quality natural oils that nourish your skin and enhance relaxation.
+                        </p>
+
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="card h-100 border-0 shadow-sm text-center p-4">
+
+                        <i class="bi bi-house-heart fs-1 text-primary mb-3"></i>
+
+                        <h5 class="fw-semibold mb-2">Relaxing Spa Environment</h5>
+
+                        <p class="text-muted mb-0">
+                            A calm, clean, and peaceful space designed to help you fully unwind.
+                        </p>
+
+                    </div>
                 </div>
 
             </div>
+
         </div>
-    </div>
 
-    <div class="position-absolute bottom-0 start-50 translate-middle-x mb-5 z-2 d-none d-md-block">
-        <div class="scroll-line"></div>
-    </div>
-</div>
+    </section>
 
-<section class="py-5" id="about" style="background-color: var(--surface);">
-    <div class="container py-5 text-center">
-        <div class="row justify-content-center">
-            <div class="col-lg-6">
-                <i class="bi bi-stars fs-3 mb-4" style="color: var(--accent);"></i>
-                <h2 class="h4 text-uppercase tracking-widest mb-4">Mindful Restoration</h2>
-                <p class="text-muted">
-                    At Rose, we believe that massage is not just a luxury, but a necessity for the soul. 
-                    Our therapists are masters of touch, trained to release tension and invite peace 
-                    back into your physical being.
+    <!-- How It Works -->
+    <section class="pt-5 pb-5 bg-light">
+
+        <div class="pt-5 container px-lg-5">
+
+            <!-- Header -->
+            <div class="text-center mb-4 mb-lg-5">
+                <h2 class="fw-bold display-5 mb-0">How It Works</h2>
+                <p class="text-muted mb-0">
+                    Simple steps to book your relaxing experience
                 </p>
             </div>
+
+            <!-- Card Grid -->
+            <div class="row g-4 justify-content-center">
+
+                <!-- Step 1 -->
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="card h-100 border-0 shadow-sm text-center p-4">
+
+                        <i class="bi bi-calendar2-plus fs-1 text-primary mb-3"></i>
+
+                        <h5 class="fw-semibold mb-2">Book a Service</h5>
+
+                        <p class="text-muted mb-0">
+                            Choose your preferred massage service from our available treatments.
+                        </p>
+
+                    </div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="card h-100 border-0 shadow-sm text-center p-4">
+
+                        <i class="bi bi-clock fs-1 text-primary mb-3"></i>
+
+                        <h5 class="fw-semibold mb-2">Pick Date & Time</h5>
+
+                        <p class="text-muted mb-0">
+                            Select a convenient schedule that fits your availability.
+                        </p>
+
+                    </div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="card h-100 border-0 shadow-sm text-center p-4">
+
+                        <i class="bi bi-check2-circle fs-1 text-primary mb-3"></i>
+
+                        <h5 class="fw-semibold mb-2">Get Confirmation</h5>
+
+                        <p class="text-muted mb-0">
+                            Receive instant confirmation and get ready to relax and unwind.
+                        </p>
+
+                    </div>
+                </div>
+
+            </div>
+
         </div>
-    </div>
-</section>
 
-@endsection
+    </section>
 
-@section('page-styles')
-<style>
-    /* Hero Content Animation */
-    .reveal {
-        animation: fadeUp 1.4s cubic-bezier(0.2, 0, 0.2, 1) forwards;
-    }
+    <!-- About Us -->
+    <section class="pt-5 pb-5">
 
-    /* Elegant Vertical Scroll Line */
-    .scroll-line {
-        width: 1px;
-        height: 60px;
-        background: linear-gradient(to bottom, var(--accent), transparent);
-        margin: 0 auto;
-        position: relative;
-        overflow: hidden;
-    }
+        <div class="pt-5 container px-lg-5">
 
-    .scroll-line::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: var(--bg);
-        animation: scrollMove 2s infinite;
-    }
+            <div class="row align-items-center g-4 g-lg-5">
 
-    @keyframes scrollMove {
-        0% { transform: translateY(-100%); }
-        100% { transform: translateY(100%); }
-    }
+                <!-- LEFT: CAROUSEL -->
+                <div class="col-12 col-lg-6">
 
-    /* Fluid Typography for Hero Title */
-    @media (max-width: 768px) {
-        h1.display-2 {
-            font-size: 2.8rem;
-        }
-    }
-</style>
+                    <div id="aboutCarousel" class="carousel slide shadow-sm overflow-hidden" data-bs-ride="carousel">
+
+                        <div class="carousel-inner">
+
+                            <div class="carousel-item active">
+                                <img src="https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&q=80&w=1200"
+                                    class="d-block w-100" style="height: 420px; object-fit: cover;" alt="Spa Image 1">
+                            </div>
+
+                            <div class="carousel-item">
+                                <img src="https://images.unsplash.com/photo-1519823551278-64ac92734fb1?auto=format&fit=crop&q=80&w=1200"
+                                    class="d-block w-100" style="height: 420px; object-fit: cover;" alt="Spa Image 2">
+                            </div>
+
+                            <div class="carousel-item">
+                                <img src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&q=80&w=1200"
+                                    class="d-block w-100" style="height: 420px; object-fit: cover;" alt="Spa Image 3">
+                            </div>
+
+                        </div>
+
+                        <button class="carousel-control-prev" type="button" data-bs-target="#aboutCarousel"
+                            data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon"></span>
+                        </button>
+
+                        <button class="carousel-control-next" type="button" data-bs-target="#aboutCarousel"
+                            data-bs-slide="next">
+                            <span class="carousel-control-next-icon"></span>
+                        </button>
+
+                    </div>
+
+                </div>
+
+                <!-- RIGHT: CONTENT -->
+                <div class="col-12 col-lg-6">
+
+                    <h2 class="fw-bold text-center text-lg-start display-5 mb-3">About Rose Sanctuary</h2>
+
+                    <p class="text-muted text-center text-lg-start mb-3">
+                        We are dedicated to creating a peaceful escape where you can relax, refresh, and rejuvenate.
+                        Our spa blends expert massage techniques with a calming atmosphere designed for total wellness.
+                    </p>
+
+                    <p class="text-muted text-center text-lg-start mb-4">
+                        Every treatment is carefully crafted to relieve stress, restore balance, and bring comfort to your
+                        body and mind.
+                        Your relaxation is our priority.
+                    </p>
+
+                    <div class="text-center text-lg-start">
+                        <a href="/about" class="btn btn-primary shadow-sm px-4 py-2">
+                            Know Our Story
+                            <i class="bi bi-arrow-right ms-2"></i>
+                        </a>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- Location -->
+    <section class="pt-5 pb-5">
+
+        <div class="pt-5 container px-lg-5">
+
+            <div class="row align-items-center g-4 g-lg-5">
+
+                <!-- Left -->
+                <div class="col-12 col-lg-5">
+
+                    <h2 class="fw-bold display-5 mb-3 text-center text-lg-start">
+                        Our Location
+                    </h2>
+
+                    <p class="text-muted text-center text-lg-start mb-3">
+                        We are located in a peaceful and relaxing environment designed for your comfort and wellness.
+                        Come visit us and experience a true moment of relaxation.
+                    </p>
+
+                    <p class="text-muted text-center text-lg-start mb-4">
+                        <i class="bi bi-geo-alt-fill me-2"></i>
+                        San Juan, Siquijor, Philippines
+                        <br>
+                    </p>
+
+                    <div class="text-center text-lg-start">
+                        <a href="https://maps.app.goo.gl/PP9bM9URwncqCESK9" target="_blank"
+                            class="btn btn-primary shadow-sm px-4 py-2">
+
+                            Get Directions
+                            <i class="bi bi-geo-alt ms-2"></i>
+
+                        </a>
+                    </div>
+
+                </div>
+
+                <!-- Right -->
+                <div class="col-12 col-lg-7">
+
+                    <div class="shadow-sm overflow-hidden">
+
+                        <iframe
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3939.097380190728!2d123.50755467483452!3d9.145677390920445!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x33ab3f92da2555d7%3A0x4b123cfa04584c4!2sRose%20Massage%20Services!5e0!3m2!1sen!2sph!4v1777212474000!5m2!1sen!2sph"
+                            width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"
+                            referrerpolicy="no-referrer-when-downgrade"></iframe>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- Contact -->
+    <section class="pt-5 pb-5 bg-light">
+
+        <div class="pt-5 container px-lg-5">
+
+            <!-- Header -->
+            <div class="text-center mb-4 mb-lg-5">
+                <h2 class="fw-bold display-5 mb-0">Get In Touch</h2>
+                <p class="text-muted mb-0">
+                    We’re here to answer your questions and help you book your relaxation experience
+                </p>
+            </div>
+
+            <div class="row justify-content-center">
+
+                <!-- Contact Card -->
+                <div class="col-12 col-lg-6">
+
+                    <div class="card border-0 shadow-sm p-4 p-lg-5 text-center">
+
+                        <!-- Icon -->
+                        <div class="mb-3">
+                            <i class="bi bi-envelope-paper-heart fs-1 text-primary"></i>
+                        </div>
+
+                        <h4 class="fw-bold mb-2">Send Us a Message</h4>
+
+                        <p class="text-muted mb-4">
+                            Have questions or special requests? Send us an email and we’ll respond as soon as possible.
+                        </p>
+
+                        <!-- Email Button -->
+                        <a href="mailto:rosesanctuary@gmail.com?subject=Inquiry%20from%20Website"
+                            class="btn btn-primary shadow-sm px-4 py-2">
+
+                            Get In Touch
+                            <i class="bi bi-send ms-2"></i>
+
+                        </a>
+
+                        <hr class="my-4">
+
+                        <!-- Extra contact info -->
+                        <p class="text-muted mb-0 small">
+
+                            <i class="bi bi-telephone-fill me-2"></i>
+                            +63 9XX XXX XXXX
+
+                            <br>
+
+                            <i class="bi bi-envelope-fill me-2"></i>
+                            rosesanctuary@gmail.com
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
 @endsection

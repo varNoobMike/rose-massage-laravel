@@ -13,12 +13,12 @@ abstract class Controller
 
     public function currentUserRole()
     {
-        return $this->currentUser()->role;
+        return $this->currentUser()?->role;
     }
 
     public function currentRoleView()
     {
-        $role = $this->currentUser()->role;
+        $role = $this->currentUser()?->role;
 
         return match ($role) {
             'admin', 'owner', 'receptionist' => 'admin',

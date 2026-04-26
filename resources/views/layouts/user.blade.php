@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,29 +8,28 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.3/dist/pulse/bootstrap.min.css" rel="stylesheet">
 
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
-          rel="stylesheet">
+        rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
 
     <style>
         body {
             background: #f8f9fc;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            overflow-x: hidden;
+            font-family: 'Inter', sans-serif;
         }
 
-        .icon-btn {
-            position: relative;
-            font-size: 1.2rem;
-        }
-
-        .badge-dot {
-            position: absolute;
-            top: -5px;
-            right: -8px;
-            font-size: 10px;
+        h1,
+        h2,
+        h3,
+        h4
+         {
+            font-family: 'Cormorant Garamond';
         }
     </style>
 
@@ -38,218 +38,397 @@
 
 <body>
 
-<!-- ================= OFFCANVAS ================= -->
-<div class="offcanvas offcanvas-start" tabindex="-1" id="mobileSidebar">
+    <div class="container-fluid p-0">
 
-    <div class="offcanvas-header">
-        <h5 class="fw-bold text-primary mb-0">ROSE.</h5>
-        <button class="btn-close" data-bs-dismiss="offcanvas"></button>
-    </div>
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top border-bottom py-3">
+            <div class="container px-lg-5">
 
-    <div class="offcanvas-body">
+                <h5 class="mb-0 fw-bold text-uppercase">Rose</h5>
 
-        <div class="list-group mb-3">
-            <a href="/" class="list-group-item">Home</a>
-            <a href="{{ route('services.index') }}" class="list-group-item">Rituals</a>
-            <a href="{{ route('bookings.index') }}" class="list-group-item">Reservations</a>
-        </div>
+                <button class="navbar-toggler shadow-none border-0 bg-light" type="button" data-bs-toggle="offcanvas"
+                    data-bs-target="#sidebar-mobile" aria-controls="sidebarOffcanvas">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
 
-        @auth
+                <div class="collapse navbar-collapse" id="navbarMain">
 
-        <h6 class="fw-bold mt-3">Notifications</h6>
-        <div class="list-group mb-3">
-            @forelse(auth()->user()->notifications->take(5) as $notif)
-                <a href="#" class="list-group-item small">
-                    {{ $notif->data['message'] ?? 'New notification' }}
-                </a>
-            @empty
-                <div class="text-muted small p-2">No notifications</div>
-            @endforelse
-        </div>
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0 d-flex align-items-center gap-3 text-">
 
-        <h6 class="fw-bold">Announcements</h6>
-        <div class="list-group">
-            <div class="list-group-item small">🎉 Promo this week</div>
-            <div class="list-group-item small">📅 Updated schedule</div>
-        </div>
-
-        @endauth
-
-    </div>
-</div>
-
-<!-- ================= NAVBAR ================= -->
-<nav class="navbar navbar-expand-lg bg-white shadow-sm sticky-top">
-    <div class="container">
-
-        <!-- BRAND -->
-        <a class="navbar-brand fw-bold text-primary" href="/">ROSE.</a>
-
-        <!-- ONLY ONE MOBILE TOGGLER (OFFCANVAS) -->
-        <button class="btn btn-outline-primary d-lg-none ms-auto me-2"
-                data-bs-toggle="offcanvas"
-                data-bs-target="#mobileSidebar">
-            <i class="bi bi-list"></i>
-        </button>
-
-        <!-- NAV COLLAPSE (desktop menu) -->
-        <button class="navbar-toggler" type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#nav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse" id="nav">
-
-            <!-- CENTER LINKS -->
-            <ul class="navbar-nav mx-auto">
-                <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('services.index') }}">Rituals</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('bookings.index') }}">Reservations</a></li>
-            </ul>
-
-            <!-- RIGHT SIDE -->
-            <div class="d-flex align-items-center gap-3">
-
-                @auth
-
-                <!-- ANNOUNCEMENTS -->
-                <div class="d-none d-lg-block position-relative">
-
-                    @php
-                        $announcementCount = \App\Models\Announcement::where('is_active', true)->count();
-                    @endphp
-
-                    <a href="{{ route('announcements.index') }}"
-                    class="icon-btn nav-link">
-
-                        <i class="bi bi-megaphone"></i>
-
-                        @if($announcementCount > 0)
-                            <span class="badge bg-danger badge-dot">
-                                {{ $announcementCount }}
-                            </span>
-                        @endif
-
-                    </a>
-
-                </div>
-
-                <!-- NOTIFICATIONS -->
-                <div class="d-none d-lg-block position-relative">
-
-                    <a href="{{ route('notifications.index') }}" class="icon-btn nav-link">
-                        <i class="bi bi-bell"></i>
-
-                        @php
-                            $unreadCount = auth()->user()->unreadNotifications->count();
-                        @endphp
-
-                        @if($unreadCount > 0)
-                            <span class="badge bg-danger badge-dot">
-                                {{ $unreadCount }}
-                            </span>
-                        @endif
-                    </a>
-
-                </div>
-
-                <!-- BOOK -->
-                <a href="{{ route('bookings.create') }}"
-                   class="btn btn-primary d-none d-lg-block">
-                    Book
-                </a>
-
-                <!-- PROFILE -->
-                <div class="dropdown">
-                    <a class="d-flex align-items-center gap-2 nav-link dropdown-toggle"
-                       data-bs-toggle="dropdown">
-
-                        <div class="rounded-circle bg-primary text-white d-flex justify-content-center align-items-center"
-                             style="width:32px;height:32px;">
-                            {{ strtoupper(substr(Auth::user()->name ?? 'U',0,1)) }}
-                        </div>
-
-                        <span class="d-none d-lg-inline">
-                            {{ Auth::user()->name }}
-                        </span>
-
-                    </a>
-
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li class="px-3 py-2 small text-muted">
-                            {{ Auth::user()->email }}
+                        <!-- HOME -->
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('home') ? 'text-primary fw-bold border-bottom border-3 border-primary' : 'text-dark' }}"
+                                href="{{ route('home') }}">
+                                Home
+                            </a>
                         </li>
-                        <li><hr class="dropdown-divider"></li>
 
-                        <li><a class="dropdown-item" href="#">Profile</a></li>
-
-                        <li>
-                            <form method="POST" action="{{ route('logout') }}">
-                                @csrf
-                                <button class="dropdown-item text-danger">Logout</button>
-                            </form>
+                        <!-- SERVICES -->
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('services.*') ? 'text-primary fw-bold border-bottom border-3 border-primary' : 'text-dark' }}"
+                                href="{{ route('services.index') }}">
+                                Our Services
+                            </a>
                         </li>
+
+                        <!-- ABOUT -->
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('about.*') ? 'text-primary fw-bold border-bottom border-3 border-primary' : 'text-dark' }}"
+                                href="{{ route('about.index') }}">
+                                About Us
+                            </a>
+                        </li>
+
+                        <!-- CONTACT -->
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('contact.*') ? 'text-primary fw-bold border-bottom border-3 border-primary' : 'text-dark' }}"
+                                href="{{ route('contact.index') }}">
+                                Contact Us
+                            </a>
+                        </li>
+
+                        <!-- BOOK NOW -->
+                        <li class="nav-item ms-lg-2">
+                            <a class="btn btn-primary shadow-sm px-3 py-2" href="{{ route('bookings.create') }}">
+                                Book Now
+                            </a>
+                        </li>
+
+                        @auth
+                            <!-- MY BOOKINGS -->
+                            <li class="nav-item">
+                                <a class="nav-link {{ request()->routeIs('bookings.*') ? 'text-primary fw-bold border-bottom border-3 border-primary' : 'text-dark' }}"
+                                    href="{{ route('bookings.index') }}">
+                                    My Bookings
+                                </a>
+                            </li>
+                             <li class="nav-item">
+                                <a class="nav-link fs-5 {{ request()->routeIs('notifications.*') ? 'text-primary fw-bold border-bottom border-3 border-primary' : 'text-dark' }}"
+                                    href="{{ route('notifications.index') }}">
+                                    <i class="bi bi-bell"></i>
+                                </a>
+                            </li>
+                             <li class="nav-item">
+                                <a class="nav-link fs-5 {{ request()->routeIs('announcements.*') ? 'text-primary fw-bold border-bottom border-3 border-primary' : 'text-dark' }}"
+                                    href="{{ route('announcements.index') }}">
+                                    <i class="bi bi-megaphone"></i>
+                                </a>
+                            </li>
+                        @endauth
+
+                        <!-- GUEST -->
+                        @guest
+                            <li class="nav-item ms-lg-2">
+                                <a class="btn btn-dark shadow-sm px-4 py-2" href="{{ route('login') }}">
+                                    Login
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="btn btn-outline-dark shadow-sm px-4 py-2" href="{{ route('register') }}">
+                                    Register
+                                </a>
+                            </li>
+                        @endguest
+
+                        <!-- AUTH -->
+                        @auth
+                            <li class="nav-item dropdown ms-lg-2">
+
+                                <!-- AVATAR BUTTON -->
+                                <a class="nav-link dropdown-toggle d-flex align-items-center gap-2 p-1" href="#"
+                                    role="button" data-bs-toggle="dropdown" aria-expanded="false">
+
+                                    <!-- Avatar image or fallback -->
+                                    <img src="{{ Auth::user()->avatar ?? 'https://ui-avatars.com/api/?name=' . urlencode(Auth::user()->name) }}"
+                                        class="rounded-circle" width="32" height="32" alt="avatar">
+
+                                </a>
+
+                                <!-- DROPDOWN -->
+                                <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0">
+
+                                    <!-- USER INFO -->
+                                    <li class="px-3 py-2">
+                                        <div class="fw-bold">{{ Auth::user()->name }}</div>
+                                        <small class="text-muted">{{ Auth::user()->email }}</small>
+                                    </li>
+
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
+
+                                    <!-- VIEW PROFILE -->
+                                    <li>
+                                        <a class="dropdown-item" href="">
+                                            <i class="bi bi-person me-2"></i> View Profile
+                                        </a>
+                                    </li>
+
+                                    <!-- BOOKINGS (optional if you want inside dropdown too) -->
+                                    <li>
+                                        <a class="dropdown-item" href="{{ route('bookings.index') }}">
+                                            <i class="bi bi-calendar-event me-2"></i> My Bookings
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
+
+                                    <!-- LOGOUT -->
+                                    <li>
+                                        <form method="POST" action="{{ route('logout') }}">
+                                            @csrf
+                                            <button class="dropdown-item text-danger" type="submit">
+                                                <i class="bi bi-box-arrow-right me-2"></i> Logout
+                                            </button>
+                                        </form>
+                                    </li>
+
+                                </ul>
+                            </li>
+                        @endauth
+
                     </ul>
+
                 </div>
 
-                @endauth
+            </div>
+        </nav>
+
+        <!-- Sidebar - Mobile -->
+        <div class="offcanvas offcanvas-start" tabindex="-1" id="sidebar-mobile"
+            aria-labelledby="sidebarOffcanvasLabel">
+
+            <div class="offcanvas-header border-bottom">
+                <h5 class="offcanvas-title fw-bold" id="sidebarOffcanvasLabel">MENU</h5>
+                <button type="button" class="btn-close shadow-none" data-bs-dismiss="offcanvas"></button>
+            </div>
+
+            <div class="offcanvas-body p-0">
+
+                <ul class="nav flex-column">
+
+                    <!-- HOME -->
+                    <li class="nav-item">
+                        <a href="{{ route('home') }}"
+                            class="nav-link px-3 py-3 d-flex align-items-center
+                {{ request()->routeIs('home') ? 'text-primary fw-bold bg-light' : 'text-dark' }}">
+                            <i class="bi bi-house me-3"></i> Home
+                        </a>
+                    </li>
+
+                    <!-- SERVICES -->
+                    <li class="nav-item">
+                        <a href="{{ route('services.index') }}"
+                            class="nav-link px-3 py-3 d-flex align-items-center
+                {{ request()->routeIs('services.*') ? 'text-primary fw-bold bg-light' : 'text-dark' }}">
+                            <i class="bi bi-flower1 me-3"></i> Our Services
+                        </a>
+                    </li>
+
+                    <!-- ABOUT -->
+                    <li class="nav-item">
+                        <a href="{{ route('about.index') }}"
+                            class="nav-link px-3 py-3 d-flex align-items-center
+                {{ request()->routeIs('about.*') ? 'text-primary fw-bold bg-light' : 'text-dark' }}">
+                            <i class="bi bi-info-circle me-3"></i> About Us
+                        </a>
+                    </li>
+
+                    <!-- CONTACT -->
+                    <li class="nav-item">
+                        <a href="{{ route('contact.index') }}"
+                            class="nav-link px-3 py-3 d-flex align-items-center
+                {{ request()->routeIs('contact.*') ? 'text-primary fw-bold bg-light' : 'text-dark' }}">
+                            <i class="bi bi-envelope me-3"></i> Contact Us
+                        </a>
+                    </li>
+
+                    @auth
+
+                        <!-- BOOKINGS -->
+                        <li class="nav-item">
+                            <a href="{{ route('bookings.index') }}"
+                                class="nav-link px-3 py-3 d-flex align-items-center
+                    {{ request()->routeIs('bookings.*') ? 'text-primary fw-bold bg-light' : 'text-dark' }}">
+                                <i class="bi bi-calendar-event me-3"></i> My Bookings
+                            </a>
+                        </li>
+
+                        <!-- NOTIFICATIONS -->
+                        <li class="nav-item">
+                            <a href="{{ route('notifications.index') }}"
+                                class="nav-link px-3 py-3 d-flex align-items-center
+                    {{ request()->routeIs('notifications.*') ? 'text-primary fw-bold bg-light' : 'text-dark' }}">
+                                <i class="bi bi-bell me-3"></i> Notifications
+                            </a>
+                        </li>
+
+                        <!-- ANNOUNCEMENTS -->
+                        <li class="nav-item">
+                            <a href="{{ route('announcements.index') }}"
+                                class="nav-link px-3 py-3 d-flex align-items-center
+                    {{ request()->routeIs('announcements.*') ? 'text-primary fw-bold bg-light' : 'text-dark' }}">
+                                <i class="bi bi-megaphone me-3"></i> Announcements
+                            </a>
+                        </li>
+
+                        <hr class="my-2">
+
+                        <!-- USER sILE DROPDOWN (MOBILE) -->
+                        <li class="nav-item dropdown px-3">
+
+                            <a class="nav-link d-flex align-items-center gap-2 p-2 bg-light rounded" href="#"
+                                role="button" data-bs-toggle="dropdown">
+
+                                <img src="{{ Auth::user()->avatar ?? 'https://ui-avatars.com/api/?name=' . urlencode(Auth::user()->name) }}"
+                                    class="rounded-circle" width="32" height="32">
+
+                                <div class="d-flex flex-column text-start">
+                                    <small class="fw-bold">{{ Auth::user()->name }}</small>
+                                    <small class="text-muted" style="font-size: 12px;">
+                                        {{ Auth::user()->email }}
+                                    </small>
+                                </div>
+
+                            </a>
+
+                            <ul class="dropdown-menu shadow-sm border-0 w-100">
+
+                                <li>
+                                    <a class="dropdown-item" href="">
+                                        <i class="bi bi-person me-2"></i> View Profile
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a class="dropdown-item" href="{{ route('bookings.index') }}">
+                                        <i class="bi bi-calendar-event me-2"></i> My Bookings
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+
+                                <li>
+                                    <form method="POST" action="{{ route('logout') }}">
+                                        @csrf
+                                        <button class="dropdown-item text-danger" type="submit">
+                                            <i class="bi bi-box-arrow-right me-2"></i> Logout
+                                        </button>
+                                    </form>
+                                </li>
+
+                            </ul>
+
+                        </li>
+
+                    @endauth
+
+                    <hr class="my-2">
+
+                    <!-- BOOK NOW -->
+                    <li class="nav-item px-3">
+                        <a class="btn btn-primary w-100 mb-2" href="{{ route('bookings.create') }}">
+                            Book Now
+                        </a>
+                    </li>
+
+                    @guest
+
+                        <!-- LOGIN -->
+                        <li class="nav-item px-3">
+                            <a class="btn btn-dark w-100 mb-2" href="{{ route('login') }}">
+                                Login
+                            </a>
+                        </li>
+
+                        <!-- REGISTER -->
+                        <li class="nav-item px-3">
+                            <a class="btn btn-outline-dark w-100" href="{{ route('register') }}">
+                                Register
+                            </a>
+                        </li>
+
+                    @endguest
+
+                </ul>
 
             </div>
 
         </div>
+
+        <!-- Main -->
+        <main class="pb-5">
+            <!-- Breadcrumb -->
+            @hasSection('breadcrumb')
+                <div class="container px-lg-5 py-3 py-lg-4">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="/" class="text-decoration-none">Home</a>
+                            </li>
+
+                            @hasSection('breadcrumb-parent')
+                                <li class="breadcrumb-item"><a href="@yield('breadcrumb-parent-url')"
+                                        class="text-decoration-none">@yield('breadcrumb-parent')</a></li>
+                            @endif
+                            @hasSection('page-title')
+                                <li class="breadcrumb-item active" aria-current="page">@yield('page-title')</li>
+                            @endif
+                        </ol>
+                    </nav>
+                </div>
+            @endif
+
+            <!-- Page Header Area -->
+            @hasSection('page-header')
+                <div class="container px-lg-5">
+                    <div
+                        class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+                        <div>
+                            <!-- Page header -->
+                            @hasSection('page-header-title')
+                                <h1 class="fw-bold display-6 mb-0">@yield('page-header-title')</h1>
+                            @endif
+                            <!-- Page subtitle -->
+                            @hasSection('page-header-subtitle')
+                                <p class="text-muted mb-0">@yield('page-header-subtitle')</p>
+                            @endif
+                        </div>
+
+                        @hasSection('page-header-actions')
+                            <div class="d-flex gap-2">
+                                @yield('page-header-actions')
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            @endif
+
+            <!-- Filter Area -->
+            @hasSection('filter-area')
+                <div class="container px-lg-5">
+                    <div class="card shadow-sm border mb-4">
+                        <div class="card-body">
+                            @yield('filter-form')
+                        </div>
+                    </div>
+                </div>
+            @endif
+
+            @yield('content')
+        </main>
+
+
     </div>
-</nav>
 
-<!-- ================= CONTENT ================= -->
-<!-- Breadcrumb -->
-<div class="bg-white border-bottom py-2">
-    <div class="container">
-
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb mb-0 bg-transparent p-0">
-
-                <li class="breadcrumb-item">
-                    <a href="/" class="text-decoration-none text-muted">
-                        Home
-                    </a>
-                </li>
-
-                @hasSection('breadcrumb-parent')
-                    <li class="breadcrumb-item">
-                        <a href="@yield('breadcrumb-parent-url')" class="text-decoration-none text-muted">
-                            @yield('breadcrumb-parent')
-                        </a>
-                    </li>
-                @endif
-
-                <li class="breadcrumb-item active text-primary fw-semibold">
-                    @yield('page-title', 'Dashboard')
-                </li>
-
-            </ol>
-        </nav>
-
-    </div>
-</div>
-<main class="py-5">
-    <div class="container">
-        @yield('content')
-    </div>
-</main>
-
-<!-- ================= FOOTER ================= -->
-<footer class="border-top py-4">
-    <div class="container text-center text-muted small">
-        © {{ date('Y') }} ROSE MASSAGE SERVICES
-    </div>
-</footer>
-
-<!-- ================= SCRIPTS ================= -->
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-@yield('page-scripts')
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    @yield('page-scripts')
 
 </body>
+
 </html>

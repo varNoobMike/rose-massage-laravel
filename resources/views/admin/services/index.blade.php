@@ -10,59 +10,55 @@
     <a href="{{ route('services.index') }}" class="btn btn-outline-secondary px-4 shadow-sm">
         <i class="bi bi-arrow-repeat me-2"></i> Sync
     </a>
-    <a href="{{ route('services.create') }}" class="btn btn-primary px-4 shadow-sm"> 
+    <a href="{{ route('services.create') }}" class="btn btn-primary px-4 shadow-sm">
         <i class="bi bi-plus-lg me-2"></i> New
     </a>
 @endsection
 
 @section('filter-area', true)
 @section('filter-form')
- <form action="{{ route('services.index') }}" method="GET">
-                <div class="row g-3">
+    <form action="{{ route('services.index') }}" method="GET">
+        <div class="row g-3">
 
-                    <div class="col-md-6">
-                        <input type="text"
-                               name="search"
-                               class="form-control"
-                               placeholder="Search service name, id..."
-                               value="{{ request('search') }}">
-                    </div>
+            <div class="col-md-6">
+                <input type="text" name="search" class="form-control" placeholder="Search service name, id..."
+                    value="{{ request('search') }}">
+            </div>
 
-                    <div class="col-md-3">
-                        @php
-                            $status = request('status', 'active');
-                        @endphp
+            <div class="col-md-3">
+                @php
+                    $status = request('status', 'active');
+                @endphp
 
-                        <select name="status" class="form-select">
+                <select name="status" class="form-select">
 
-                            <option value="all" {{ $status == 'all' ? 'selected' : '' }}>
-                                All Status
-                            </option>
+                    <option value="all" {{ $status == 'all' ? 'selected' : '' }}>
+                        All Status
+                    </option>
 
-                            <option value="active" {{ $status == 'active' ? 'selected' : '' }}>
-                                Active
-                            </option>
+                    <option value="active" {{ $status == 'active' ? 'selected' : '' }}>
+                        Active
+                    </option>
 
-                            <option value="inactive" {{ $status == 'inactive' ? 'selected' : '' }}>
-                                Inactive
-                            </option>
+                    <option value="inactive" {{ $status == 'inactive' ? 'selected' : '' }}>
+                        Inactive
+                    </option>
 
-                        </select>
-                    </div>
+                </select>
+            </div>
 
-                    <div class="col-md-3 d-flex gap-2">
-                        <button class="btn btn-dark w-100">
-                            Filter
-                        </button>
+            <div class="col-md-3 d-flex gap-2">
+                <button class="btn btn-dark w-100">
+                    Filter
+                </button>
 
-                        <a href="{{ route('services.index') }}"
-                           class="btn btn-outline-secondary w-100">
-                            Clear
-                        </a>
-                    </div>
+                <a href="{{ route('services.index') }}" class="btn btn-outline-secondary w-100">
+                    Clear
+                </a>
+            </div>
 
-                </div>
-            </form>
+        </div>
+    </form>
 @endsection
 
 @section('content')
@@ -75,9 +71,9 @@
                 <thead class="table-light">
                     <tr>
                         <th>Service</th>
-                        <th class="text-center">Duration</th>
-                        <th class="text-center">Price</th>
-                        <th class="text-center">Status</th>
+                        <th class="text-center d-none d-lg-table-cell">Duration</th>
+                        <th>Price</th>
+                        <th class="text-center d-none d-lg-table-cell">Status</th>
                         <th class="text-end">Actions</th>
                     </tr>
                 </thead>
@@ -90,17 +86,12 @@
                             <td>
                                 <div class="d-flex align-items-center">
 
-                                    @if($service->image)
-                                        <img
-                                            src="{{ asset('storage/' . $service->image) }}"
-                                            alt="{{ $service->name }}"
-                                            class="rounded me-3 object-fit-cover"
-                                            width="50"
-                                            height="50"
-                                        >
+                                    @if ($service->image)
+                                        <img src="{{ asset('storage/' . $service->image) }}" alt="{{ $service->name }}"
+                                            class="rounded me-3 object-fit-cover" width="50" height="50">
                                     @else
                                         <div class="bg-light text-muted rounded d-flex align-items-center justify-content-center me-3"
-                                             style="width:50px; height:50px;">
+                                            style="width:50px; height:50px;">
                                             <i class="bi bi-image"></i>
                                         </div>
                                     @endif
@@ -119,20 +110,20 @@
                             </td>
 
                             <!-- DURATION -->
-                            <td class="text-center">
+                            <td class="text-center d-none d-lg-table-cell">
                                 <span class="badge bg-light text-dark">
                                     {{ $service->duration_minutes }} mins
                                 </span>
                             </td>
 
                             <!-- PRICE -->
-                            <td class="text-center fw-bold">
+                            <td class="fw-bold">
                                 ₱{{ number_format($service->price, 2) }}
                             </td>
 
                             <!-- STATUS -->
-                            <td class="text-center">
-                                @if($service->status === 'active')
+                            <td class="text-center d-none d-lg-table-cell">
+                                @if ($service->status === 'active')
                                     <span class="badge bg-success">
                                         Active
                                     </span>
@@ -147,13 +138,11 @@
                             <td class="text-end">
                                 <div class="btn-group gap-2">
 
-                                    <a href="{{ route('services.show', $service->id) }}"
-                                       class="btn btn-sm btn-secondary">
+                                    <a href="{{ route('services.show', $service->id) }}" class="btn btn-sm btn-secondary">
                                         <i class="bi bi-eye"></i>
                                     </a>
 
-                                    <a href="{{ route('services.edit', $service->id) }}"
-                                       class="btn btn-sm btn-primary">
+                                    <a href="{{ route('services.edit', $service->id) }}" class="btn btn-sm btn-primary">
                                         <i class="bi bi-pencil"></i>
                                     </a>
 
@@ -182,7 +171,7 @@
         </div>
 
         <!-- Pagination -->
-        @if($services->hasPages())
+        @if ($services->hasPages())
             <div class="card-footer bg-white">
                 <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
 

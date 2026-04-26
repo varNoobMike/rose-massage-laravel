@@ -14,53 +14,49 @@
 
 @section('filter-area', true)
 @section('filter-form')
-<form action="{{ route('notifications.index') }}" method="GET">
-                <div class="row g-3">
+    <form action="{{ route('notifications.index') }}" method="GET">
+        <div class="row g-3">
 
-                    <!-- Search -->
-                    <div class="col-md-6">
-                        <input type="text"
-                               name="search"
-                               class="form-control"
-                               placeholder="Search message..."
-                               value="{{ request('search') }}">
-                    </div>
+            <!-- Search -->
+            <div class="col-md-6">
+                <input type="text" name="search" class="form-control" placeholder="Search message..."
+                    value="{{ request('search') }}">
+            </div>
 
-                    <!-- Status -->
-                    <div class="col-md-3">
-                        @php
-                            $status = request('status', 'all');
-                        @endphp
+            <!-- Status -->
+            <div class="col-md-3">
+                @php
+                    $status = request('status', 'all');
+                @endphp
 
-                        <select name="status" class="form-select">
-                            <option value="all" {{ $status == 'all' ? 'selected' : '' }}>
-                                All Notifications
-                            </option>
+                <select name="status" class="form-select">
+                    <option value="all" {{ $status == 'all' ? 'selected' : '' }}>
+                        All Notifications
+                    </option>
 
-                            <option value="unread" {{ $status == 'unread' ? 'selected' : '' }}>
-                                Unread
-                            </option>
+                    <option value="unread" {{ $status == 'unread' ? 'selected' : '' }}>
+                        Unread
+                    </option>
 
-                            <option value="read" {{ $status == 'read' ? 'selected' : '' }}>
-                                Read
-                            </option>
-                        </select>
-                    </div>
+                    <option value="read" {{ $status == 'read' ? 'selected' : '' }}>
+                        Read
+                    </option>
+                </select>
+            </div>
 
-                    <!-- Actions -->
-                    <div class="col-md-3 d-flex gap-2">
-                        <button class="btn btn-dark w-100">
-                            Filter
-                        </button>
+            <!-- Actions -->
+            <div class="col-md-3 d-flex gap-2">
+                <button class="btn btn-dark w-100">
+                    Filter
+                </button>
 
-                        <a href="{{ route('notifications.index') }}"
-                           class="btn btn-outline-secondary w-100">
-                            Clear
-                        </a>
-                    </div>
+                <a href="{{ route('notifications.index') }}" class="btn btn-outline-secondary w-100">
+                    Clear
+                </a>
+            </div>
 
-                </div>
-            </form>
+        </div>
+    </form>
 @endsection
 
 @section('content')
@@ -89,7 +85,7 @@
                                 <div class="d-flex align-items-center">
 
                                     <div class="bg-light rounded d-flex align-items-center justify-content-center me-3"
-                                         style="width:50px; height:50px;">
+                                        style="width:50px; height:50px;">
                                         <i class="bi bi-bell text-primary fs-5"></i>
                                     </div>
 
@@ -120,7 +116,7 @@
 
                             <!-- Status -->
                             <td class="text-center">
-                                @if($notification->read_at)
+                                @if ($notification->read_at)
                                     <span class="badge bg-secondary">
                                         Read
                                     </span>
@@ -135,9 +131,8 @@
                             <td class="text-end">
                                 <div class="btn-group gap-2">
 
-                                    @if(!$notification->read_at)
-                                        <form action="{{ route('notifications.read', $notification->id) }}"
-                                              method="POST">
+                                    @if (!$notification->read_at)
+                                        <form action="{{ route('notifications.read', $notification->id) }}" method="POST">
                                             @csrf
                                             <button class="btn btn-sm btn-primary">
                                                 <i class="bi bi-check-lg"></i>
@@ -145,9 +140,9 @@
                                         </form>
                                     @endif
 
-                                    @if(isset($notification->data['booking_id']))
+                                    @if (isset($notification->data['booking_id']))
                                         <a href="{{ route('bookings.show', $notification->data['booking_id']) }}"
-                                           class="btn btn-sm btn-secondary">
+                                            class="btn btn-sm btn-secondary">
                                             <i class="bi bi-eye"></i>
                                         </a>
                                     @endif
@@ -177,7 +172,7 @@
         </div>
 
         <!-- Pagination -->
-        @if($notifications->hasPages())
+        @if ($notifications->hasPages())
             <div class="card-footer bg-white">
                 <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
 

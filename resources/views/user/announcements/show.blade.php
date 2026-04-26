@@ -2,38 +2,20 @@
 
 @section('page-title', 'Announcement')
 
+@section('breadcrumb', true)
+@section('breadcrumb-parent', 'Bookings')
+@section('breadcrumb-parent-url', route('bookings.index'))
+
+@section('page-header', true)
+@section('page-header-title', $announcement->title)
+@section('page-header-subtitle', 'View details of this announcement')
+
 @section('content')
 
-<div class="container py-4">
+<div class="container px-lg-5">
 
-    <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
 
-        <div>
-
-            <h3 class="fw-bold mb-1">
-                {{ $announcement->title }}
-            </h3>
-
-            <!-- Breadcrumb style line -->
-            <p class="text-muted mb-0">
-                <a href="{{ route('announcements.index') }}" class="text-decoration-none text-muted">
-                    Announcements
-                </a>
-                <span class="mx-1">/</span>
-                <span class="text-dark">Details</span>
-            </p>
-
-        </div>
-
-        <a href="{{ route('announcements.index') }}" class="btn btn-outline-secondary rounded-pill">
-            <i class="bi bi-arrow-left me-2"></i> Back
-        </a>
-
-    </div>
-
-    <!-- Main Card -->
-    <div class="card border-0 shadow-sm rounded-4">
+    <div class="card border shadow-sm">
 
         <div class="card-body p-4 p-md-5">
 
