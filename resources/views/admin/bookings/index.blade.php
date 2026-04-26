@@ -32,13 +32,32 @@
             </div>
 
             <div class="col-md-2">
-                <select name="status" class="form-select">
-                    <option value="">All Status</option>
-                    <option value="pending">Pending</option>
-                    <option value="confirmed">Confirmed</option>
-                    <option value="active">Active</option>
-                    <option value="completed">Completed</option>
-                    <option value="cancelled">Cancelled</option>
+                <select name="status" class="form-select" onchange="this.form.submit()">
+
+                    <option value="" {{ request('status') == null ? 'selected' : '' }}>
+                        All Status
+                    </option>
+
+                    <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>
+                        Pending
+                    </option>
+
+                    <option value="confirmed" {{ request('status') == 'confirmed' ? 'selected' : '' }}>
+                        Confirmed
+                    </option>
+
+                    <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>
+                        Active
+                    </option>
+
+                    <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>
+                        Completed
+                    </option>
+
+                    <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>
+                        Cancelled
+                    </option>
+
                 </select>
             </div>
 

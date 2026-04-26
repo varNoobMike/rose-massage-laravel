@@ -11,9 +11,7 @@
 
 @section('content')
 
-    <form action="{{ route('users.store') }}"
-          method="POST"
-          enctype="multipart/form-data">
+    <form action="{{ route('users.store') }}" method="POST" enctype="multipart/form-data">
 
         @csrf
 
@@ -39,10 +37,9 @@
                                         Full Name
                                     </td>
                                     <td class="py-4 pe-4">
-                                        <input type="text"
-                                               name="name"
-                                               class="form-control @error('name') is-invalid @enderror"
-                                               value="{{ old('name') }}">
+                                        <input type="text" name="name"
+                                            class="form-control @error('name') is-invalid @enderror"
+                                            value="{{ old('name') }}">
 
                                         @error('name')
                                             <div class="invalid-feedback">{{ $message }}</div>
@@ -56,10 +53,9 @@
                                         Email
                                     </td>
                                     <td class="py-4 pe-4">
-                                        <input type="email"
-                                               name="email"
-                                               class="form-control @error('email') is-invalid @enderror"
-                                               value="{{ old('email') }}">
+                                        <input type="email" name="email"
+                                            class="form-control @error('email') is-invalid @enderror"
+                                            value="{{ old('email') }}">
 
                                         @error('email')
                                             <div class="invalid-feedback">{{ $message }}</div>
@@ -73,10 +69,8 @@
                                         Phone
                                     </td>
                                     <td class="py-4 pe-4">
-                                        <input type="text"
-                                               name="phone_number"
-                                               class="form-control"
-                                               value="{{ old('phone_number') }}">
+                                        <input type="text" name="phone_number" class="form-control"
+                                            value="{{ old('phone_number') }}">
                                     </td>
                                 </tr>
 
@@ -86,9 +80,7 @@
                                         Address
                                     </td>
                                     <td class="py-4 pe-4">
-                                        <textarea name="address"
-                                                  rows="3"
-                                                  class="form-control">{{ old('address') }}</textarea>
+                                        <textarea name="address" rows="3" class="form-control">{{ old('address') }}</textarea>
                                     </td>
                                 </tr>
 
@@ -100,12 +92,10 @@
                                     <td class="py-4 pe-4">
                                         <select name="gender" class="form-select">
                                             <option value="">Select Gender</option>
-                                            <option value="male"
-                                                {{ old('gender') == 'male' ? 'selected' : '' }}>
+                                            <option value="male" {{ old('gender') == 'male' ? 'selected' : '' }}>
                                                 Male
                                             </option>
-                                            <option value="female"
-                                                {{ old('gender') == 'female' ? 'selected' : '' }}>
+                                            <option value="female" {{ old('gender') == 'female' ? 'selected' : '' }}>
                                                 Female
                                             </option>
                                         </select>
@@ -118,10 +108,8 @@
                                         Birthdate
                                     </td>
                                     <td class="py-4 pe-4">
-                                        <input type="date"
-                                               name="birthdate"
-                                               class="form-control"
-                                               value="{{ old('birthdate') }}">
+                                        <input type="date" name="birthdate" class="form-control"
+                                            value="{{ old('birthdate') }}">
                                     </td>
                                 </tr>
 
@@ -144,25 +132,23 @@
 
                         <select name="role" class="form-select @error('role') is-invalid @enderror">
 
-                            <option value="client"
-                                {{ old('role', 'client') == 'client' ? 'selected' : '' }}>
+                            <option value="client" {{ old('role', 'client') == 'client' ? 'selected' : '' }}>
                                 Client
                             </option>
 
-                            <option value="therapist"
-                                {{ old('role') == 'therapist' ? 'selected' : '' }}>
+                            <option value="therapist" {{ old('role') == 'therapist' ? 'selected' : '' }}>
                                 Therapist
                             </option>
 
-                            <option value="receptionist"
-                                {{ old('role') == 'receptionist' ? 'selected' : '' }}>
+                            <option value="receptionist" {{ old('role') == 'receptionist' ? 'selected' : '' }}>
                                 Receptionist
                             </option>
 
-                            <option value="owner"
-                                {{ old('role') == 'owner' ? 'selected' : '' }}>
-                                Owner
-                            </option>
+                            @if (auth()->user()->role === 'admin')
+                                <option value="owner" {{ old('role') == 'owner' ? 'selected' : '' }}>
+                                    Owner
+                                </option>
+                            @endif
 
                         </select>
 
@@ -184,13 +170,11 @@
 
                         <select name="status" class="form-select @error('status') is-invalid @enderror">
 
-                            <option value="active"
-                                {{ old('status', 'active') == 'active' ? 'selected' : '' }}>
+                            <option value="active" {{ old('status', 'active') == 'active' ? 'selected' : '' }}>
                                 Active
                             </option>
 
-                            <option value="inactive"
-                                {{ old('status') == 'inactive' ? 'selected' : '' }}>
+                            <option value="inactive" {{ old('status') == 'inactive' ? 'selected' : '' }}>
                                 Inactive
                             </option>
 
@@ -216,12 +200,11 @@
                     <div class="card-body text-center">
 
                         <div class="bg-light rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center"
-                             style="width:150px;height:150px;">
+                            style="width:150px;height:150px;">
                             <i class="bi bi-person fs-1 text-muted"></i>
                         </div>
 
-                        <input type="file"
-                            name="image"
+                        <input type="file" name="image"
                             class="form-control form-control-sm @error('image') is-invalid @enderror">
 
                         @error('image')
@@ -241,13 +224,11 @@
 
                 <div class="d-flex flex-column flex-md-row gap-2 justify-content-end">
 
-                    <a href="{{ route('users.create') }}"
-                            class="btn btn-outline-secondary px-4">
+                    <a href="{{ route('users.create') }}" class="btn btn-outline-secondary px-4">
                         Reset Changes
                     </a>
 
-                    <button type="submit"
-                            class="btn btn-primary px-4 fw-bold">
+                    <button type="submit" class="btn btn-primary px-4 fw-bold">
                         <i class="bi bi-check2-circle me-2"></i>
                         Save User
                     </button>

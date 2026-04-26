@@ -10,9 +10,11 @@
     <a href="{{ route('users.index') }}" class="btn btn-outline-secondary px-4 shadow-sm">
         <i class="bi bi-arrow-repeat me-2"></i> Sync
     </a>
-    <a href="{{ route('users.create') }}" class="btn btn-primary px-4 shadow-sm ">
-        <i class="bi bi-plus-lg me-2"></i> New
-    </a>
+    @if (auth()->user()->role !== 'receptionist')
+        <a href="{{ route('users.create') }}" class="btn btn-primary px-4 shadow-sm ">
+            <i class="bi bi-plus-lg me-2"></i> New
+        </a>
+    @endif
 @endsection
 
 @section('filter-area', true)
@@ -47,13 +49,17 @@
                         Therapist
                     </option>
 
-                    <option value="receptionist" {{ $role == 'receptionist' ? 'selected' : '' }}>
-                        Receptionist
-                    </option>
+                    @if (auth()->user()->role !== 'receptionist')
+                        <option value="receptionist" {{ $role == 'receptionist' ? 'selected' : '' }}>
+                            Receptionist
+                        </option>
+                    @endif
 
-                    <option value="owner" {{ $role == 'owner' ? 'selected' : '' }}>
-                        Owner
-                    </option>
+                    @if (auth()->user()->role !== 'owner' && auth()->user()->role !== 'receptionist')
+                        <option value="owner" {{ $role == 'owner' ? 'selected' : '' }}>
+                            Owner
+                        </option>
+                    @endif
 
                 </select>
             </div>
@@ -174,9 +180,11 @@
                                         <i class="bi bi-eye"></i>
                                     </a>
 
-                                    <a href="{{ route('users.edit', $user->id) }}" class="btn btn-sm btn-primary">
-                                        <i class="bi bi-pencil"></i>
-                                    </a>
+                                    @if (auth()->user()->role !== 'receptionist')
+                                        <a href="{{ route('users.edit', $user->id) }}" class="btn btn-sm btn-primary">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                    @endif
 
                                 </div>
                             </td>

@@ -10,9 +10,11 @@
     <a href="{{ route('services.index') }}" class="btn btn-outline-secondary px-4 shadow-sm">
         <i class="bi bi-arrow-repeat me-2"></i> Sync
     </a>
-    <a href="{{ route('services.create') }}" class="btn btn-primary px-4 shadow-sm">
-        <i class="bi bi-plus-lg me-2"></i> New
-    </a>
+    @if (auth()->user()->role !== 'receptionist')
+        <a href="{{ route('services.create') }}" class="btn btn-primary px-4 shadow-sm">
+            <i class="bi bi-plus-lg me-2"></i> New
+        </a>
+    @endif
 @endsection
 
 @section('filter-area', true)
@@ -141,10 +143,12 @@
                                     <a href="{{ route('services.show', $service->id) }}" class="btn btn-sm btn-secondary">
                                         <i class="bi bi-eye"></i>
                                     </a>
-
-                                    <a href="{{ route('services.edit', $service->id) }}" class="btn btn-sm btn-primary">
-                                        <i class="bi bi-pencil"></i>
-                                    </a>
+                                    @if (auth()->user()->role !== 'receptionist')
+                                        <a href="{{ route('services.edit', $service->id) }}"
+                                            class="btn btn-sm btn-primary">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                    @endif
 
                                 </div>
                             </td>

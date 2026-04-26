@@ -93,7 +93,7 @@ Route::get('/user', [App\Http\Controllers\HomeController::class, 'index'])
 Route::get('/user/home', [App\Http\Controllers\HomeController::class, 'index'])
     ->name('user.home');
 
-Route::get('/about', [App\Http\Controllers\ContactController::class, 'index'])
+Route::get('/about', [App\Http\Controllers\AboutController::class, 'index'])
     ->name('about.index');
 
 Route::get('/contact', [App\Http\Controllers\ContactController::class, 'index'])

@@ -8,9 +8,11 @@
 @section('page-header-title-showpage', 'User #' . $user->id)
 @section('page-header-subtitle', 'Review and manage this user')
 @section('page-header-actions')
-    <a href="{{ route('users.edit', $user->id) }}" class="btn btn-primary px-4 shadow-sm">
-        <i class="bi bi-pencil-square me-2"></i> Edit
-    </a>
+    @if (auth()->user()->role !== 'receptionist')
+        <a href="{{ route('users.edit', $user->id) }}" class="btn btn-primary px-4 shadow-sm">
+            <i class="bi bi-pencil-square me-2"></i> Edit
+        </a>
+    @endif
 @endsection
 
 @section('content')
@@ -41,8 +43,7 @@
                             <tbody>
 
                                 <tr class="border-bottom border-light">
-                                    <td class="ps-4 py-4 text-muted small fw-bold text-uppercase"
-                                        style="width:30%;">
+                                    <td class="ps-4 py-4 text-muted small fw-bold text-uppercase" style="width:30%;">
                                         Full Name
                                     </td>
                                     <td class="py-4 pe-4 fw-bold text-dark">
@@ -91,10 +92,7 @@
                                         Birthdate
                                     </td>
                                     <td class="py-4 pe-4">
-                                        {{ $user->profile?->birthdate 
-                                            ? \Carbon\Carbon::parse($user->profile?->birthdate)->format('M d, Y')
-                                            : 'N/A'
-                                        }}
+                                        {{ $user->profile?->birthdate ? \Carbon\Carbon::parse($user->profile?->birthdate)->format('M d, Y') : 'N/A' }}
                                     </td>
                                 </tr>
 
@@ -153,11 +151,13 @@
                         Account Status
                     </small>
 
-                    <div class="bg-{{ $user->status === 'active' ? 'success' : 'secondary' }} bg-opacity-10 
+                    <div
+                        class="bg-{{ $user->status === 'active' ? 'success' : 'secondary' }} bg-opacity-10 
                                 text-{{ $user->status === 'active' ? 'success' : 'secondary' }} 
                                 rounded-pill py-2 px-4 d-inline-flex align-items-center mb-2">
 
-                        <i class="bi bi-{{ $user->status === 'active' ? 'check-circle-fill' : 'slash-circle-fill' }} me-2"></i>
+                        <i
+                            class="bi bi-{{ $user->status === 'active' ? 'check-circle-fill' : 'slash-circle-fill' }} me-2"></i>
 
                         <span class="fw-bold text-uppercase">
                             {{ $user->status }}
@@ -165,10 +165,7 @@
                     </div>
 
                     <p class="text-muted small mb-0">
-                        {{ $user->status === 'active'
-                            ? 'User can access the platform'
-                            : 'User account access is restricted'
-                        }}
+                        {{ $user->status === 'active' ? 'User can access the platform' : 'User account access is restricted' }}
                     </p>
 
                 </div>
@@ -185,10 +182,9 @@
 
                 <div class="card-body p-3">
 
-                    @if($user->profile?->avatar)
+                    @if ($user->profile?->avatar)
                         <img src="{{ asset('storage/' . $user->profile?->avatar) }}"
-                             class="img-fluid shadow-sm w-100 object-fit-cover"
-                             style="height: 250px;">
+                            class="img-fluid shadow-sm w-100 object-fit-cover" style="height: 250px;">
                     @else
                         <div class="bg-light text-center py-5 border border-dashed">
                             <i class="bi bi-person text-muted fs-1 opacity-25"></i>

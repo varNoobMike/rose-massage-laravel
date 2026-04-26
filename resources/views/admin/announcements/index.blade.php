@@ -10,9 +10,11 @@
     <a href="{{ route('announcements.index') }}" class="btn btn-outline-secondary px-4 shadow-sm">
         <i class="bi bi-arrow-repeat me-2"></i> Sync
     </a>
-    <a href="{{ route('announcements.create') }}" class="btn btn-primary px-4 shadow-sm">
-        <i class="bi bi-plus-lg me-2"></i> New
-    </a>
+    @if (auth()->user()->role !== 'receptionist')
+        <a href="{{ route('announcements.create') }}" class="btn btn-primary px-4 shadow-sm">
+            <i class="bi bi-plus-lg me-2"></i> New
+        </a>
+    @endif
 @endsection
 
 @section('filter-area', true)
@@ -138,10 +140,12 @@
                                     </a>
 
                                     <!-- Edit -->
-                                    <a href="{{ route('announcements.edit', $announcement->id) }}"
-                                        class="btn btn-sm btn-primary">
-                                        <i class="bi bi-pencil"></i>
-                                    </a>
+                                    @if (auth()->user()->role !== 'receptionist')
+                                        <a href="{{ route('announcements.edit', $announcement->id) }}"
+                                            class="btn btn-sm btn-primary">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                    @endif
 
                                 </div>
 

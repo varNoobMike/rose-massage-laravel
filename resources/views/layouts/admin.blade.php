@@ -117,6 +117,47 @@
                             </a>
                         </li>
 
+                        @php
+                            $unreadNotificationsCount = auth()->user()->unreadNotifications()->count();
+                            $announcementsCount = \App\Models\Announcement::where('is_active', 1)->count();
+                        @endphp
+                        <!-- Notifications -->
+                        <li class="nav-item mb-1">
+                            <a href="{{ route('notifications.index') }}"
+                                class="nav-link {{ request()->routeIs('notifications*') ? 'text-primary bg-light fw-bold' : 'text-dark opacity-75' }} px-3 py-2 d-flex align-items-center justify-content-between">
+
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-bell me-3"></i>
+                                    <span>Notifications</span>
+                                </div>
+
+                                @if ($unreadNotificationsCount > 0)
+                                    <span class="badge bg-danger rounded-pill" style="font-size:10px; padding:4px 6px;">
+                                        {{ $unreadNotificationsCount }}
+                                    </span>
+                                @endif
+                            </a>
+                        </li>
+
+                        <!-- Announcements -->
+                        <li class="nav-item mb-1">
+                            <a href="{{ route('announcements.index') }}"
+                                class="nav-link {{ request()->routeIs('announcements*') ? 'text-primary bg-light fw-bold' : 'text-dark opacity-75' }} px-3 py-2 d-flex align-items-center justify-content-between">
+
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-megaphone me-3"></i>
+                                    <span>Announcements</span>
+                                </div>
+
+                                @if ($announcementsCount > 0)
+                                    <span class="badge bg-danger rounded-pill" style="font-size:10px; padding:4px 6px;">
+                                        {{ $announcementsCount }}
+                                    </span>
+                                @endif
+                            </a>
+                        </li>
+
+
                     </ul>
                 </div>
             </div>
@@ -139,19 +180,48 @@
                         <div class="collapse navbar-collapse" id="navbarMain">
                             <ul class="navbar-nav ms-auto mb-2 mb-lg-0 d-flex align-items-center gap-3">
 
-                                <li class="nav-item">
-                                    <a class="nav-link fs-5 d-flex align-items-center p-1"
-                                        href="{{ route('notifications.index') }}">
-                                        <i class="bi bi-bell"></i>
-                                    </a>
-                                </li>
+                                @auth
+                                    @php
+                                        $unreadNotificationsCount = auth()->user()->unreadNotifications()->count();
+                                        $announcementsCount = \App\Models\Announcement::where('is_active', 1)->count();
+                                    @endphp
 
-                                <li class="nav-item">
-                                    <a class="nav-link fs-5 d-flex align-items-center p-1"
-                                        href="{{ route('announcements.index') }}">
-                                        <i class="bi bi-megaphone"></i>
-                                    </a>
-                                </li>
+                                    <!-- Notifications -->
+                                    <li class="nav-item position-relative">
+                                        <a class="nav-link fs-5 d-flex align-items-center p-1 position-relative"
+                                            href="{{ route('notifications.index') }}">
+
+                                            <i class="bi bi-bell"></i>
+
+                                            @if ($unreadNotificationsCount > 0)
+                                                <span
+                                                    class="position-absolute top-0 start-100 translate-middle 
+    badge rounded-pill bg-danger"
+                                                    style="font-size: 10px; padding: 4px 6px; min-width: 18px;">
+                                                    {{ $unreadNotificationsCount }}
+                                                </span>
+                                            @endif
+                                        </a>
+                                    </li>
+
+                                    <!-- Announcements -->
+                                    <li class="nav-item position-relative">
+                                        <a class="nav-link fs-5 d-flex align-items-center p-1 position-relative"
+                                            href="{{ route('announcements.index') }}">
+
+                                            <i class="bi bi-megaphone"></i>
+
+                                            @if ($announcementsCount > 0)
+                                                <span
+                                                    class="position-absolute top-0 start-100 translate-middle 
+    badge rounded-pill bg-danger"
+                                                    style="font-size: 10px; padding: 4px 6px; min-width: 18px;">
+                                                    {{ $announcementsCount }}
+                                                </span>
+                                            @endif
+                                        </a>
+                                    </li>
+                                @endauth
 
                                 <li class="nav-item dropdown">
                                     <a class="nav-link dropdown-toggle d-flex align-items-center p-0 shadow-none border-0"

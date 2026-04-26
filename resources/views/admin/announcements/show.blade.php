@@ -8,9 +8,11 @@
 @section('page-header-title-showpage', 'Announcement #' . $announcement->id)
 @section('page-header-subtitle', 'Review and manage this announcement')
 @section('page-header-actions')
-    <a href="{{ route('announcements.edit', $announcement->id) }}" class="btn btn-primary px-4 shadow-sm">
-        <i class="bi bi-pencil-square me-2"></i> Edit
-    </a>
+    @if (auth()->user()->role !== 'receptionist')
+        <a href="{{ route('announcements.edit', $announcement->id) }}" class="btn btn-primary px-4 shadow-sm">
+            <i class="bi bi-pencil-square me-2"></i> Edit
+        </a>
+    @endif
 @endsection
 
 @section('content')
@@ -39,8 +41,7 @@
 
                                 <!-- TITLE -->
                                 <tr class="border-bottom border-light">
-                                    <td class="ps-4 py-4 text-muted small fw-bold text-uppercase"
-                                        style="width:30%;">
+                                    <td class="ps-4 py-4 text-muted small fw-bold text-uppercase" style="width:30%;">
                                         Title
                                     </td>
                                     <td class="py-4 pe-4 fw-bold text-dark">
@@ -76,10 +77,9 @@
                                         External Link
                                     </td>
                                     <td class="py-4 pe-4">
-                                        @if($announcement->link_url)
-                                            <a href="{{ $announcement->link_url }}"
-                                               target="_blank"
-                                               class="text-decoration-none fw-bold">
+                                        @if ($announcement->link_url)
+                                            <a href="{{ $announcement->link_url }}" target="_blank"
+                                                class="text-decoration-none fw-bold">
                                                 {{ $announcement->link_url }}
                                             </a>
                                         @else
@@ -130,11 +130,13 @@
                         Announcement Status
                     </small>
 
-                    <div class="bg-{{ $announcement->is_active ? 'success' : 'secondary' }} bg-opacity-10 
+                    <div
+                        class="bg-{{ $announcement->is_active ? 'success' : 'secondary' }} bg-opacity-10 
                                 text-{{ $announcement->is_active ? 'success' : 'secondary' }} 
                                 rounded-pill py-2 px-4 d-inline-flex align-items-center mb-2">
 
-                        <i class="bi bi-{{ $announcement->is_active ? 'check-circle-fill' : 'pause-circle-fill' }} me-2"></i>
+                        <i
+                            class="bi bi-{{ $announcement->is_active ? 'check-circle-fill' : 'pause-circle-fill' }} me-2"></i>
 
                         <span class="fw-bold text-uppercase">
                             {{ $announcement->is_active ? 'Active' : 'Inactive' }}
@@ -142,9 +144,7 @@
                     </div>
 
                     <p class="text-muted small mb-0">
-                        {{ $announcement->is_active 
-                            ? 'Currently visible to users'
-                            : 'Currently hidden from users' }}
+                        {{ $announcement->is_active ? 'Currently visible to users' : 'Currently hidden from users' }}
                     </p>
                 </div>
             </div>
@@ -165,7 +165,7 @@
                         </small>
 
                         <div class="fw-bold">
-                            {{ $announcement->starts_at 
+                            {{ $announcement->starts_at
                                 ? \Carbon\Carbon::parse($announcement->starts_at)->format('M d, Y h:i A')
                                 : 'Not scheduled' }}
                         </div>
@@ -179,7 +179,7 @@
                         </small>
 
                         <div class="fw-bold">
-                            {{ $announcement->ends_at 
+                            {{ $announcement->ends_at
                                 ? \Carbon\Carbon::parse($announcement->ends_at)->format('M d, Y h:i A')
                                 : 'No expiration' }}
                         </div>

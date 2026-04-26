@@ -19,6 +19,12 @@ class UserController extends Controller
         // exclude admin
         $query->whereNot('role', User::ROLE_ADMIN);
 
+        // if current role is receptionist exclude owner, and receptionist, but this block of code needs future improvement
+        if($this->currentUserRole() === User::ROLE_RECEPTIONIST) {
+            $query->whereNot('role', User::ROLE_OWNER);
+            $query->whereNot('role', User::ROLE_RECEPTIONIST);
+        }
+
         // 1. Search by Name, Email, or ID
         $query->when($request->search, function ($q, $search) {
             return $q->where(function ($sub) use ($search) {
@@ -126,7 +132,7 @@ class UserController extends Controller
 
             return redirect()
                 ->route('users.show', $user->id)
-                ->with('success', "User created. Temporary password: {$generatedPassword}");
+                ->with('success', $user->role === User::ROLE_THERAPIST ? 'Therapist record created successfully' : "User account created successfully. Temporary password: {$generatedPassword}");
         } catch (\Throwable $e) {
             return back()
                 ->withInput()

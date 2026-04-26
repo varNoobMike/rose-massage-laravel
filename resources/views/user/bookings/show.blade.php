@@ -156,7 +156,7 @@
                         </a>
 
                         @if ($booking->status == 'pending')
-                            <button class="btn btn-danger w-100">
+                            <button class="btn btn-danger w-100 d-none"> <!-- future feature -->
                                 Cancel Booking
                             </button>
                         @endif

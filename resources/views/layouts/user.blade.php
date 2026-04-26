@@ -27,8 +27,7 @@
         h1,
         h2,
         h3,
-        h4
-         {
+        h4 {
             font-family: 'Cormorant Garamond';
         }
     </style>
@@ -102,16 +101,44 @@
                                     My Bookings
                                 </a>
                             </li>
-                             <li class="nav-item">
-                                <a class="nav-link fs-5 {{ request()->routeIs('notifications.*') ? 'text-primary fw-bold border-bottom border-3 border-primary' : 'text-dark' }}"
+                            @php
+                                $unreadNotificationsCount = auth()->user()->unreadNotifications()->count();
+                                $announcementsCount = \App\Models\Announcement::count();
+                            @endphp
+
+                            <!-- Notifications -->
+                            <li class="nav-item position-relative">
+                                <a class="nav-link fs-5 position-relative
+        {{ request()->routeIs('notifications.*') ? 'text-primary fw-bold border-bottom border-3 border-primary' : 'text-dark' }}"
                                     href="{{ route('notifications.index') }}">
+
                                     <i class="bi bi-bell"></i>
+
+                                    @if ($unreadNotificationsCount > 0)
+                                        <span
+                                            class="position-absolute top-0 start-100 translate-middle badge bg-danger rounded-pill"
+                                            style="font-size:10px; padding:3px 5px; min-width:18px;">
+                                            {{ $unreadNotificationsCount }}
+                                        </span>
+                                    @endif
                                 </a>
                             </li>
-                             <li class="nav-item">
-                                <a class="nav-link fs-5 {{ request()->routeIs('announcements.*') ? 'text-primary fw-bold border-bottom border-3 border-primary' : 'text-dark' }}"
+
+                            <!-- Announcements -->
+                            <li class="nav-item position-relative">
+                                <a class="nav-link fs-5 position-relative
+        {{ request()->routeIs('announcements.*') ? 'text-primary fw-bold border-bottom border-3 border-primary' : 'text-dark' }}"
                                     href="{{ route('announcements.index') }}">
+
                                     <i class="bi bi-megaphone"></i>
+
+                                    @if ($announcementsCount > 0)
+                                        <span
+                                            class="position-absolute top-0 start-100 translate-middle badge bg-danger rounded-pill"
+                                            style="font-size:10px; padding:3px 5px; min-width:18px;">
+                                            {{ $announcementsCount }}
+                                        </span>
+                                    @endif
                                 </a>
                             </li>
                         @endauth
@@ -257,21 +284,48 @@
                             </a>
                         </li>
 
+                        @php
+                            $unreadNotificationsCount = auth()->user()->unreadNotifications()->count();
+                            $announcementsCount = \App\Models\Announcement::count();
+                        @endphp
+
                         <!-- NOTIFICATIONS -->
                         <li class="nav-item">
                             <a href="{{ route('notifications.index') }}"
-                                class="nav-link px-3 py-3 d-flex align-items-center
-                    {{ request()->routeIs('notifications.*') ? 'text-primary fw-bold bg-light' : 'text-dark' }}">
-                                <i class="bi bi-bell me-3"></i> Notifications
+                                class="nav-link px-3 py-3 d-flex align-items-center justify-content-between
+        {{ request()->routeIs('notifications.*') ? 'text-primary fw-bold bg-light' : 'text-dark' }}">
+
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-bell me-3"></i>
+                                    <span>Notifications</span>
+                                </div>
+
+                                @if ($unreadNotificationsCount > 0)
+                                    <span class="badge bg-danger rounded-pill"
+                                        style="font-size:10px; padding:4px 6px; min-width:18px;">
+                                        {{ $unreadNotificationsCount }}
+                                    </span>
+                                @endif
                             </a>
                         </li>
 
                         <!-- ANNOUNCEMENTS -->
                         <li class="nav-item">
                             <a href="{{ route('announcements.index') }}"
-                                class="nav-link px-3 py-3 d-flex align-items-center
-                    {{ request()->routeIs('announcements.*') ? 'text-primary fw-bold bg-light' : 'text-dark' }}">
-                                <i class="bi bi-megaphone me-3"></i> Announcements
+                                class="nav-link px-3 py-3 d-flex align-items-center justify-content-between
+        {{ request()->routeIs('announcements.*') ? 'text-primary fw-bold bg-light' : 'text-dark' }}">
+
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-megaphone me-3"></i>
+                                    <span>Announcements</span>
+                                </div>
+
+                                @if ($announcementsCount > 0)
+                                    <span class="badge bg-danger rounded-pill"
+                                        style="font-size:10px; padding:4px 6px; min-width:18px;">
+                                        {{ $announcementsCount }}
+                                    </span>
+                                @endif
                             </a>
                         </li>
 
@@ -418,6 +472,45 @@
                     </div>
                 </div>
             @endif
+
+            <div class="container px-lg-5">
+                <!-- Alert -->
+                @if (session('success'))
+                    <div class="col-12">
+                        <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+                            {{ session('success') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    </div>
+                @endif
+
+                @if (session('info'))
+                    <div class="col-12">
+                        <div class="alert alert-info alert-dismissible fade show shadow-sm" role="alert">
+                            {{ session('info') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    </div>
+                @endif
+
+                @if (session('warning'))
+                    <div class="col-12">
+                        <div class="alert alert-warning alert-dismissible fade show shadow-sm" role="alert">
+                            {{ session('warning') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    </div>
+                @endif
+
+                @if (session('error'))
+                    <div class="col-12">
+                        <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+                            {{ session('error') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    </div>
+                @endif
+            </div>
 
             @yield('content')
         </main>
