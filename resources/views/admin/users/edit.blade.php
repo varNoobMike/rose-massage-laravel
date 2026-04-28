@@ -7,14 +7,10 @@
 
 @section('page-header', true)
 @section('page-header-title-showpage', 'Edit User #' . $user->id)
-@section('page-header-subtitle', 'Update, manage this user account')
+@section('page-header-subtitle', 'Update this user account')
 
 @section('content')
-<div class="container-fluid">
-
-    <form action="{{ route('users.update', $user->id) }}"
-          method="POST"
-          enctype="multipart/form-data">
+    <form action="{{ route('users.update', $user->id) }}" method="POST" enctype="multipart/form-data">
 
         @csrf
         @method('PUT')
@@ -44,15 +40,13 @@
 
                                     <!-- Full Name -->
                                     <tr class="border-bottom border-light">
-                                        <td class="ps-4 py-4 text-muted small fw-bold text-uppercase"
-                                            style="width:30%;">
+                                        <td class="ps-4 py-4 text-muted small fw-bold text-uppercase" style="width:30%;">
                                             Full Name
                                         </td>
                                         <td class="py-4 pe-4">
-                                            <input type="text"
-                                                   name="name"
-                                                   class="form-control @error('name') is-invalid @enderror"
-                                                   value="{{ old('name', $user->name) }}">
+                                            <input type="text" name="name"
+                                                class="form-control @error('name') is-invalid @enderror"
+                                                value="{{ old('name', $user->name) }}">
 
                                             @error('name')
                                                 <div class="invalid-feedback">
@@ -68,10 +62,9 @@
                                             Email
                                         </td>
                                         <td class="py-4 pe-4">
-                                            <input type="email"
-                                                   name="email"
-                                                   class="form-control @error('email') is-invalid @enderror"
-                                                   value="{{ old('email', $user->email) }}">
+                                            <input type="email" name="email"
+                                                class="form-control @error('email') is-invalid @enderror"
+                                                value="{{ old('email', $user->email) }}">
 
                                             @error('email')
                                                 <div class="invalid-feedback">
@@ -87,10 +80,9 @@
                                             Phone
                                         </td>
                                         <td class="py-4 pe-4">
-                                            <input type="text"
-                                                   name="phone_number"
-                                                   class="form-control @error('phone_number') is-invalid @enderror"
-                                                   value="{{ old('phone_number', $user->profile?->phone_number) ?? 'N/A' }}">
+                                            <input type="text" name="phone_number"
+                                                class="form-control @error('phone_number') is-invalid @enderror"
+                                                value="{{ old('phone_number', $user->profile?->phone_number) ?? 'N/A' }}">
 
                                             @error('phone_number')
                                                 <div class="invalid-feedback">
@@ -106,9 +98,7 @@
                                             Address
                                         </td>
                                         <td class="py-4 pe-4">
-                                            <textarea name="address"
-                                                      rows="3"
-                                                      class="form-control @error('address') is-invalid @enderror">{{ old('address', $user->profile?->address) }}</textarea>
+                                            <textarea name="address" rows="3" class="form-control @error('address') is-invalid @enderror">{{ old('address', $user->profile?->address) }}</textarea>
 
                                             @error('address')
                                                 <div class="invalid-feedback">
@@ -138,10 +128,9 @@
                                         </td>
                                         <td class="py-4 pe-4">
 
-                                            <input type="date"
-                                                   name="birthdate"
-                                                   class="form-control @error('birthdate') is-invalid @enderror"
-                                                   value="{{ old('birthdate', $user->profile?->birthdate) }}">
+                                            <input type="date" name="birthdate"
+                                                class="form-control @error('birthdate') is-invalid @enderror"
+                                                value="{{ old('birthdate', $user->profile?->birthdate) }}">
 
                                             @error('birthdate')
                                                 <div class="invalid-feedback">
@@ -158,11 +147,9 @@
                                         </td>
                                         <td class="py-4 pe-4">
 
-                                            <input type="password"
-                                                   name="password"
-                                                   class="form-control @error('birthdate') is-invalid @enderror"
-                                                   value="{{ old('password') }}"
-                                                   placeholder="********">
+                                            <input type="password" name="password"
+                                                class="form-control @error('birthdate') is-invalid @enderror"
+                                                value="{{ old('password') }}" placeholder="********">
 
                                             @error('password')
                                                 <div class="invalid-feedback">
@@ -179,11 +166,9 @@
                                         </td>
                                         <td class="py-4 pe-4">
 
-                                            <input type="password"
-                                                   name="password_confirmation"
-                                                   class="form-control @error('birthdate') is-invalid @enderror"
-                                                   value=""
-                                                   placeholder="********">
+                                            <input type="password" name="password_confirmation"
+                                                class="form-control @error('birthdate') is-invalid @enderror" value=""
+                                                placeholder="********">
 
                                             @error('password')
                                                 <div class="invalid-feedback">
@@ -200,8 +185,7 @@
                                             Role
                                         </td>
                                         <td class="py-4 pe-4">
-                                            <select name="role"
-                                                    class="form-select @error('role') is-invalid @enderror">
+                                            <select name="role" class="form-select @error('role') is-invalid @enderror">
 
                                                 <option value="client"
                                                     {{ old('role', $user->role) == 'client' ? 'selected' : '' }}>
@@ -253,16 +237,13 @@
                             Account Status
                         </small>
 
-                        <select name="status"
-                                class="form-select text-center fw-bold">
+                        <select name="status" class="form-select text-center fw-bold">
 
-                            <option value="active"
-                                {{ old('status', $user->status) == 'active' ? 'selected' : '' }}>
+                            <option value="active" {{ old('status', $user->status) == 'active' ? 'selected' : '' }}>
                                 Active
                             </option>
 
-                            <option value="inactive"
-                                {{ old('status', $user->status) == 'inactive' ? 'selected' : '' }}>
+                            <option value="inactive" {{ old('status', $user->status) == 'inactive' ? 'selected' : '' }}>
                                 Inactive
                             </option>
                         </select>
@@ -287,10 +268,9 @@
 
                     <div class="card-body p-3 text-center">
 
-                        @if($user->profile?->avatar)
+                        @if ($user->profile?->avatar)
                             <img src="{{ asset('storage/' . $user->profile?->avatar) }}"
-                                class="img-fluid rounded-3 shadow-sm w-100 object-fit-cover"
-                                style="height: 250px;">
+                                class="img-fluid rounded-3 shadow-sm w-100 object-fit-cover" style="height: 250px;">
                         @else
                             <div class="bg-light rounded-3 text-center py-5 border border-dashed">
                                 <i class="bi bi-person text-muted fs-1 opacity-25"></i>
@@ -302,9 +282,8 @@
                                 Upload New Image
                             </label>
 
-                            <input type="file"
-                                   name="image"
-                                   class="form-control form-control-sm @error('image') is-invalid @enderror">
+                            <input type="file" name="image"
+                                class="form-control form-control-sm @error('image') is-invalid @enderror">
 
                             @error('image')
                                 <div class="text-danger small mt-2">
@@ -326,13 +305,11 @@
 
                 <div class="d-flex flex-column flex-md-row gap-2 justify-content-end">
 
-                    <a href="{{ route('users.edit', $user->id) }}"
-                            class="btn btn-outline-secondary px-4 shadow-sm">
+                    <a href="{{ route('users.edit', $user->id) }}" class="btn btn-outline-secondary px-4 shadow-sm">
                         Reset Changes
                     </a>
 
-                    <button type="submit"
-                            class="btn btn-primary px-4 fw-bold shadow-sm">
+                    <button type="submit" class="btn btn-primary px-4 fw-bold shadow-sm">
                         <i class="bi bi-save me-2"></i>
                         Save Changes
                     </button>
@@ -344,5 +321,5 @@
 
 
     </form>
-</div>
+    </div>
 @endsection

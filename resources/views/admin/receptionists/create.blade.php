@@ -5,48 +5,23 @@
 @section('breadcrumb-parent', 'Receptionists')
 @section('breadcrumb-parent-url', route('receptionists.index'))
 
-@section('content')
-<div class="container-fluid">
+@section('page-header', true)
+@section('page-header-title-showpage', 'Create Receptionist')
+@section('page-header-subtitle', 'Create new receptionist account')
 
+@section('content')
     <form action="{{ route('receptionists.store') }}"
           method="POST"
           enctype="multipart/form-data">
 
         @csrf
 
-        <!-- Header -->
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="fw-bold text-dark mb-0 h4">
-                <i class="bi bi-person-plus text-primary me-2"></i>
-                Create New Receptionist
-            </h2>
-        </div>
-
         <div class="row g-4">
-
-            <!-- Alerts -->
-            @if(session('success'))
-                <div class="col-12">
-                    <div class="alert alert-success alert-dismissible fade show shadow-sm rounded">
-                        {{ session('success') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                </div>
-            @endif
-
-            @if(session('error'))
-                <div class="col-12">
-                    <div class="alert alert-danger alert-dismissible fade show shadow-sm rounded">
-                        {{ session('error') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                </div>
-            @endif
 
             <!-- LEFT -->
             <div class="col-lg-8">
 
-                <div class="card border-0 shadow-sm rounded-3">
+                <div class="card shadow-sm border">
                     <div class="card-header bg-white py-3 border-bottom">
                         <h6 class="mb-0 fw-bold text-uppercase small text-muted">
                             Receptionist Information
@@ -160,7 +135,7 @@
             <div class="col-lg-4">
 
                 <!-- Status -->
-                <div class="card border-0 shadow-sm rounded-3 mb-4">
+                <div class="card shadow-sm border mb-4">
                     <div class="card-body">
                         <small class="text-uppercase text-muted fw-bold d-block mb-3">
                             Account Status
@@ -190,7 +165,7 @@
                 </div>
 
                 <!-- Profile Image -->
-                <div class="card border-0 shadow-sm rounded-3">
+                <div class="card shadow-sm border">
                     <div class="card-header bg-white py-3 border-bottom text-center">
                         <h6 class="mb-0 fw-bold small text-muted text-uppercase">
                             Profile Image
@@ -220,20 +195,20 @@
         </div>
 
         {{-- GLOBAL ACTION BUTTONS --}}
-        <div class="card border-0 shadow-sm mt-4">
+        <div class="card shadow-sm border mt-4">
             <div class="card-body">
 
                 <div class="d-flex flex-column flex-md-row gap-2 justify-content-end">
 
-                    <a href="{{ route('users.create') }}"
-                            class="btn btn-outline-secondary px-4">
+                    <a href="{{ route('receptionists.create') }}"
+                            class="btn btn-outline-secondary px-4 shadow-sm">
                         Reset Changes
                     </a>
 
                     <button type="submit"
-                            class="btn btn-primary px-4 fw-bold">
+                            class="btn btn-primary px-4 fw-bold shadow-sm">
                         <i class="bi bi-check2-circle me-2"></i>
-                        Create User
+                        Save Receptionist
                     </button>
 
                 </div>
@@ -242,5 +217,4 @@
         </div>
 
     </form>
-</div>
 @endsection

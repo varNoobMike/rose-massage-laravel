@@ -6,17 +6,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('page-title', 'Rose Massage Services')</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.3/dist/pulse/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    @include('partials.styles')
+
+    <!-- Font Plus Jakarta Sans -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
         rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+    </style>
+
 </head>
 
-<style>
-    body {
-        font-family: 'Plus Jakarta Sans', sans-serif;
-    }
-</style>
 
 @yield('page-styles')
 
@@ -28,7 +31,7 @@
         <div class="row g-0">
 
             <!-- Sidebar - Desktop -->
-            <div class="col-2 bg-white border-end d-none d-lg-block min-vh-100">
+            <div id="sidebar-desktop" class="col-2 bg-white border-end d-none d-lg-block min-vh-100">
                 <div class="py-4 px-3">
                     <div class="mb-4 px-2">
                         <h5 class="fw-bold mb-0 text-dark" style="letter-spacing: -0.5px;">
@@ -63,13 +66,37 @@
                             </a>
                         </li>
 
-                        <li class="nav-item mb-1">
-                            <a href="{{ route('users.index') }}"
-                                class="nav-link {{ request()->routeIs('users*') ? 'text-bg-primary fw-bold' : 'text-dark opacity-75' }} px-3 py-2 d-flex align-items-center">
-                                <i class="bi bi-people me-3"></i>
-                                <span>Users</span>
-                            </a>
-                        </li>
+                        @php $role = auth()->user()?->role; @endphp
+
+                        @if ($role === 'admin')
+                            <li class="nav-item mb-1">
+                                <a href="{{ route('users.index') }}"
+                                    class="nav-link {{ request()->routeIs('users*') ? 'text-bg-primary fw-bold' : 'text-dark opacity-75' }} px-3 py-2 d-flex align-items-center">
+                                    <i class="bi bi-people me-3"></i>
+                                    <span>Users</span>
+                                </a>
+                            </li>
+                        @endif
+
+                        @if ($role === 'owner')
+                            <li class="nav-item mb-1">
+                                <a href="{{ route('receptionists.index') }}"
+                                    class="nav-link {{ request()->routeIs('receptionists*') ? 'text-bg-primary fw-bold' : 'text-dark opacity-75' }} px-3 py-2 d-flex align-items-center">
+                                    <i class="bi bi-person-workspace me-3"></i>
+                                    <span>Receptionists</span>
+                                </a>
+                            </li>
+                        @endif
+
+                        @if ($role === 'owner' || $role === 'receptionist')
+                            <li class="nav-item mb-1">
+                                <a href="{{ route('therapists.index') }}"
+                                    class="nav-link {{ request()->routeIs('therapists*') ? 'text-bg-primary fw-bold' : 'text-dark opacity-75' }} px-3 py-2 d-flex align-items-center">
+                                    <i class="bi bi-person-hearts me-3"></i>
+                                    <span>Therapists</span>
+                                </a>
+                            </li>
+                        @endif
 
                     </ul>
                 </div>
@@ -109,13 +136,35 @@
                             </a>
                         </li>
 
-                        <li class="nav-item mb-1">
-                            <a href="{{ route('users.index') }}"
-                                class="nav-link {{ request()->routeIs('users*') ? 'text-primary bg-light fw-bold' : 'text-dark opacity-75' }} px-3 py-2 d-flex align-items-center">
-                                <i class="bi bi-people me-3"></i>
-                                <span>Users</span>
-                            </a>
-                        </li>
+                        @if (auth()->user()?->role === 'admin')
+                            <li class="nav-item mb-1">
+                                <a href="{{ route('users.index') }}"
+                                    class="nav-link {{ request()->routeIs('users*') ? 'text-primary bg-light fw-bold' : 'text-dark opacity-75' }} px-3 py-2 d-flex align-items-center">
+                                    <i class="bi bi-people me-3"></i>
+                                    <span>Users</span>
+                                </a>
+                            </li>
+                        @endif
+
+                        @if ($role === 'owner')
+                            <li class="nav-item mb-1">
+                                <a href="{{ route('receptionists.index') }}"
+                                    class="nav-link {{ request()->routeIs('receptionists*') ? 'text-primary bg-light fw-bold' : 'text-dark opacity-75' }} px-3 py-2 d-flex align-items-center">
+                                    <i class="bi bi-person-workspace me-3"></i>
+                                    <span>Receptionists</span>
+                                </a>
+                            </li>
+                        @endif
+
+                        @if ($role === 'owner' || $role === 'receptionist')
+                            <li class="nav-item mb-1">
+                                <a href="{{ route('therapists.index') }}"
+                                    class="nav-link {{ request()->routeIs('therapists*') ? 'text-primary bg-light fw-bold' : 'text-dark opacity-75' }} px-3 py-2 d-flex align-items-center">
+                                    <i class="bi bi-person-hearts me-3"></i>
+                                    <span>Therapists</span>
+                                </a>
+                            </li>
+                        @endif
 
                         @php
                             $unreadNotificationsCount = auth()->user()->unreadNotifications()->count();
@@ -169,7 +218,7 @@
                 <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top border-bottom py-2 py-md-3">
                     <div class="container-fluid px-3 px-lg-5">
 
-                        <h5 class="mb-0 fw-bold">Lorem</h5>
+                        <h5 class="mb-0 fw-bold text-uppercase d-block d-lg-none">Rose Massage</h5>
 
                         <button class="navbar-toggler shadow-none border-0 bg-light" type="button"
                             data-bs-toggle="offcanvas" data-bs-target="#sidebar-mobile"
@@ -314,42 +363,8 @@
                             </div>
                         @endif
 
-                        <!-- Alert -->
-                        @if (session('success'))
-                            <div class="col-12">
-                                <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
-                                    {{ session('success') }}
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                                </div>
-                            </div>
-                        @endif
-
-                        @if (session('info'))
-                            <div class="col-12">
-                                <div class="alert alert-info alert-dismissible fade show shadow-sm" role="alert">
-                                    {{ session('info') }}
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                                </div>
-                            </div>
-                        @endif
-
-                        @if (session('warning'))
-                            <div class="col-12">
-                                <div class="alert alert-warning alert-dismissible fade show shadow-sm" role="alert">
-                                    {{ session('warning') }}
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                                </div>
-                            </div>
-                        @endif
-
-                        @if (session('error'))
-                            <div class="col-12">
-                                <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
-                                    {{ session('error') }}
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                                </div>
-                            </div>
-                        @endif
+                        <!-- Alerts -->
+                        @include('partials.alerts')
 
                         <!-- Filter Area -->
                         @hasSection('filter-area')
@@ -370,9 +385,7 @@
 
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    @yield('page-scripts')
+    @include('partials.scripts')
 
 </body>
 

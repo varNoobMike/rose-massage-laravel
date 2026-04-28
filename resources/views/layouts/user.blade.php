@@ -6,15 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('page-title', 'Rose Massage Services')</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.3/dist/pulse/bootstrap.min.css" rel="stylesheet">
+    @include('partials.styles')
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
-        rel="stylesheet">
-
+    <!-- Font Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
+    <!-- Font Cormorant Garamond -->
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
 
@@ -33,6 +30,7 @@
     </style>
 
     @yield('page-styles')
+
 </head>
 
 <body>
@@ -474,42 +472,8 @@
             @endif
 
             <div class="container px-lg-5">
-                <!-- Alert -->
-                @if (session('success'))
-                    <div class="col-12">
-                        <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
-                            {{ session('success') }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-                    </div>
-                @endif
-
-                @if (session('info'))
-                    <div class="col-12">
-                        <div class="alert alert-info alert-dismissible fade show shadow-sm" role="alert">
-                            {{ session('info') }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-                    </div>
-                @endif
-
-                @if (session('warning'))
-                    <div class="col-12">
-                        <div class="alert alert-warning alert-dismissible fade show shadow-sm" role="alert">
-                            {{ session('warning') }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-                    </div>
-                @endif
-
-                @if (session('error'))
-                    <div class="col-12">
-                        <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
-                            {{ session('error') }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-                    </div>
-                @endif
+                <!-- Alerts -->
+                @include('partials.alerts')
             </div>
 
             @yield('content')
@@ -518,9 +482,7 @@
 
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    @yield('page-scripts')
+    @include('partials.scripts')
 
 </body>
 

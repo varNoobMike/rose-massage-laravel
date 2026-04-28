@@ -114,7 +114,7 @@ class TherapistController extends Controller
 
             return redirect()
                 ->route('therapists.show', $user->id)
-                ->with('success', "Therapist created.");
+                ->with('success', "Therapist created successfully.");
         } catch (\Throwable $e) {
             return back()
                 ->withInput()

@@ -90,9 +90,9 @@
 
                                     @if ($service->image)
                                         <img src="{{ asset('storage/' . $service->image) }}" alt="{{ $service->name }}"
-                                            class="rounded me-3 object-fit-cover" width="50" height="50">
+                                            class="me-3 object-fit-cover" width="50" height="50">
                                     @else
-                                        <div class="bg-light text-muted rounded d-flex align-items-center justify-content-center me-3"
+                                        <div class="bg-light text-muted d-flex align-items-center justify-content-center me-3"
                                             style="width:50px; height:50px;">
                                             <i class="bi bi-image"></i>
                                         </div>

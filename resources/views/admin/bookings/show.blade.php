@@ -39,110 +39,108 @@
 
                         <tbody>
 
-                        <!-- CLIENT -->
-                        <tr class="border-bottom border-light">
-                            <td class="ps-4 py-4 text-muted small fw-bold text-uppercase" style="width: 30%;">
-                                Client
-                            </td>
+                            <!-- CLIENT -->
+                            <tr class="border-bottom border-light">
+                                <td class="ps-4 py-4 text-muted small fw-bold text-uppercase" style="width: 30%;">
+                                    Client
+                                </td>
 
-                            <td class="py-4 pe-4">
-                                <div class="d-flex align-items-center">
+                                <td class="py-4 pe-4">
+                                    <div class="d-flex align-items-center">
 
-                                    @if($booking->client && $booking->client->image)
-                                        <img src="{{ asset('storage/' . $booking->client->image->image) }}"
-                                             class="rounded-circle me-3 object-fit-cover"
-                                             width="45"
-                                             height="45">
-                                    @else
-                                        <div class="bg-light text-muted rounded-circle d-flex align-items-center justify-content-center me-3"
-                                             style="width:45px;height:45px;">
-                                            <i class="bi bi-person"></i>
+                                        @if ($booking->client && $booking->client?->profile?->avatar)
+                                            <img src="{{ asset('storage/' . $booking->client?->profile?->avatar) }}"
+                                                class="rounded-circle me-3 object-fit-cover" width="45" height="45">
+                                        @else
+                                            <div class="bg-light text-muted rounded-circle d-flex align-items-center justify-content-center me-3"
+                                                style="width:45px;height:45px;">
+                                                <i class="bi bi-person"></i>
+                                            </div>
+                                        @endif
+
+                                        <div>
+                                            <div class="fw-bold">
+                                                {{ optional($booking->client)->name ?? 'Unknown Client' }}
+                                            </div>
+                                            <small class="text-muted">
+                                                {{ optional($booking->client)->email }}
+                                            </small>
                                         </div>
-                                    @endif
 
-                                    <div>
-                                        <div class="fw-bold">
-                                            {{ optional($booking->client)->name ?? 'Unknown Client' }}
-                                        </div>
-                                        <small class="text-muted">
-                                            {{ optional($booking->client)->email }}
-                                        </small>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <!-- SCHEDULE -->
+                            <tr class="border-bottom border-light">
+                                <td class="ps-4 py-4 text-muted small fw-bold text-uppercase">
+                                    Schedule
+                                </td>
+
+                                <td class="py-4 pe-4">
+                                    <div class="fw-bold">
+                                        {{ \Carbon\Carbon::parse($booking->booking_date)->format('M d, Y') }}
                                     </div>
 
-                                </div>
-                            </td>
-                        </tr>
+                                    <small class="text-muted">
+                                        {{ \Carbon\Carbon::parse($booking->start_time)->format('h:i A') }}
+                                        -
+                                        {{ \Carbon\Carbon::parse($booking->end_time)->format('h:i A') }}
+                                    </small>
+                                </td>
+                            </tr>
 
-                        <!-- SCHEDULE -->
-                        <tr class="border-bottom border-light">
-                            <td class="ps-4 py-4 text-muted small fw-bold text-uppercase">
-                                Schedule
-                            </td>
+                            <!-- TOTAL -->
+                            <tr class="border-bottom border-light">
+                                <td class="ps-4 py-4 text-muted small fw-bold text-uppercase">
+                                    Total Amount
+                                </td>
 
-                            <td class="py-4 pe-4">
-                                <div class="fw-bold">
-                                    {{ \Carbon\Carbon::parse($booking->booking_date)->format('M d, Y') }}
-                                </div>
+                                <td class="py-4 pe-4">
+                                    <span class="h4 mb-0 fw-bold text-primary">
+                                        ₱{{ number_format($booking->total_amount, 2) }}
+                                    </span>
+                                </td>
+                            </tr>
 
-                                <small class="text-muted">
-                                    {{ \Carbon\Carbon::parse($booking->start_time)->format('h:i A') }}
-                                    -
-                                    {{ \Carbon\Carbon::parse($booking->end_time)->format('h:i A') }}
-                                </small>
-                            </td>
-                        </tr>
+                            <!-- NOTES -->
+                            <tr class="border-bottom border-light">
+                                <td class="ps-4 py-4 text-muted small fw-bold text-uppercase">
+                                    Notes
+                                </td>
 
-                        <!-- TOTAL -->
-                        <tr class="border-bottom border-light">
-                            <td class="ps-4 py-4 text-muted small fw-bold text-uppercase">
-                                Total Amount
-                            </td>
+                                <td class="py-4 pe-4">
+                                    <p class="text-muted mb-0">
+                                        {{ $booking->notes ?? 'No notes.' }}
+                                    </p>
+                                </td>
+                            </tr>
 
-                            <td class="py-4 pe-4">
-                                <span class="h4 mb-0 fw-bold text-primary">
-                                    ₱{{ number_format($booking->total_amount, 2) }}
-                                </span>
-                            </td>
-                        </tr>
+                            <!-- STATUS -->
+                            <tr>
+                                <td class="ps-4 py-4 text-muted small fw-bold text-uppercase">
+                                    Status
+                                </td>
 
-                        <!-- NOTES -->
-                        <tr class="border-bottom border-light">
-                            <td class="ps-4 py-4 text-muted small fw-bold text-uppercase">
-                                Notes
-                            </td>
+                                <td class="py-4 pe-4">
 
-                            <td class="py-4 pe-4">
-                                <p class="text-muted mb-0">
-                                    {{ $booking->notes ?? 'No notes.' }}
-                                </p>
-                            </td>
-                        </tr>
+                                    @php $status = $booking->status; @endphp
 
-                        <!-- STATUS -->
-                        <tr>
-                            <td class="ps-4 py-4 text-muted small fw-bold text-uppercase">
-                                Status
-                            </td>
-
-                            <td class="py-4 pe-4">
-
-                                @php $status = $booking->status; @endphp
-
-                                <span class="badge
-                                    @if($status == 'pending') bg-warning text-dark
+                                    <span
+                                        class="badge
+                                    @if ($status == 'pending') bg-warning text-dark
                                     @elseif($status == 'confirmed') bg-primary
                                     @elseif($status == 'active') bg-success
                                     @elseif($status == 'completed') bg-secondary
-                                    @elseif($status == 'cancelled') bg-danger
-                                    @endif
+                                    @elseif($status == 'cancelled') bg-danger @endif
                                       px-3 py-2 text-uppercase small">
 
-                                    {{ $status }}
+                                        {{ $status }}
 
-                                </span>
+                                    </span>
 
-                            </td>
-                        </tr>
+                                </td>
+                            </tr>
 
                         </tbody>
                     </table>
@@ -189,7 +187,7 @@
                                     Assigned Therapist
                                 </small>
 
-                                @if($item->therapist)
+                                @if ($item->therapist)
                                     <span class="badge bg-success-subtle text-success border">
                                         <i class="bi bi-person-check me-1"></i>
                                         {{ $item->therapist->name }}
@@ -212,7 +210,7 @@
 
                 </div>
 
-                @if($booking->items->whereNull('therapist_id')->count() > 0)
+                @if ($booking->items->whereNull('therapist_id')->count() > 0)
                     <div class="card-footer bg-light text-center">
                         <small class="text-warning fw-semibold">
                             <i class="bi bi-exclamation-circle me-1"></i>

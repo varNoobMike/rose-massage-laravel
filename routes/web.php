@@ -14,6 +14,7 @@ use App\Mail\BookingNotification;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 
 /**
  * Test Route - For development and testing purposes only. Remove or comment out in production.
@@ -27,6 +28,29 @@ Route::get('/test-email', function () {
 
     Mail::to('lindseybongcawel4@gmail.com')->send(new BookingNotification($data));
     return 'This is a test email route.';
+});
+
+
+// test xendit api key
+Route::get('/test-xendit', function () {
+
+    $response = Http::withBasicAuth(env('XENDIT_SECRET_KEY'), '')
+        ->get('https://api.xendit.co/v2/invoices');
+
+    return $response->json();
+});
+
+Route::get('/create-test-invoice', function () {
+
+    $response = Http::withBasicAuth(env('XENDIT_SECRET_KEY'), '')
+        ->post('https://api.xendit.co/v2/invoices', [
+            'external_id' => 'test-'.time(),
+            'amount' => 1000,
+            'payer_email' => 'test@gmail.com',
+            'description' => 'Test invoice'
+        ]);
+
+    return $response->json();
 });
 
 /***
@@ -104,7 +128,7 @@ Route::get('/contact', [App\Http\Controllers\ContactController::class, 'index'])
 /**
  * Announcement Routes 
  */
-Route::prefix('/announcement')->group(function () {
+Route::prefix('/announcement')->middleware('auth')->group(function () {
     Route::get('/', [AnnouncementController::class, 'index'])->name('announcements.index');
     Route::get('/create', [AnnouncementController::class, 'create'])->name('announcements.create');
     Route::post('/', [AnnouncementController::class, 'store'])->name('announcements.store');
@@ -138,7 +162,7 @@ Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'inde
 /**
  * Notifications Routes 
  */
-Route::prefix('/notifications')->group(function () {
+Route::prefix('/notifications')->middleware('auth')->group(function () {
 
     Route::get('/', [NotificationController::class, 'index'])
         ->name('notifications.index');
@@ -156,7 +180,7 @@ Route::prefix('/notifications')->group(function () {
 /**
  * Receptionists
  */
-Route::prefix('/receptionists')->group(function () {
+Route::prefix('/receptionists')->middleware('auth')->group(function () {
     Route::get('/', [ReceptionistController::class, 'index'])->name('receptionists.index');
     Route::get('/create', [ReceptionistController::class, 'create'])->name('receptionists.create');
     Route::post('/', [ReceptionistController::class, 'store'])->name('receptionists.store');
@@ -166,21 +190,21 @@ Route::prefix('/receptionists')->group(function () {
 });
 
 /**
- * Services Routes 
+ * Services Routes  , (note: needs access control improvement)
  */
 Route::prefix('/services')->group(function () {
     Route::get('/', [ServiceController::class, 'index'])->name('services.index');
-    Route::get('/create', [ServiceController::class, 'create'])->name('services.create');
-    Route::post('/', [ServiceController::class, 'store'])->name('services.store');
-    Route::get('/{service}', [ServiceController::class, 'show'])->name('services.show');
-    Route::get('/{service}/edit', [ServiceController::class, 'edit'])->name('services.edit');
-    Route::put('/{service}', [ServiceController::class, 'update'])->name('services.update');
+    Route::get('/create', [ServiceController::class, 'create'])->name('services.create')->middleware('auth');
+    Route::post('/', [ServiceController::class, 'store'])->name('services.store')->middleware('auth');
+    Route::get('/{service}', [ServiceController::class, 'show'])->name('services.show')->middleware('auth');
+    Route::get('/{service}/edit', [ServiceController::class, 'edit'])->name('services.edit')->middleware('auth');
+    Route::put('/{service}', [ServiceController::class, 'update'])->name('services.update')->middleware('auth');
 });
 
 /**
  * Therapists
  */
-Route::prefix('/therapists')->group(function () {
+Route::prefix('/therapists')->middleware('auth')->group(function () {
     Route::get('/', [TherapistController::class, 'index'])->name('therapists.index');
     Route::get('/create', [TherapistController::class, 'create'])->name('therapists.create');
     Route::post('/', [TherapistController::class, 'store'])->name('therapists.store');
@@ -192,7 +216,7 @@ Route::prefix('/therapists')->group(function () {
 /**
  * Users Routes 
  */
-Route::prefix('/users')->group(function () {
+Route::prefix('/users')->middleware('auth')->group(function () {
     Route::get('/', [UserController::class, 'index'])->name('users.index');
     Route::get('/create', [UserController::class, 'create'])->name('users.create');
     Route::post('/', [UserController::class, 'store'])->name('users.store');

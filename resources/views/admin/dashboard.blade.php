@@ -200,108 +200,131 @@
 
     <div class="row g-4 mb-4 align-items-stretch">
 
-        @if (auth()->user()->role !== 'receptionist')
-            <!-- Users -->
+        @if (auth()->user()->role === 'admin')
             <div class="col-md-3">
-                <div class="card shadow-sm border p-3 h-100 d-flex flex-row align-items-center gap-3">
-                    <i class="bi bi-person-circle fs-2 text-primary"></i>
-                    <div>
-                        <small class="text-muted">Total Users</small>
-                        <h3 class="fw-bold mb-0">{{ $totalUsers }}</h3>
+                <a href="{{ route('users.index') }}" class="text-decoration-none text-dark">
+                    <div class="card shadow-sm border p-3 h-100 d-flex flex-row align-items-center gap-3">
+                        <i class="bi bi-person-circle fs-2 text-primary"></i>
+                        <div>
+                            <small class="text-muted">Total Users</small>
+                            <h3 class="fw-bold mb-0">{{ $totalUsers }}</h3>
+                        </div>
                     </div>
-                </div>
+                </a>
+            </div>
+
+
+            <div class="col-md-3">
+                <a href="{{ route('users.index', ['status' => 'active']) }}" class="text-decoration-none text-dark">
+                    <div class="card shadow-sm border p-3 h-100 d-flex flex-row align-items-center gap-3">
+                        <i class="bi bi-person-check fs-2 text-success"></i>
+                        <div>
+                            <small class="text-muted">Active Users</small>
+                            <h3 class="fw-bold mb-0">{{ $activeUsers }}</h3>
+                        </div>
+                    </div>
+                </a>
             </div>
 
             <div class="col-md-3">
-                <div class="card shadow-sm border p-3 h-100 d-flex flex-row align-items-center gap-3">
-                    <i class="bi bi-person-check fs-2 text-success"></i>
-                    <div>
-                        <small class="text-muted">Active Users</small>
-                        <h3 class="fw-bold mb-0">{{ $activeUsers }}</h3>
+                <a href="{{ route('users.index', ['status', 'pending']) }}" class="text-decoration-none text-dark">
+                    <div class="card shadow-sm border p-3 h-100 d-flex flex-row align-items-center gap-3">
+                        <i class="bi bi-person-exclamation fs-2 text-warning"></i>
+                        <div>
+                            <small class="text-muted">Pending Users</small>
+                            <h3 class="fw-bold mb-0">{{ $pendingUsers }}</h3>
+                        </div>
                     </div>
-                </div>
+                </a>
             </div>
 
             <div class="col-md-3">
-                <div class="card shadow-sm border p-3 h-100 d-flex flex-row align-items-center gap-3">
-                    <i class="bi bi-person-exclamation fs-2 text-warning"></i>
-                    <div>
-                        <small class="text-muted">Pending Users</small>
-                        <h3 class="fw-bold mb-0">{{ $pendingUsers }}</h3>
+                <a href="{{ route('users.index', ['status' => 'inactive']) }}" class="text-decoration-none text-dark">
+                    <div class="card shadow-sm border p-3 h-100 d-flex flex-row align-items-center gap-3">
+                        <i class="bi bi-person-x fs-2 text-danger"></i>
+                        <div>
+                            <small class="text-muted">Inactive Users</small>
+                            <h3 class="fw-bold mb-0">{{ $inactiveUsers }}</h3>
+                        </div>
                     </div>
-                </div>
-            </div>
-
-            <div class="col-md-3">
-                <div class="card shadow-sm border p-3 h-100 d-flex flex-row align-items-center gap-3">
-                    <i class="bi bi-person-x fs-2 text-danger"></i>
-                    <div>
-                        <small class="text-muted">Inactive Users</small>
-                        <h3 class="fw-bold mb-0">{{ $inactiveUsers }}</h3>
-                    </div>
-                </div>
+                </a>
             </div>
         @endif
 
         <!-- Clients (optional if same as users with role client) -->
         <div class="col-md-3">
-            <div class="card shadow-sm border p-3 h-100 d-flex flex-row align-items-center gap-3">
-                <i class="bi bi-person-hearts fs-2 text-info"></i>
-                <div>
-                    <small class="text-muted">Clients</small>
-                    <h3 class="fw-bold mb-0">{{ $totalClients ?? 0 }}</h3>
+            <a href="{{ route('users.index', ['role' => 'client']) }}" class="text-decoration-none text-dark">
+                <div class="card shadow-sm border p-3 h-100 d-flex flex-row align-items-center gap-3">
+                    <i class="bi bi-person-hearts fs-2 text-info"></i>
+                    <div>
+                        <small class="text-muted">Clients</small>
+                        <h3 class="fw-bold mb-0">{{ $totalClients ?? 0 }}</h3>
+                    </div>
                 </div>
-            </div>
+            </a>
         </div>
 
         <!-- Services -->
         <div class="col-md-3">
-            <div class="card shadow-sm border p-3 h-100 d-flex flex-row align-items-center gap-3">
-                <i class="bi bi-flower1 fs-2 text-success"></i>
-                <div>
-                    <small class="text-muted">Services</small>
-                    <h3 class="fw-bold mb-0">{{ $totalServices }}</h3>
-                </div>
-            </div>
-        </div>
-
-        <!-- Therapists -->
-        <div class="col-md-3">
-            <div class="card shadow-sm border p-3 h-100 d-flex flex-row align-items-center gap-3">
-                <i class="bi bi-heart-pulse fs-2 text-danger"></i>
-                <div>
-                    <small class="text-muted">Therapists</small>
-                    <h3 class="fw-bold mb-0">{{ $totalTherapists }}</h3>
-                </div>
-            </div>
-        </div>
-
-        <!-- Owners -->
-        @if (auth()->user()->role !== 'receptionist')
-            <div class="col-md-3">
+            <a href="{{ route('services.index') }}" class="text-decoration-none text-dark">
                 <div class="card shadow-sm border p-3 h-100 d-flex flex-row align-items-center gap-3">
-                    <i class="bi bi-shield-lock fs-2 text-dark"></i>
+                    <i class="bi bi-flower1 fs-2 text-success"></i>
                     <div>
-                        <small class="text-muted">Owners</small>
-                        <h3 class="fw-bold mb-0">{{ $totalOwner ?? 0 }}</h3>
+                        <small class="text-muted">Services</small>
+                        <h3 class="fw-bold mb-0">{{ $totalServices }}</h3>
                     </div>
                 </div>
-            </div>
+            </a>
+        </div>
 
-            <!-- Receptionists -->
+        @if (auth()->user()?->role === 'owner')
+            <!-- Therapists -->
             <div class="col-md-3">
-                <div class="card shadow-sm border p-3 h-100 d-flex flex-row align-items-center gap-3">
-                    <i class="bi bi-person-workspace fs-2 text-warning"></i>
-                    <div>
-                        <small class="text-muted">Receptionists</small>
-                        <h3 class="fw-bold mb-0">{{ $totalReceptionist ?? 0 }}</h3>
+                <a href="{{ route('therapists.index') }}" class="text-decoration-none text-dark">
+                    <div class="card shadow-sm border p-3 h-100 d-flex flex-row align-items-center gap-3">
+                        <i class="bi bi-heart-pulse fs-2 text-danger"></i>
+                        <div>
+                            <small class="text-muted">Therapists</small>
+                            <h3 class="fw-bold mb-0">{{ $totalTherapists }}</h3>
+                        </div>
                     </div>
-                </div>
+                </a>
             </div>
         @endif
 
-        <!-- Available Therapists -->
-        <div class="col-md-3">
+        <!-- Owners -->
+        @if (auth()->user()->role === 'admin')
+            <div class="col-md-3">
+                <a href="{{ route('users.index', ['role' => 'owner']) }}" class="text-decoration-none text-dark">
+                    <div class="card shadow-sm border p-3 h-100 d-flex flex-row align-items-center gap-3">
+                        <i class="bi bi-shield-lock fs-2 text-dark"></i>
+                        <div>
+                            <small class="text-muted">Owners</small>
+                            <h3 class="fw-bold mb-0">{{ $totalOwner ?? 0 }}</h3>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        @endif
+
+        @if (auth()->user()?->role === 'owner')
+            <!-- Receptionists -->
+            <div class="col-md-3">
+                <a href="{{ route('receptionists.index') }}" class="text-decoration-none text-dark">
+                    <div class="card shadow-sm border p-3 h-100 d-flex flex-row align-items-center gap-3">
+                        <i class="bi bi-person-workspace fs-2 text-warning"></i>
+                        <div>
+                            <small class="text-muted">Receptionists</small>
+                            <h3 class="fw-bold mb-0">{{ $totalReceptionist ?? 0 }}</h3>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        @endif
+
+
+        <!-- Available Therapists, hide for now -->
+        <div class="col-md-3 d-none">
             <div class="card shadow-sm border p-3 h-100 d-flex flex-row align-items-center gap-3">
                 <i class="bi bi-check2-circle fs-2 text-success"></i>
                 <div>
@@ -334,11 +357,13 @@
 
                 <thead class="table-light">
                     <tr>
-                        <th>Customer</th>
-                        <th>Time</th>
-                        <th>Therapist</th>
-                        <th>Status</th>
-                        <th class="text-end">Action</th>
+                        <th>Booking ID</th>
+                        <th class="d-none d-lg-table-cell">Client</th>
+                        <th>Schedule</th>
+                        <th class="d-none d-lg-table-cell">Therapist</th>
+                        <th class="d-none d-lg-table-cell">Total</th>
+                        <th class="d-none d-lg-table-cell">Status</th>
+                        <th class="text-end">Actions</th>
                     </tr>
                 </thead>
 
@@ -347,59 +372,145 @@
                     @forelse($todayBookingsList as $booking)
                         <tr>
 
-                            <!-- Customer -->
-                            <td class="fw-semibold">
-                                <i class="bi bi-person me-1 text-muted"></i>
-                                {{ $booking->client->name ?? 'N/A' }}
+                            <!-- BOOKING ID -->
+                            <td class="fw-bold text-muted">
+                                #{{ $booking->id }}
                             </td>
 
-                            <!-- Service -->
-                            <td>
-                                <i class="bi bi-flower2 me-1 text-success"></i>
-                                {{ $booking->items->first()->service->name ?? 'N/A' }}
+                            <!-- CLIENT -->
+                            <td class="d-none d-lg-table-cell">
+                                <div class="d-flex align-items-center">
+
+                                    @if ($booking->client && $booking->client?->profile?->avatar)
+                                        <img src="{{ asset('storage/' . $booking->client?->profile?->avatar) }}"
+                                            class="rounded-circle me-3 object-fit-cover" width="45" height="45">
+                                    @else
+                                        <div class="bg-light text-muted rounded-circle d-flex align-items-center justify-content-center me-3"
+                                            style="width:45px;height:45px;">
+                                            <i class="bi bi-person"></i>
+                                        </div>
+                                    @endif
+
+                                    <div>
+                                        <div class="fw-bold">
+                                            {{ optional($booking->client)->name ?? 'Unknown Client' }}
+                                        </div>
+
+                                        <small class="text-muted">
+                                            {{ optional($booking->client)->email }}
+                                        </small>
+                                    </div>
+
+                                </div>
                             </td>
 
-                            <!-- Time -->
-                            <td>
-                                <i class="bi bi-clock me-1 text-info"></i>
-                                {{ \Carbon\Carbon::parse($booking->start_time)->format('h:i A') ?? '-' }}
+                            <!-- SCHEDULE -->
+                            <td class="">
+                                <div class="fw-semibold">
+                                    {{ \Carbon\Carbon::parse($booking->booking_date)->format('M d, Y') }}
+                                </div>
+                                <small class="text-muted">
+                                    {{ \Carbon\Carbon::parse($booking->start_time)->format('h:i A') }}
+                                    -
+                                    {{ \Carbon\Carbon::parse($booking->end_time)->format('h:i A') }}
+                                </small>
                             </td>
 
-                            <!-- Therapist -->
-                            <td>
-                                <i class="bi bi-heart-pulse me-1 text-danger"></i>
-                                {{ $booking->therapist->name ?? 'Unassigned' }}
+                            <!-- THERAPIST -->
+                            <td class="d-none d-lg-table-cell">
+                                @php
+                                    $assignedTherapists = $booking->items
+                                        ->whereNotNull('therapist_id')
+                                        ->pluck('therapist')
+                                        ->filter()
+                                        ->unique('id');
+
+                                    $totalItems = $booking->items->count();
+                                    $assignedCount = $booking->items->whereNotNull('therapist_id')->count();
+                                @endphp
+
+                                @if ($assignedTherapists->count())
+                                    <div class="d-flex flex-wrap gap-1">
+
+                                        @foreach ($assignedTherapists->take(2) as $therapist)
+                                            <span class="badge bg-success-subtle text-success border">
+                                                {{ $therapist->name }}
+                                            </span>
+                                        @endforeach
+
+                                        @if ($assignedTherapists->count() > 2)
+                                            <span class="badge bg-light text-muted border">
+                                                +{{ $assignedTherapists->count() - 2 }} more
+                                            </span>
+                                        @endif
+
+                                    </div>
+
+                                    <small class="text-muted d-block mt-1">
+                                        {{ $assignedCount }}/{{ $totalItems }} assigned
+                                    </small>
+                                @else
+                                    <span class="badge bg-warning text-dark">
+                                        Unassigned
+                                    </span>
+                                    <small class="text-muted d-block mt-1">
+                                        0/{{ $totalItems }} assigned
+                                    </small>
+                                @endif
                             </td>
 
-                            <!-- Status -->
-                            <td>
+                            <!-- TOTAL -->
+                            <td class="fw-bold d-none d-lg-table-cell">
+                                ₱{{ number_format($booking->total_amount, 2) }}
+                            </td>
+
+                            <!-- STATUS -->
+                            <td class="d-none d-lg-table-cell">
+
+                                @php $status = $booking->status; @endphp
+
                                 <span
-                                    class="badge 
-                                @if ($booking->status == 'completed') bg-success
-                                @elseif($booking->status == 'pending') bg-warning
-                                @elseif($booking->status == 'active') bg-info
-                                @elseif($booking->status == 'cancelled') bg-danger
-                                @else bg-secondary @endif">
-                                    {{ ucfirst($booking->status) }}
+                                    class="badge
+                                    @if ($status == 'pending') bg-warning text-dark
+                                    @elseif($status == 'confirmed') bg-primary
+                                    @elseif($status == 'active') bg-success
+                                    @elseif($status == 'completed') bg-secondary
+                                    @elseif($status == 'cancelled') bg-danger @endif
+                                        text-uppercase small">
+                                    {{ $status }}
                                 </span>
+
                             </td>
 
-                            <!-- Action -->
+                            <!-- ACTIONS -->
                             <td class="text-end">
-                                <a href="{{ route('bookings.show', $booking->id) }}" class="btn btn-sm btn-secondary">
-                                    View
-                                </a>
+
+                                <div class="btn-group gap-2">
+
+                                    <a href="{{ route('bookings.show', $booking->id) }}"
+                                        class="btn btn-sm btn-secondary">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+
+                                    <a href="{{ route('bookings.edit', $booking->id) }}" class="btn btn-sm btn-primary">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+
+                                </div>
+
                             </td>
 
                         </tr>
-
                     @empty
 
                         <tr>
-                            <td colspan="6" class="text-center text-muted py-4">
-                                No bookings for today
+                            <td colspan="6" class="text-center py-5">
+                                <i class="bi bi-calendar-x fs-1 text-muted"></i>
+                                <h5 class="mt-3">No bookings found</h5>
+                                <p class="text-muted mb-0">Try adjusting your filters.</p>
                             </td>
                         </tr>
+
                     @endforelse
 
                 </tbody>

@@ -109,8 +109,8 @@
                             <td class="d-none d-lg-table-cell">
                                 <div class="d-flex align-items-center">
 
-                                    @if ($booking->client && $booking->client->image)
-                                        <img src="{{ asset('storage/' . $booking->client->image->image) }}"
+                                    @if ($booking->client && $booking->client?->profile?->avatar)
+                                        <img src="{{ asset('storage/' . $booking->client?->profile?->avatar) }}"
                                             class="rounded-circle me-3 object-fit-cover" width="45" height="45">
                                     @else
                                         <div class="bg-light text-muted rounded-circle d-flex align-items-center justify-content-center me-3"
@@ -199,13 +199,13 @@
 
                                 <span
                                     class="badge
-                            @if ($status == 'pending') bg-warning text-dark
-                            @elseif($status == 'confirmed') bg-primary
-                            @elseif($status == 'active') bg-success
-                            @elseif($status == 'completed') bg-secondary
-                            @elseif($status == 'cancelled') bg-danger @endif
-                                px-3 py-2 text-uppercase small">
-                                    {{ $status }}
+                                    @if ($status == 'pending') bg-warning text-dark
+                                    @elseif($status == 'confirmed') bg-primary
+                                    @elseif($status == 'active') bg-success
+                                    @elseif($status == 'completed') bg-secondary
+                                    @elseif($status == 'cancelled') bg-danger @endif
+                                        text-uppercase small">
+                                            {{ $status }}
                                 </span>
 
                             </td>

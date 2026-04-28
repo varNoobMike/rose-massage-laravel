@@ -184,7 +184,7 @@ class ReceptionistController extends Controller
 
             return redirect()
                 ->route('receptionists.show', $user->id)
-                ->with('success', 'User updated successfully.');
+                ->with('success', 'Receptionists updated successfully.');
         } catch (\Throwable $e) {
 
             return back()

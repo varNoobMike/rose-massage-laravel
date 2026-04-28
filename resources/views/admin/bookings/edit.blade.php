@@ -10,9 +10,7 @@
 
 @section('content')
 
-    <form method="POST"
-          action="{{ route('bookings.update', $booking->id) }}"
-          id="bookingEditForm">
+    <form method="POST" action="{{ route('bookings.update', $booking->id) }}" id="bookingEditForm">
         @csrf
         @method('PUT')
 
@@ -33,19 +31,15 @@
                         {{-- CLIENT --}}
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Client</label>
-                            <input type="text"
-                                   class="form-control"
-                                   value="{{ optional($booking->client)->name }}"
-                                   disabled>
+                            <input type="text" class="form-control" value="{{ optional($booking->client)->name }}"
+                                disabled>
                         </div>
 
                         {{-- DATE --}}
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Booking Date</label>
-                            <input type="date"
-                                   name="booking_date"
-                                   class="form-control"
-                                   value="{{ $booking->booking_date }}">
+                            <input type="date" name="booking_date" class="form-control"
+                                value="{{ $booking->booking_date }}">
                         </div>
 
                         {{-- TIME --}}
@@ -54,20 +48,15 @@
                                 <label class="form-label fw-semibold">
                                     Start Time
                                 </label>
-                                <input type="time"
-                                       name="start_time"
-                                       class="form-control"
-                                       value="{{ $booking->start_time }}">
+                                <input type="time" name="start_time" class="form-control"
+                                    value="{{ $booking->start_time }}">
                             </div>
 
                             <div class="col-md-6 mb-3">
                                 <label class="form-label fw-semibold">
                                     End Time
                                 </label>
-                                <input type="time"
-                                       name="end_time"
-                                       class="form-control"
-                                       value="{{ $booking->end_time }}">
+                                <input type="time" name="end_time" class="form-control" value="{{ $booking->end_time }}">
                             </div>
                         </div>
 
@@ -76,11 +65,15 @@
                             <label class="form-label fw-semibold">Status</label>
 
                             <select name="status" class="form-select">
-                                <option value="pending" {{ $booking->status == 'pending' ? 'selected' : '' }}>Pending</option>
-                                <option value="confirmed" {{ $booking->status == 'confirmed' ? 'selected' : '' }}>Confirmed</option>
+                                <option value="pending" {{ $booking->status == 'pending' ? 'selected' : '' }}>Pending
+                                </option>
+                                <option value="confirmed" {{ $booking->status == 'confirmed' ? 'selected' : '' }}>Confirmed
+                                </option>
                                 <option value="active" {{ $booking->status == 'active' ? 'selected' : '' }}>Active</option>
-                                <option value="completed" {{ $booking->status == 'completed' ? 'selected' : '' }}>Completed</option>
-                                <option value="cancelled" {{ $booking->status == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+                                <option value="completed" {{ $booking->status == 'completed' ? 'selected' : '' }}>Completed
+                                </option>
+                                <option value="cancelled" {{ $booking->status == 'cancelled' ? 'selected' : '' }}>Cancelled
+                                </option>
                             </select>
                         </div>
 
@@ -89,10 +82,8 @@
                             <label class="form-label fw-semibold">
                                 Total Amount
                             </label>
-                            <input type="text"
-                                   class="form-control"
-                                   value="₱{{ number_format($booking->total_amount,2) }}"
-                                   disabled>
+                            <input type="text" class="form-control"
+                                value="₱{{ number_format($booking->total_amount, 2) }}" disabled>
                         </div>
 
                     </div>
@@ -114,63 +105,58 @@
 
                         <div id="serviceItemsContainer">
 
-                            @foreach($booking->items as $index => $item)
-                            <div class="service-item border p-3 mb-3">
+                            @foreach ($booking->items as $index => $item)
+                                <div class="service-item border p-3 mb-3">
 
-                                <input type="hidden"
-                                       name="existing_items[{{ $index }}][id]"
-                                       value="{{ $item->id }}">
+                                    <input type="hidden" name="existing_items[{{ $index }}][id]"
+                                        value="{{ $item->id }}">
 
-                                {{-- SERVICE --}}
-                                <div class="mb-2">
-                                    <label class="small fw-bold">
-                                        Service
-                                    </label>
+                                    {{-- SERVICE --}}
+                                    <div class="mb-2">
+                                        <label class="small fw-bold">
+                                            Service
+                                        </label>
 
-                                    <select name="existing_items[{{ $index }}][service_id]"
+                                        <select name="existing_items[{{ $index }}][service_id]" class="form-select">
+
+                                            @foreach ($services as $service)
+                                                <option value="{{ $service->id }}"
+                                                    {{ $item->service_id == $service->id ? 'selected' : '' }}>
+                                                    {{ $service->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    {{-- THERAPIST --}}
+                                    <div class="mb-2">
+                                        <label class="small fw-bold">
+                                            Therapist
+                                        </label>
+
+                                        <select name="existing_items[{{ $index }}][therapist_id]"
                                             class="form-select">
+                                            <option value="">Unassigned</option>
 
-                                        @foreach($services as $service)
-                                            <option value="{{ $service->id }}"
-                                                {{ $item->service_id == $service->id ? 'selected' : '' }}>
-                                                {{ $service->name }}
-                                            </option>
-                                        @endforeach
-                                    </select>
+                                            @foreach ($therapists as $therapist)
+                                                <option value="{{ $therapist->id }}"
+                                                    {{ $item->therapist_id == $therapist->id ? 'selected' : '' }}>
+                                                    {{ $therapist->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <button type="button" class="btn btn-outline-danger btn-sm w-100 remove-service">
+                                        Remove Service
+                                    </button>
+
                                 </div>
-
-                                {{-- THERAPIST --}}
-                                <div class="mb-2">
-                                    <label class="small fw-bold">
-                                        Therapist
-                                    </label>
-
-                                    <select name="existing_items[{{ $index }}][therapist_id]"
-                                            class="form-select">
-                                        <option value="">Unassigned</option>
-
-                                        @foreach($therapists as $therapist)
-                                            <option value="{{ $therapist->id }}"
-                                                {{ $item->therapist_id == $therapist->id ? 'selected' : '' }}>
-                                                {{ $therapist->name }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-
-                                <button type="button"
-                                        class="btn btn-outline-danger btn-sm w-100 remove-service">
-                                    Remove Service
-                                </button>
-
-                            </div>
                             @endforeach
 
                         </div>
 
-                        <button type="button"
-                                id="addServiceBtn"
-                                class="btn btn-outline-primary w-100">
+                        <button type="button" id="addServiceBtn" class="btn btn-outline-primary w-100">
                             + Add New Service
                         </button>
 
@@ -187,13 +173,11 @@
 
                 <div class="d-flex flex-column flex-md-row gap-2 justify-content-end">
 
-                    <a href="{{ route('bookings.edit', $booking->id) }}"
-                            class="btn btn-outline-secondary px-4 shadow-sm">
+                    <a href="{{ route('bookings.edit', $booking->id) }}" class="btn btn-outline-secondary px-4 shadow-sm">
                         Reset Changes
                     </a>
 
-                    <button type="submit"
-                            class="btn btn-primary px-4 fw-bold shadow-sm">
+                    <button type="submit" class="btn btn-primary px-4 fw-bold shadow-sm">
                         <i class="bi bi-save me-2"></i>
                         Save Changes
                     </button>
@@ -209,14 +193,14 @@
 
 
 @section('page-scripts')
-<script>
-$(function () {
+    <script>
+        $(function() {
 
-    let serviceIndex = {{ $booking->items->count() }};
+            let serviceIndex = {{ $booking->items->count() }};
 
-    $('#addServiceBtn').click(function () {
+            $('#addServiceBtn').click(function() {
 
-        let html = `
+                let html = `
             <div class="service-item border rounded p-3 mb-3">
 
                 <div class="mb-2">
@@ -225,7 +209,7 @@ $(function () {
                     <select name="new_items[${serviceIndex}][service_id]"
                             class="form-select">
 
-                        @foreach($services as $service)
+                        @foreach ($services as $service)
                             <option value="{{ $service->id }}">
                                 {{ $service->name }}
                             </option>
@@ -241,7 +225,7 @@ $(function () {
 
                         <option value="">Unassigned</option>
 
-                        @foreach($therapists as $therapist)
+                        @foreach ($therapists as $therapist)
                             <option value="{{ $therapist->id }}">
                                 {{ $therapist->name }}
                             </option>
@@ -257,15 +241,15 @@ $(function () {
             </div>
         `;
 
-        $('#serviceItemsContainer').append(html);
+                $('#serviceItemsContainer').append(html);
 
-        serviceIndex++;
-    });
+                serviceIndex++;
+            });
 
-    $(document).on('click', '.remove-service', function () {
-        $(this).closest('.service-item').remove();
-    });
+            $(document).on('click', '.remove-service', function() {
+                $(this).closest('.service-item').remove();
+            });
 
-});
-</script>
+        });
+    </script>
 @endsection

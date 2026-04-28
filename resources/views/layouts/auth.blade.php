@@ -5,10 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Welcome') | Rose Spa</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.3/dist/pulse/bootstrap.min.css" rel="stylesheet">
+    @include('partials.styles')
     
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    
+    <!-- Font Plus Jakarta Sans -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 </head>
@@ -27,7 +26,7 @@
 
 </style>
 
-@yield('pageStyles')
+@yield('page-styles')
 
 <body>
 
@@ -42,14 +41,13 @@
                     <div class="row d-flex justify-content-center align-items-center mt-5">
                          @yield('content')
                     </div>
-                   
                 </div>
             </div>
         </div>
 
    </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    @include('partials.scripts')
 
 </body>
 </html>

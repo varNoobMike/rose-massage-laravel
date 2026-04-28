@@ -7,10 +7,11 @@
 
 @section('page-header', true)
 @section('page-header-title-showpage', 'Edit Service #' . $service->id)
-@section('page-header-subtitle', 'Update, manage, or reschedule this service')
+@section('page-header-subtitle', 'Update this service')
 
 @section('content')
-    <form action="{{ route('services.update', $service->id) }}" id="editServiceForm" method="POST" enctype="multipart/form-data">
+    <form action="{{ route('services.update', $service->id) }}" id="editServiceForm" method="POST"
+        enctype="multipart/form-data">
         @csrf
         @method('PUT')
 
@@ -22,7 +23,8 @@
                     <div class="card-header bg-white py-3 border-bottom">
                         <div class="d-flex justify-content-between align-items-center">
                             <h6 class="mb-0 fw-bold text-uppercase small text-muted tracking-wider">Service Information</h6>
-                            <span class="badge bg-light text-primary border px-3 py-2">ID: #{{ str_pad($service->id, 4, '0', STR_PAD_LEFT) }}</span>
+                            <span class="badge bg-light text-primary border px-3 py-2">ID:
+                                #{{ str_pad($service->id, 4, '0', STR_PAD_LEFT) }}</span>
                         </div>
                     </div>
                     <div class="card-body p-0">
@@ -31,11 +33,15 @@
                                 <tbody>
                                     {{-- Name Field --}}
                                     <tr class="border-bottom border-light">
-                                        <td class="ps-4 py-4 text-muted small fw-bold text-uppercase" style="width: 30%;">Treatment Name</td>
+                                        <td class="ps-4 py-4 text-muted small fw-bold text-uppercase" style="width: 30%;">
+                                            Treatment Name</td>
                                         <td class="py-4 pe-4">
-                                            <input type="text" name="name" class="form-control border-2 @error('name') is-invalid @enderror" 
+                                            <input type="text" name="name"
+                                                class="form-control border-2 @error('name') is-invalid @enderror"
                                                 value="{{ old('name', $service->name) }}">
-                                            @error('name') <div class="invalid-feedback fw-bold small mt-1">{{ $message }}</div> @enderror
+                                            @error('name')
+                                                <div class="invalid-feedback fw-bold small mt-1">{{ $message }}</div>
+                                            @enderror
                                         </td>
                                     </tr>
                                     {{-- Rate Field (Fixed Name) --}}
@@ -43,11 +49,15 @@
                                         <td class="ps-4 py-4 text-muted small fw-bold text-uppercase">Service Rate</td>
                                         <td class="py-4 pe-4">
                                             <div class="input-group">
-                                                <span class="input-group-text bg-light border-2 fw-bold text-primary">₱</span>
-                                                <input type="number" step="0.01" name="rate" class="form-control border-2 fw-bold font-monospace @error('rate') is-invalid @enderror" 
+                                                <span
+                                                    class="input-group-text bg-light border-2 fw-bold text-primary">₱</span>
+                                                <input type="number" step="0.01" name="rate"
+                                                    class="form-control border-2 fw-bold font-monospace @error('rate') is-invalid @enderror"
                                                     value="{{ old('rate', $service->price) }}">
                                             </div>
-                                            @error('rate') <div class="small text-danger mt-1 fw-bold">{{ $message }}</div> @enderror
+                                            @error('rate')
+                                                <div class="small text-danger mt-1 fw-bold">{{ $message }}</div>
+                                            @enderror
                                         </td>
                                     </tr>
                                     {{-- Duration Field (Fixed Name) --}}
@@ -55,12 +65,16 @@
                                         <td class="ps-4 py-4 text-muted small fw-bold text-uppercase">Time Allocation</td>
                                         <td class="py-4 pe-4">
                                             <div class="input-group">
-                                                <span class="input-group-text bg-light border-2"><i class="bi bi-clock-history text-primary"></i></span>
-                                                <input type="number" name="duration" class="form-control border-2 @error('duration') is-invalid @enderror" 
+                                                <span class="input-group-text bg-light border-2"><i
+                                                        class="bi bi-clock-history text-primary"></i></span>
+                                                <input type="number" name="duration"
+                                                    class="form-control border-2 @error('duration') is-invalid @enderror"
                                                     value="{{ old('duration', $service->duration_minutes) }}">
                                                 <span class="input-group-text bg-light border-2 small fw-bold">MINS</span>
                                             </div>
-                                            @error('duration') <div class="small text-danger mt-1 fw-bold">{{ $message }}</div> @enderror
+                                            @error('duration')
+                                                <div class="small text-danger mt-1 fw-bold">{{ $message }}</div>
+                                            @enderror
                                         </td>
                                     </tr>
                                 </tbody>
@@ -74,12 +88,17 @@
             <div class="col-12 col-lg-4">
                 <div class="card shadow-sm border mb-4 text-center">
                     <div class="card-body p-4">
-                        <small class="text-uppercase text-muted fw-bold mb-3 d-block tracking-wider">Visibility Status</small>
+                        <small class="text-uppercase text-muted fw-bold mb-3 d-block tracking-wider">Visibility
+                            Status</small>
                         <select name="status" class="form-select border-2 fw-bold text-center">
-                            <option value="active" {{ old('status', $service->status) === 'active' ? 'selected' : '' }}>Active</option>
-                            <option value="inactive" {{ old('status', $service->status) === 'inactive' ? 'selected' : '' }}>Inactive</option>
+                            <option value="active" {{ old('status', $service->status) === 'active' ? 'selected' : '' }}>
+                                Active</option>
+                            <option value="inactive" {{ old('status', $service->status) === 'inactive' ? 'selected' : '' }}>
+                                Inactive</option>
                         </select>
-                        @error('status') <div class="small text-danger mt-1 fw-bold">{{ $message }}</div> @enderror
+                        @error('status')
+                            <div class="small text-danger mt-1 fw-bold">{{ $message }}</div>
+                        @enderror
                     </div>
                 </div>
 
@@ -88,19 +107,23 @@
                         <h6 class="mb-0 fw-bold small text-muted text-uppercase tracking-wider">Marketing Image</h6>
                     </div>
                     <div class="card-body p-3 text-center">
-                        @if($service->image)
-                            <img src="{{ asset('storage/' . $service->image) }}" class="img-fluid shadow-sm w-100 object-fit-cover mb-3" style="height: 180px;">
+                        @if ($service->image)
+                            <img src="{{ asset('storage/' . $service->image) }}"
+                                class="img-fluid shadow-sm w-100 object-fit-cover mb-3" style="height: 180px;">
                         @endif
                         <div class="text-start">
                             <label class="form-label x-small fw-bold text-uppercase text-muted">Upload New Cover</label>
-                            <input type="file" name="image" class="form-control form-control-sm border-2 @error('image') is-invalid @enderror">
-                            @error('image') <div class="small text-danger mt-1 fw-bold">{{ $message }}</div> @enderror
+                            <input type="file" name="image"
+                                class="form-control form-control-sm border-2 @error('image') is-invalid @enderror">
+                            @error('image')
+                                <div class="small text-danger mt-1 fw-bold">{{ $message }}</div>
+                            @enderror
                         </div>
                     </div>
                 </div>
 
             </div>
-  
+
         </div>
 
         {{-- GLOBAL ACTION BUTTONS --}}
@@ -109,13 +132,11 @@
 
                 <div class="d-flex flex-column flex-md-row gap-2 justify-content-end">
 
-                    <a href="{{ route('services.edit', $service->id) }}"
-                            class="btn btn-outline-secondary px-4 shadow-sm">
+                    <a href="{{ route('services.edit', $service->id) }}" class="btn btn-outline-secondary px-4 shadow-sm">
                         Reset Changes
                     </a>
 
-                    <button type="submit"
-                            class="btn btn-primary px-4 fw-bold shadow-sm">
+                    <button type="submit" class="btn btn-primary px-4 fw-bold shadow-sm">
                         <i class="bi bi-save me-2"></i>
                         Save Changes
                     </button>

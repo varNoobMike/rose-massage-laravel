@@ -13,7 +13,7 @@
     <form action="{{ route('services.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
 
-        <div class="row g-4">        
+        <div class="row g-4">
 
             {{-- LEFT --}}
             <div class="col-12 col-lg-8">
@@ -37,11 +37,9 @@
                                         Treatment Name
                                     </td>
                                     <td class="py-4 pe-4">
-                                        <input type="text"
-                                               name="name"
-                                               class="form-control border-2 @error('name') is-invalid @enderror"
-                                               value="{{ old('name') }}"
-                                               placeholder="e.g. Swedish Massage">
+                                        <input type="text" name="name"
+                                            class="form-control border-2 @error('name') is-invalid @enderror"
+                                            value="{{ old('name') }}" placeholder="e.g. Swedish Massage">
 
                                         @error('name')
                                             <div class="small text-danger mt-1 fw-bold">{{ $message }}</div>
@@ -57,12 +55,9 @@
                                     <td class="py-4 pe-4">
                                         <div class="input-group">
                                             <span class="input-group-text bg-light border-2 fw-bold text-primary">₱</span>
-                                            <input type="number"
-                                                   step="0.01"
-                                                   name="rate"
-                                                   class="form-control border-2 @error('rate') is-invalid @enderror"
-                                                   value="{{ old('rate') }}"
-                                                   placeholder="0.00">
+                                            <input type="number" step="0.01" name="rate"
+                                                class="form-control border-2 @error('rate') is-invalid @enderror"
+                                                value="{{ old('rate') }}" placeholder="0.00">
                                         </div>
 
                                         @error('rate')
@@ -82,11 +77,9 @@
                                                 <i class="bi bi-clock text-primary"></i>
                                             </span>
 
-                                            <input type="number"
-                                                   name="duration"
-                                                   class="form-control border-2 @error('duration') is-invalid @enderror"
-                                                   value="{{ old('duration') }}"
-                                                   placeholder="Minutes">
+                                            <input type="number" name="duration"
+                                                class="form-control border-2 @error('duration') is-invalid @enderror"
+                                                value="{{ old('duration') }}" placeholder="Minutes">
 
                                             <span class="input-group-text bg-light border-2 small fw-bold">
                                                 MINS
@@ -119,7 +112,7 @@
                         </small>
 
                         <select name="status"
-                                class="form-select border-2 fw-bold text-center @error('status') is-invalid @enderror">
+                            class="form-select border-2 fw-bold text-center @error('status') is-invalid @enderror">
 
                             <option value="active" {{ old('status') == 'active' ? 'selected' : '' }}>
                                 Active
@@ -158,9 +151,8 @@
                             Upload Image
                         </label>
 
-                        <input type="file"
-                               name="image"
-                               class="form-control border-2 @error('image') is-invalid @enderror">
+                        <input type="file" name="image"
+                            class="form-control border-2 @error('image') is-invalid @enderror">
 
                         @error('image')
                             <div class="small text-danger mt-1 fw-bold">{{ $message }}</div>
@@ -179,13 +171,11 @@
 
                 <div class="d-flex flex-column flex-md-row gap-2 justify-content-end">
 
-                    <a href="{{ route('services.create') }}"
-                            class="btn btn-outline-secondary px-4 shadow-sm">
+                    <a href="{{ route('services.create') }}" class="btn btn-outline-secondary px-4 shadow-sm">
                         Reset Changes
                     </a>
 
-                    <button type="submit"
-                            class="btn btn-primary px-4 fw-bold shadow-sm">
+                    <button type="submit" class="btn btn-primary px-4 fw-bold shadow-sm">
                         <i class="bi bi-check2-circle me-2"></i>
                         Save Service
                     </button>

@@ -227,12 +227,13 @@ class BookingController extends Controller
             'booking_date' => 'required|date|after_or_equal:today',
             'start_time' => 'required|date_format:H:i',
             'notes' => 'nullable|string|max:500',
+            'status' => 'pending'
         ]);
 
         try {
             $user = $this->currentUser();
 
-            $services = array_values($request->services); // 🔥 FIX INDEX ISSUE
+            $services = array_values($request->services);
 
             if (count($services) === 0) {
                 return back()->with('error', 'Please select services.');

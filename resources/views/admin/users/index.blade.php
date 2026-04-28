@@ -10,7 +10,7 @@
     <a href="{{ route('users.index') }}" class="btn btn-outline-secondary px-4 shadow-sm">
         <i class="bi bi-arrow-repeat me-2"></i> Sync
     </a>
-    @if (auth()->user()->role !== 'receptionist')
+    @if (auth()->user()?->role !== 'receptionist')
         <a href="{{ route('users.create') }}" class="btn btn-primary px-4 shadow-sm ">
             <i class="bi bi-plus-lg me-2"></i> New
         </a>
