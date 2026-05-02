@@ -90,7 +90,7 @@
 
                             <!-- ID -->
                             <td class="fw-bold text-muted">
-                                #{{ str_pad($user->id, 5, '0', STR_PAD_LEFT) }}
+                                #{{ $user->id }}
                             </td>
 
                             <!-- USER DETAILS -->
@@ -144,12 +144,22 @@
                             <td class="text-end">
                                 <div class="btn-group gap-2">
 
-                                    <a href="{{ route('therapists.show', $user->id) }}" class="btn btn-sm btn-secondary">
+                                    <a href="{{ route('therapists.show', $user->id) }}" 
+                                        class="btn btn-sm btn-secondary"
+                                        title="View Therapist">
                                         <i class="bi bi-eye"></i>
                                     </a>
 
-                                    <a href="{{ route('therapists.edit', $user->id) }}" class="btn btn-sm btn-primary">
+                                    <a href="{{ route('therapists.edit', $user->id) }}" 
+                                        class="btn btn-sm btn-primary"
+                                        title="Edit Therapist">
                                         <i class="bi bi-pencil"></i>
+                                    </a>
+
+                                    <a href="#" 
+                                       class="btn btn-sm btn-warning"
+                                       title="View Therapist's Commission">
+                                        <i class="bi bi-cash-coin me-1"></i>
                                     </a>
 
                                 </div>

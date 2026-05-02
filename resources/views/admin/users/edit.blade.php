@@ -148,7 +148,7 @@
                                         <td class="py-4 pe-4">
 
                                             <input type="password" name="password"
-                                                class="form-control @error('birthdate') is-invalid @enderror"
+                                                class="form-control @error('password') is-invalid @enderror"
                                                 value="{{ old('password') }}" placeholder="********">
 
                                             @error('password')
@@ -167,7 +167,7 @@
                                         <td class="py-4 pe-4">
 
                                             <input type="password" name="password_confirmation"
-                                                class="form-control @error('birthdate') is-invalid @enderror" value=""
+                                                class="form-control @error('password') is-invalid @enderror" value=""
                                                 placeholder="********">
 
                                             @error('password')

@@ -427,5 +427,69 @@
 
     </section>
 
+    <!-- Reviews -->
+    <section class="pt-5 pb-5 bg-light">
+
+        <div class="pt-5 container px-lg-5">
+
+            <!-- Header -->
+            <div class="text-center mb-4 mb-lg-5">
+                <h2 class="fw-bold display-5 mb-0">Customer Reviews</h2>
+                <p class="text-muted mb-0">
+                    Real experiences from our happy clients
+                </p>
+            </div>
+
+            <!-- Reviews Grid -->
+            <div class="row d-flex justify-content-center g-4">
+
+                @foreach ($reviews as $review)
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <a href="{{ route('reviews.show', $review->id) }}"
+                            class="text-decoration-none text-reset d-block h-100">
+
+                            <div class="card border-0 shadow-sm h-100 p-3">
+
+                                <div class="fw-semibold mb-1">
+                                    {{ $review->user->name ?? 'Anonymous' }}
+                                </div>
+
+                                <!-- Rating -->
+                                <div class="text-warning mb-2">
+                                    @for ($i = 1; $i <= 5; $i++)
+                                        <i class="bi bi-star{{ $i <= $review->rating ? '-fill' : '' }}"></i>
+                                    @endfor
+                                </div>
+
+                                <p class="text-muted mb-3">
+                                    {{ Str::limit($review->comment, 100) }}
+                                </p>
+
+                                @if ($review->images && $review->images->count())
+                                    <div class="d-flex flex-wrap gap-2 mb-3">
+                                        @foreach ($review->images as $image)
+                                            <img src="{{ asset('storage/' . $image->path) }}"
+                                                style="width: 70px; height: 70px; object-fit: cover; border-radius: 8px;">
+                                        @endforeach
+                                    </div>
+                                @endif
+
+                                <!-- UX CTA (still visible, not a button) -->
+                                <div class="mt-auto pt-2 d-flex align-items-center text-primary fw-semibold small">
+                                    View review
+                                    <i class="bi bi-arrow-right ms-1"></i>
+                                </div>
+
+                            </div>
+
+                        </a>
+                    </div>
+                @endforeach
+
+            </div>
+
+        </div>
+
+    </section>
 
 @endsection

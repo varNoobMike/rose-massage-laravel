@@ -2,25 +2,24 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Review;
 use App\Models\Service;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
 class HomeController extends Controller
 {
     public function index()
     {
-        $role = Auth::user()->role ?? '';
+        $role = $this->currentUserRole();
 
-        if($role === 'admin' || $role === 'receptionist') {
-            return redirect()->route('dashboard');
+        if (in_array($role, [User::ROLE_ADMIN, User::ROLE_OWNER, User::ROLE_RECEPTIONIST])) {
+            return to_route('dashboard');
         }
 
-        return view(
-            'user.home',
-            [
-                'services' => Service::where('status', 'active')->latest()->paginate(10),
-            ]
-        );
+        $services = Service::active()->latest()->paginate(10);
+        $reviews = Review::with(['user', 'images'])->where('status', 'approved')
+            ->latest()
+            ->paginate(10);
+        return view('user.home', compact('services', 'reviews'));
     }
 }

@@ -12,7 +12,6 @@
 @section('content')
 
     <form action="{{ route('users.store') }}" method="POST" enctype="multipart/form-data">
-
         @csrf
 
         <div class="row g-4">
@@ -31,7 +30,7 @@
                         <table class="table table-borderless mb-0 align-middle">
                             <tbody>
 
-                                <!-- Name -->
+                                <!-- NAME -->
                                 <tr class="border-bottom border-light">
                                     <td class="ps-4 py-4 text-muted small fw-bold text-uppercase">
                                         Full Name
@@ -47,7 +46,7 @@
                                     </td>
                                 </tr>
 
-                                <!-- Email -->
+                                <!-- EMAIL -->
                                 <tr class="border-bottom border-light">
                                     <td class="ps-4 py-4 text-muted small fw-bold text-uppercase">
                                         Email
@@ -63,53 +62,71 @@
                                     </td>
                                 </tr>
 
-                                <!-- Phone -->
+                                <!-- PHONE -->
                                 <tr class="border-bottom border-light">
                                     <td class="ps-4 py-4 text-muted small fw-bold text-uppercase">
                                         Phone
                                     </td>
                                     <td class="py-4 pe-4">
-                                        <input type="text" name="phone_number" class="form-control"
+                                        <input type="text" name="phone_number"
+                                            class="form-control @error('phone_number') is-invalid @enderror"
                                             value="{{ old('phone_number') }}">
+
+                                        @error('phone_number')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </td>
                                 </tr>
 
-                                <!-- Address -->
+                                <!-- ADDRESS -->
                                 <tr class="border-bottom border-light">
                                     <td class="ps-4 py-4 text-muted small fw-bold text-uppercase">
                                         Address
                                     </td>
                                     <td class="py-4 pe-4">
-                                        <textarea name="address" rows="3" class="form-control">{{ old('address') }}</textarea>
+                                        <textarea name="address" rows="3"
+                                            class="form-control @error('address') is-invalid @enderror">{{ old('address') }}</textarea>
+
+                                        @error('address')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </td>
                                 </tr>
 
-                                <!-- Gender -->
+                                <!-- GENDER -->
                                 <tr class="border-bottom border-light">
                                     <td class="ps-4 py-4 text-muted small fw-bold text-uppercase">
                                         Gender
                                     </td>
                                     <td class="py-4 pe-4">
-                                        <select name="gender" class="form-select">
+                                        <select name="gender"
+                                            class="form-select @error('gender') is-invalid @enderror">
+
                                             <option value="">Select Gender</option>
-                                            <option value="male" {{ old('gender') == 'male' ? 'selected' : '' }}>
-                                                Male
-                                            </option>
-                                            <option value="female" {{ old('gender') == 'female' ? 'selected' : '' }}>
-                                                Female
-                                            </option>
+                                            <option value="male" {{ old('gender') == 'male' ? 'selected' : '' }}>Male</option>
+                                            <option value="female" {{ old('gender') == 'female' ? 'selected' : '' }}>Female</option>
+
                                         </select>
+
+                                        @error('gender')
+                                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                                        @enderror
                                     </td>
                                 </tr>
 
-                                <!-- Birthdate -->
+                                <!-- BIRTHDATE -->
                                 <tr>
                                     <td class="ps-4 py-4 text-muted small fw-bold text-uppercase">
                                         Birthdate
                                     </td>
                                     <td class="py-4 pe-4">
-                                        <input type="date" name="birthdate" class="form-control"
+                                        <input type="date" name="birthdate"
+                                            class="form-control @error('birthdate') is-invalid @enderror"
                                             value="{{ old('birthdate') }}">
+
+                                        @error('birthdate')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </td>
                                 </tr>
 
@@ -119,77 +136,57 @@
                 </div>
             </div>
 
-
             <!-- RIGHT -->
             <div class="col-lg-4">
 
-                <!-- Role -->
+                <!-- ROLE -->
                 <div class="card shadow-sm border mb-4">
                     <div class="card-body">
                         <small class="text-uppercase text-muted fw-bold d-block mb-3">
                             User Role
                         </small>
 
-                        <select name="role" class="form-select @error('role') is-invalid @enderror">
+                        <select name="role"
+                            class="form-select @error('role') is-invalid @enderror">
 
-                            <option value="client" {{ old('role', 'client') == 'client' ? 'selected' : '' }}>
-                                Client
-                            </option>
-
-                            <option value="therapist" {{ old('role') == 'therapist' ? 'selected' : '' }}>
-                                Therapist
-                            </option>
-
-                            <option value="receptionist" {{ old('role') == 'receptionist' ? 'selected' : '' }}>
-                                Receptionist
-                            </option>
+                            <option value="client" {{ old('role', 'client') == 'client' ? 'selected' : '' }}>Client</option>
+                            <option value="therapist" {{ old('role') == 'therapist' ? 'selected' : '' }}>Therapist</option>
+                            <option value="receptionist" {{ old('role') == 'receptionist' ? 'selected' : '' }}>Receptionist</option>
 
                             @if (auth()->user()->role === 'admin')
-                                <option value="owner" {{ old('role') == 'owner' ? 'selected' : '' }}>
-                                    Owner
-                                </option>
+                                <option value="owner" {{ old('role') == 'owner' ? 'selected' : '' }}>Owner</option>
                             @endif
 
                         </select>
 
                         @error('role')
-                            <div class="invalid-feedback d-block">
-                                {{ $message }}
-                            </div>
+                            <div class="invalid-feedback d-block">{{ $message }}</div>
                         @enderror
-
                     </div>
                 </div>
 
-                <!-- Status -->
+                <!-- STATUS -->
                 <div class="card shadow-sm border mb-4">
                     <div class="card-body">
                         <small class="text-uppercase text-muted fw-bold d-block mb-3">
                             Account Status
                         </small>
 
-                        <select name="status" class="form-select @error('status') is-invalid @enderror">
+                        <select name="status"
+                            class="form-select @error('status') is-invalid @enderror">
 
-                            <option value="active" {{ old('status', 'active') == 'active' ? 'selected' : '' }}>
-                                Active
-                            </option>
-
-                            <option value="inactive" {{ old('status') == 'inactive' ? 'selected' : '' }}>
-                                Inactive
-                            </option>
+                            <option value="active" {{ old('status', 'active') == 'active' ? 'selected' : '' }}>Active</option>
+                            <option value="inactive" {{ old('status') == 'inactive' ? 'selected' : '' }}>Inactive</option>
 
                         </select>
 
                         @error('status')
-                            <div class="text-danger small mt-2">
-                                {{ $message }}
-                            </div>
+                            <div class="invalid-feedback d-block">{{ $message }}</div>
                         @enderror
-
                     </div>
                 </div>
 
-                <!-- Profile Image -->
+                <!-- IMAGE -->
                 <div class="card shadow-sm border">
                     <div class="card-header bg-white py-3 border-bottom text-center">
                         <h6 class="mb-0 fw-bold small text-muted text-uppercase">
@@ -208,20 +205,18 @@
                             class="form-control form-control-sm @error('image') is-invalid @enderror">
 
                         @error('image')
-                            <div class="invalid-feedback d-block">
-                                {{ $message }}
-                            </div>
+                            <div class="invalid-feedback d-block">{{ $message }}</div>
                         @enderror
+
                     </div>
                 </div>
 
             </div>
         </div>
 
-        {{-- GLOBAL ACTION BUTTONS --}}
+        <!-- ACTIONS -->
         <div class="card border-0 shadow-sm mt-4">
             <div class="card-body">
-
                 <div class="d-flex flex-column flex-md-row gap-2 justify-content-end">
 
                     <a href="{{ route('users.create') }}" class="btn btn-outline-secondary px-4">
@@ -234,7 +229,6 @@
                     </button>
 
                 </div>
-
             </div>
         </div>
 

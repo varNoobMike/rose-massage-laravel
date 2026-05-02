@@ -14,6 +14,10 @@ class DashboardController extends Controller
 {
     public function index()
     {
+        if ($this->currentUserRole() === User::ROLE_CLIENT) {
+            return to_route('home');
+        }
+
         // =========================
         // BOOKING SUMMARY
         // =========================

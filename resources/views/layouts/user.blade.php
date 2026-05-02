@@ -482,7 +482,7 @@
 
     </div>
 
-    @include('partials.scripts')
+    @yield('page-scripts')
 
 </body>
 

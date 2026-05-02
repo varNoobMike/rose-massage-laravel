@@ -128,15 +128,13 @@
 
                                     <span
                                         class="badge
-                                    @if ($status == 'pending') bg-warning text-dark
-                                    @elseif($status == 'confirmed') bg-primary
-                                    @elseif($status == 'active') bg-success
-                                    @elseif($status == 'completed') bg-secondary
-                                    @elseif($status == 'cancelled') bg-danger @endif
-                                      px-3 py-2 text-uppercase small">
-
+                                            @if ($status == 'pending') bg-warning text-dark
+                                            @elseif($status == 'confirmed') bg-primary
+                                            @elseif($status == 'active') bg-success
+                                            @elseif($status == 'completed') bg-secondary
+                                            @elseif($status == 'cancelled') bg-danger @endif
+                                            px-3 py-2 text-uppercase small">
                                         {{ $status }}
-
                                     </span>
 
                                 </td>

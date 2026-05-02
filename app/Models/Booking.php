@@ -38,4 +38,9 @@ class Booking extends Model
     {
         return $this->belongsTo(Spa::class);
     }
+
+    public function review()
+    {
+        return $this->hasOne(Review::class);
+    }
 }

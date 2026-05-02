@@ -2,7 +2,7 @@
 
 @section('page-title', 'Therapist #' . $user->id)
 
-@section('breadcrumb-parent', 'Therapisst')
+@section('breadcrumb-parent', 'Therapists')
 @section('breadcrumb-parent-url', route('therapists.index'))
 
 @section('page-header', true)

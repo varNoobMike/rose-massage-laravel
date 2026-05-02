@@ -78,7 +78,15 @@
                             </li>
                         @endif
 
-                        @if ($role === 'owner')
+                        @if ($role === 'owner') 
+                            <li class="nav-item mb-1">
+                                <a href="{{ route('clients.index') }}"
+                                    class="nav-link {{ request()->routeIs('clients*') ? 'text-bg-primary fw-bold' : 'text-dark opacity-75' }} px-3 py-2 d-flex align-items-center">
+                                    <i class="bi bi-people me-3"></i>
+                                    <span>Clients</span>
+                                </a>
+                            </li>
+
                             <li class="nav-item mb-1">
                                 <a href="{{ route('receptionists.index') }}"
                                     class="nav-link {{ request()->routeIs('receptionists*') ? 'text-bg-primary fw-bold' : 'text-dark opacity-75' }} px-3 py-2 d-flex align-items-center">
@@ -97,6 +105,14 @@
                                 </a>
                             </li>
                         @endif
+
+                        <li class="nav-item mb-1">
+                            <a href="{{ route('reviews.index') }}"
+                                class="nav-link {{ request()->routeIs('reviews*') ? 'text-bg-primary fw-bold' : 'text-dark opacity-75' }} px-3 py-2 d-flex align-items-center">
+                                <i class="bi bi-star me-3"></i>
+                                <span>Reviews</span>
+                            </a>
+                        </li>
 
                     </ul>
                 </div>
@@ -146,7 +162,16 @@
                             </li>
                         @endif
 
+                         <!-- Clients, Receptionists -->
                         @if ($role === 'owner')
+                            <li class="nav-item mb-1">
+                                <a href="{{ route('clients.index') }}"
+                                    class="nav-link {{ request()->routeIs('clients*') ? 'text-primary bg-light fw-bold' : 'text-dark opacity-75' }} px-3 py-2 d-flex align-items-center">
+                                    <i class="bi bi-people me-3"></i>
+                                    <span>Clients</span>
+                                </a>
+                            </li>
+
                             <li class="nav-item mb-1">
                                 <a href="{{ route('receptionists.index') }}"
                                     class="nav-link {{ request()->routeIs('receptionists*') ? 'text-primary bg-light fw-bold' : 'text-dark opacity-75' }} px-3 py-2 d-flex align-items-center">
@@ -156,6 +181,7 @@
                             </li>
                         @endif
 
+                        <!-- Therapists -->
                         @if ($role === 'owner' || $role === 'receptionist')
                             <li class="nav-item mb-1">
                                 <a href="{{ route('therapists.index') }}"
@@ -165,6 +191,15 @@
                                 </a>
                             </li>
                         @endif
+
+                        <!-- Reviews -->
+                        <li class="nav-item mb-1">
+                            <a href="{{ route('reviews.index') }}"
+                                    class="nav-link {{ request()->routeIs('reviews*') ? 'text-primary bg-light fw-bold' : 'text-dark opacity-75' }} px-3 py-2 d-flex align-items-center">
+                                    <i class="bi bi-star me-3"></i>
+                                    <span>Reviews</span>
+                            </a>
+                        </li>
 
                         @php
                             $unreadNotificationsCount = auth()->user()->unreadNotifications()->count();
@@ -244,8 +279,8 @@
 
                                             @if ($unreadNotificationsCount > 0)
                                                 <span
-                                                    class="position-absolute top-0 start-100 translate-middle 
-    badge rounded-pill bg-danger"
+                                                    class="position-absolute top-0 start-100 
+                                                        translate-middle badge rounded-pill bg-danger"
                                                     style="font-size: 10px; padding: 4px 6px; min-width: 18px;">
                                                     {{ $unreadNotificationsCount }}
                                                 </span>

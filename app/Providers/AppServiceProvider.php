@@ -22,6 +22,6 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Paginator::useBootstrapFive();
-        URL::forceScheme('https');  // remove this line later if not using ngrok
+        // URL::forceScheme('https');  // remove this line later if not using ngrok
     }
 }

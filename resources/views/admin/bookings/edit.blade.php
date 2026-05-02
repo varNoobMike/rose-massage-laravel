@@ -122,7 +122,8 @@
                                             @foreach ($services as $service)
                                                 <option value="{{ $service->id }}"
                                                     {{ $item->service_id == $service->id ? 'selected' : '' }}>
-                                                    {{ $service->name }}
+                                                    {{ $service->name }} ({{ $service->duration_minutes }} mins -
+                                                    ₱{{ number_format($service->price, 2) }})
                                                 </option>
                                             @endforeach
                                         </select>

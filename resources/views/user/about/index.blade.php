@@ -1,12 +1,12 @@
 @extends('layouts.user')
 
-@section('page-title', 'Contact')
+@section('page-title', 'About')
 
 @section('breadcrumb', true)
 
 @section('page-header', true)
-@section('page-header-title-indexpage', 'Contact Us')
-@section('page-header-subtitle', 'We’re here to answer your questions and help you book your relaxation experience')
+@section('page-header-title-indexpage', 'About Us')
+@section('page-header-subtitle', 'Know our story')
 
 @section('content')
     <div class="container px-lg-5">

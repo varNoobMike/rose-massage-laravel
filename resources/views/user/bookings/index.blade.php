@@ -141,11 +141,11 @@
 
                                     <span
                                         class="badge
-                            @if ($status == 'pending') bg-warning text-dark
-                            @elseif($status == 'confirmed') bg-primary
-                            @elseif($status == 'active') bg-success
-                            @elseif($status == 'completed') bg-secondary
-                            @elseif($status == 'cancelled') bg-danger @endif">
+                                        @if ($status == 'pending') bg-warning text-dark
+                                        @elseif($status == 'confirmed') bg-primary
+                                        @elseif($status == 'active') bg-success
+                                        @elseif($status == 'completed') bg-secondary
+                                        @elseif($status == 'cancelled') bg-danger @endif">
                                         {{ ucfirst($status) }}
                                     </span>
                                 </td>
@@ -155,6 +155,13 @@
                                     <a href="{{ route('bookings.show', $booking->id) }}" class="btn btn-sm btn-secondary">
                                         <i class="bi bi-eye"></i>
                                     </a>
+                                    {{-- ⭐ ADD THIS --}}
+                                    @if ($booking->status === 'completed' && !$booking->review)
+                                        <a href="{{ route('reviews.create', $booking->id) }}"
+                                            class="btn btn-sm btn-warning ms-1">
+                                            <i class="bi bi-star-fill"></i>
+                                        </a>
+                                    @endif
                                 </td>
 
                             </tr>

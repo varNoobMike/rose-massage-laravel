@@ -38,7 +38,7 @@
                                     </td>
                                     <td class="py-4 pe-4">
                                         <input type="text" name="name"
-                                            class="form-control border-2 @error('name') is-invalid @enderror"
+                                            class="form-control text-capitalize border-2 @error('name') is-invalid @enderror"
                                             value="{{ old('name') }}" placeholder="e.g. Swedish Massage">
 
                                         @error('name')
