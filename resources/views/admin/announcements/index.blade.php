@@ -19,17 +19,33 @@
 
 @section('filter-area', true)
 @section('filter-form')
-    <form action="{{ route('announcements.index') }}" method="GET">
-        <div class="row g-3">
 
-            <!-- Search -->
-            <div class="col-md-6">
-                <input type="text" name="search" class="form-control" placeholder="Search announcements..."
-                    value="{{ request('search') }}">
+<form action="{{ route('announcements.index') }}" method="GET">
+
+    {{-- MOBILE TOGGLE --}}
+    <button class="btn btn-outline-dark d-md-none w-100 mb-3"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#announcementFilter">
+        <i class="bi bi-funnel me-1"></i>
+        Show Filters
+    </button>
+
+    <div class="collapse d-md-block" id="announcementFilter">
+
+        <div class="row g-3 align-items-end">
+
+            {{-- SEARCH --}}
+            <div class="col-12 col-md-3">
+                <input type="text"
+                       name="search"
+                       class="form-control"
+                       placeholder="Search announcements..."
+                       value="{{ request('search') }}">
             </div>
 
-            <!-- Type -->
-            <div class="col-md-3">
+            {{-- TYPE --}}
+            <div class="col-12 col-md-2">
                 <select name="type" class="form-select">
                     <option value="">All Types</option>
                     <option value="promo" {{ request('type') == 'promo' ? 'selected' : '' }}>Promo</option>
@@ -39,19 +55,55 @@
                 </select>
             </div>
 
-            <!-- Actions -->
-            <div class="col-md-3 d-flex gap-2">
+            {{-- DATE --}}
+            <div class="col-12 col-md-2">
+                <input type="date"
+                       name="date"
+                       class="form-control"
+                       value="{{ request('date') }}">
+            </div>
+
+            {{-- STATUS --}}
+            <div class="col-12 col-md-2">
+                <select name="status" class="form-select">
+
+                    <option value="" {{ request('status') == null ? 'selected' : '' }}>
+                        All Status
+                    </option>
+
+                    <option value="1" {{ request('status') == '1' ? 'selected' : '' }}>
+                        Active
+                    </option>
+
+                    <option value="0" {{ request('status') == '0' ? 'selected' : '' }}>
+                        Inactive
+                    </option>
+
+                </select>
+            </div>
+
+            {{-- ACTIONS --}}
+            <div class="col-12 col-md-3 d-flex gap-2">
+
                 <button class="btn btn-dark w-100">
-                    Filter
+                    <i class="bi bi-funnel me-1"></i>
+                    Apply
                 </button>
 
-                <a href="{{ route('announcements.index') }}" class="btn btn-outline-secondary w-100">
+                <a href="{{ route('announcements.index') }}"
+                   class="btn btn-outline-secondary w-100">
+                    <i class="bi bi-x-circle me-1"></i>
                     Clear
                 </a>
+
             </div>
 
         </div>
-    </form>
+
+    </div>
+
+</form>
+
 @endsection
 
 @section('content')
@@ -79,9 +131,16 @@
                             <td>
                                 <div class="d-flex align-items-center">
 
-                                    <div class="bg-light rounded d-flex align-items-center justify-content-center me-3"
-                                        style="width:50px; height:50px;">
-                                        <i class="bi bi-megaphone text-primary fs-5"></i>
+                                    <div class="bg-light rounded overflow-hidden d-flex align-items-center justify-content-center me-3"
+                                         style="width:50px; height:50px;">
+
+                                        @if ($announcement->cover_image)
+                                            <img src="{{ asset('storage/' . $announcement->cover_image) }}"
+                                                 class="w-100 h-100 object-fit-cover">
+                                        @else
+                                            <i class="bi bi-megaphone text-primary fs-5"></i>
+                                        @endif
+
                                     </div>
 
                                     <div>
@@ -139,12 +198,20 @@
                                         <i class="bi bi-eye"></i>
                                     </a>
 
-                                    <!-- Edit -->
-                                    @if (auth()->user()->role !== 'receptionist')
+                                    <!-- Edit, Delete -->
+                                    @if (auth()->user()?->role === 'admin' || auth()->user()?->role === 'owner')
                                         <a href="{{ route('announcements.edit', $announcement->id) }}"
                                             class="btn btn-sm btn-primary">
                                             <i class="bi bi-pencil"></i>
                                         </a>
+                                        <form action="{{ route('announcements.destroy', $announcement->id) }}" method="POST"
+                                            onsubmit="return confirm('Delete this announcement? This action cannot be undone.')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button class="btn btn-sm btn-danger">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
                                     @endif
 
                                 </div>

@@ -11,7 +11,9 @@ class GetFilteredBookings
     {
         $search = $filters['search'] ?? null;
         $status = $filters['status'] ?? null;
-        $date   = $filters['date'] ?? null;
+        $therapist_assignment_status = $filters['therapist_assignment_status'] ?? null;
+        $from   = $filters['from'] ?? null;
+        $to = $filters['to'] ?? null;
 
 
         // Spa Insider
@@ -38,9 +40,30 @@ class GetFilteredBookings
                         : $query->where('status', $status);
                 })
 
-                // Date filter
-                ->when($date, function ($query, $date) {
-                    $query->whereDate('booking_date', $date);
+                // therapist assignment
+                ->when($therapist_assignment_status, function ($query, $status) {
+                    if ($status === 'assigned') {
+                        $query->whereDoesntHave('items', function ($q) {
+                            $q->whereNull('therapist_id');
+                        });
+                    }
+
+                    if ($status === 'unassigned') {
+                        $query->whereHas('items', function ($q) {
+                            $q->whereNull('therapist_id');
+                        });
+                    }
+                })
+                                
+
+                // Date from
+                ->when($from, function ($q, $from) {
+                    $q->whereDate('booking_date', '>=', $from);
+                })
+
+                // Date to
+                ->when($to, function ($q, $to) {
+                    $q->whereDate('booking_date', '<=', $to);
                 })
 
                 ->latest()

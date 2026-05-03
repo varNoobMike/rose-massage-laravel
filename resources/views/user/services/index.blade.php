@@ -20,10 +20,12 @@
 
             <div class="col-md-3 d-flex gap-2">
                 <button class="btn btn-dark w-100">
+                    <i class="bi bi-funnel me-1"></i>
                     Filter
                 </button>
 
                 <a href="{{ route('services.index') }}" class="btn btn-outline-secondary w-100">
+                    <i class="bi bi-x-circle me-1"></i>
                     Clear
                 </a>
             </div>

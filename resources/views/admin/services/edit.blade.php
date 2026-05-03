@@ -107,18 +107,37 @@
                         <h6 class="mb-0 fw-bold small text-muted text-uppercase tracking-wider">Marketing Image</h6>
                     </div>
                     <div class="card-body p-3 text-center">
-                        @if ($service->image)
-                            <img src="{{ asset('storage/' . $service->image) }}"
-                                class="img-fluid shadow-sm w-100 object-fit-cover mb-3" style="height: 180px;">
-                        @endif
-                        <div class="text-start">
-                            <label class="form-label x-small fw-bold text-uppercase text-muted">Upload New Cover</label>
-                            <input type="file" name="image"
-                                class="form-control form-control-sm border-2 @error('image') is-invalid @enderror">
-                            @error('image')
-                                <div class="small text-danger mt-1 fw-bold">{{ $message }}</div>
-                            @enderror
+
+                        <div id="imagePreviewWrapper" 
+                            class="bg-light d-flex align-items-center justify-content-center mb-3"
+                            style="height:180px; overflow:hidden;">
+
+                            @if ($service->image)
+                                <img id="imagePreview"
+                                     src="{{ asset('storage/' . $service->image) }}"
+                                     class="w-100 h-100 object-fit-cover rounded-3">
+                            @else
+                                <div id="imageFallback"
+                                     class="text-muted d-flex align-items-center justify-content-center w-100 h-100 rounded-3">
+                                    <i class="bi bi-image fs-1"></i>
+                                </div>
+                            @endif
+
                         </div>
+
+                        <label class="form-label small fw-bold text-uppercase text-muted">
+                            Upload New Image
+                        </label>
+
+                        <input type="file"
+                               name="image"
+                               id="serviceImageInput"
+                               class="form-control form-control-sm border-2 @error('image') is-invalid @enderror">
+
+                        @error('image')
+                            <div class="small text-danger mt-1 fw-bold">{{ $message }}</div>
+                        @enderror
+
                     </div>
                 </div>
 
@@ -147,4 +166,61 @@
         </div>
 
     </form>
+@endsection
+
+
+@section('page-scripts')
+<script>
+$(document).ready(function () {
+
+    $('#serviceImageInput').on('change', function (e) {
+
+        let file = e.target.files[0];
+
+        if (!file) {
+            resetImagePreview();
+            return;
+        }
+
+        let reader = new FileReader();
+
+        reader.onload = function (e) {
+
+            $('#imagePreviewWrapper').html(`
+                <img id="imagePreview"
+                     src="${e.target.result}"
+                     class="w-100 h-100 object-fit-cover rounded-3">
+            `);
+        };
+
+        reader.readAsDataURL(file);
+    });
+
+    function resetImagePreview() {
+
+        $('#serviceImageInput').val('');
+
+        let original = "{{ $service->image ? asset('storage/' . $service->image) : '' }}";
+
+        if (original) {
+
+            $('#imagePreviewWrapper').html(`
+                <img id="imagePreview"
+                     src="${original}"
+                     class="w-100 h-100 object-fit-cover rounded-3">
+            `);
+
+        } else {
+
+            $('#imagePreviewWrapper').html(`
+                <div id="imageFallback"
+                     class="text-muted d-flex align-items-center justify-content-center w-100 h-100 rounded-3">
+                    <i class="bi bi-image fs-1"></i>
+                </div>
+            `);
+        }
+    }
+
+});
+</script>
 @endsection

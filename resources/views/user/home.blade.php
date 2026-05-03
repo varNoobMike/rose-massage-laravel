@@ -73,7 +73,7 @@
                 @empty
 
                     <div class="col-12 text-center py-5">
-                        <p class="text-muted mb-0">No services available yet</p>
+                        <p class="text-muted fst-italic mb-0">No services available yet</p>
                     </div>
                 @endforelse
 
@@ -443,12 +443,13 @@
             <!-- Reviews Grid -->
             <div class="row d-flex justify-content-center g-4">
 
-                @foreach ($reviews as $review)
+                @forelse ($reviews as $review)
                     <div class="col-12 col-md-6 col-lg-4">
-                        <a href="{{ route('reviews.show', $review->id) }}"
+
+                        <a href="{{ route('reviews.show',  $review->id) }}"
                             class="text-decoration-none text-reset d-block h-100">
 
-                            <div class="card border-0 shadow-sm h-100 p-3">
+                            <div class="card border-0 shadow-sm h-100 p-3" style="min-height: 280px;">
 
                                 <div class="fw-semibold mb-1">
                                     {{ $review->user->name ?? 'Anonymous' }}
@@ -469,22 +470,40 @@
                                     <div class="d-flex flex-wrap gap-2 mb-3">
                                         @foreach ($review->images as $image)
                                             <img src="{{ asset('storage/' . $image->path) }}"
-                                                style="width: 70px; height: 70px; object-fit: cover; border-radius: 8px;">
+                                                style="width: 70px; height: 70px; object-fit: cover;">
                                         @endforeach
                                     </div>
                                 @endif
 
                                 <!-- UX CTA (still visible, not a button) -->
-                                <div class="mt-auto pt-2 d-flex align-items-center text-primary fw-semibold small">
-                                    View review
-                                    <i class="bi bi-arrow-right ms-1"></i>
+                                <div class="mt-auto pt-2 d-flex align-items-center text-primary fw-semibold small" style="line-height:1;">
+                                    <span>View review</span>
+                                    <i class="bi bi-arrow-right ms-1" style="display:inline-flex; align-items:center; line-height:1; vertical-align:middle;"></i>
                                 </div>
 
                             </div>
 
                         </a>
                     </div>
-                @endforeach
+                
+
+                 @empty
+                    <div class="col-12 text-center py-5">
+                        <p class="text-muted fst-italic mb-0">No customer feedback yet</p>
+                    </div>
+                @endforelse
+
+            </div>
+
+            <!-- VIEW ALL CTA -->
+            <div class="text-center mt-4 mt-lg-5">
+
+                <a href="{{ route('reviews.index') }}" class="btn btn-primary shadow-sm px-4 py-2">
+
+                    View All Reviews
+                    <i class="bi bi-arrow-right ms-2"></i>
+
+                </a>
 
             </div>
 

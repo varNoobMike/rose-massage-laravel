@@ -140,25 +140,42 @@
                         </h6>
                     </div>
 
-                    <div class="card-body p-3">
+                    <div class="card-body p-3 text-center">
 
-                        <div class="mb-3 text-center text-muted">
-                            <i class="bi bi-image fs-1 opacity-25"></i>
-                            <p class="small mb-0">No image selected</p>
+                        <!-- Preview Box (same as Edit page) -->
+                        <div id="imagePreviewWrapper"
+                             class="bg-light d-flex align-items-center justify-content-center mb-3 rounded-3"
+                             style="height:180px; overflow:hidden;">
+
+                            <div id="imageFallback"
+                                 class="text-muted d-flex align-items-center justify-content-center w-100 h-100 rounded-3">
+                                <i class="bi bi-image fs-1"></i>
+                            </div>
+
+                            <img id="imagePreview"
+                                 src=""
+                                 class="w-100 h-100 object-fit-cover"
+                                 style="display:none;">
                         </div>
 
+                        <!-- Label -->
                         <label class="form-label small fw-bold text-uppercase text-muted">
                             Upload Image
                         </label>
 
-                        <input type="file" name="image"
-                            class="form-control border-2 @error('image') is-invalid @enderror">
+                        <!-- Input -->
+                        <input type="file"
+                               name="image"
+                               id="serviceImageInput"
+                               class="form-control form-control-sm border-2 @error('image') is-invalid @enderror">
 
                         @error('image')
                             <div class="small text-danger mt-1 fw-bold">{{ $message }}</div>
                         @enderror
 
                     </div>
+
+                    
                 </div>
 
             </div>
@@ -186,4 +203,48 @@
         </div>
 
     </form>
+@endsection
+
+
+@section('page-scripts')
+<script>
+$(document).ready(function () {
+
+    $('#serviceImageInput').on('change', function (e) {
+
+        let file = e.target.files[0];
+
+        if (!file) {
+            resetImage();
+            return;
+        }
+
+        let reader = new FileReader();
+
+        reader.onload = function (e) {
+
+            $('#imagePreviewWrapper').html(`
+                <img id="imagePreview"
+                     src="${e.target.result}"
+                     class="w-100 h-100 object-fit-cover rounded-3">
+            `);
+        };
+
+        reader.readAsDataURL(file);
+    });
+
+    function resetImage() {
+
+        $('#serviceImageInput').val('');
+
+        $('#imagePreviewWrapper').html(`
+            <div id="imageFallback"
+                 class="text-muted d-flex align-items-center justify-content-center w-100 h-100 rounded-3">
+                <i class="bi bi-image fs-1"></i>
+            </div>
+        `);
+    }
+
+});
+</script>
 @endsection

@@ -14,52 +14,79 @@
 
 @section('filter-area', true)
 @section('filter-form')
-    <form action="{{ route('clients.index') }}" method="GET">
-        <div class="row g-3">
 
-            @php
-                $role = request('role');
-                $status = request('status', 'active');
-            @endphp
 
-            <!-- Search -->
-            <div class="col-md-5">
-                <input type="text" name="search" class="form-control" placeholder="Search name, email, ID..."
-                    value="{{ request('search') }}">
-            </div>
+        {{-- TOGGLE BUTTON (mobile only) --}}
+        <button class="btn btn-outline-dark d-md-none w-100 mb-3"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#clientFilterCollapse">
+            <i class="bi bi-funnel me-1"></i>
+            Show Filters
+        </button>
 
-            <!-- Status -->
-            <div class="col-md-4">
-                <select name="status" class="form-select">
+        <div class="collapse d-md-block" id="clientFilterCollapse">
 
-                    <option value="all" {{ $status == 'all' ? 'selected' : '' }}>
-                        All Status
-                    </option>
+            <form action="{{ route('clients.index') }}" method="GET">
 
-                    <option value="active" {{ $status == 'active' ? 'selected' : '' }}>
-                        Active
-                    </option>
+                <div class="row g-2 align-items-end">
 
-                    <option value="inactive" {{ $status == 'inactive' ? 'selected' : '' }}>
-                        Inactive
-                    </option>
+                    @php
+                        $status = request('status', 'active');
+                    @endphp
 
-                </select>
-            </div>
+                    {{-- SEARCH --}}
+                    <div class="col-12 col-md-5">
+                        <input type="text"
+                               name="search"
+                               class="form-control"
+                               placeholder="Search name, email, ID..."
+                               value="{{ request('search') }}">
+                    </div>
 
-            <!-- Buttons -->
-            <div class="col-md-3 d-flex gap-2">
-                <button class="btn btn-dark w-100">
-                    Filter
-                </button>
+                    {{-- STATUS --}}
+                    <div class="col-12 col-md-4">
+                        <select name="status" class="form-select">
 
-                <a href="{{ route('clients.index') }}" class="btn btn-outline-secondary w-100">
-                    Clear
-                </a>
-            </div>
+                            <option value="all" {{ $status == 'all' ? 'selected' : '' }}>
+                                All Status
+                            </option>
+
+                            <option value="active" {{ $status == 'active' ? 'selected' : '' }}>
+                                Active
+                            </option>
+
+                            <option value="inactive" {{ $status == 'inactive' ? 'selected' : '' }}>
+                                Inactive
+                            </option>
+
+                        </select>
+                    </div>
+
+                    {{-- ACTIONS --}}
+                    <div class="col-12 col-md-3 d-flex gap-2">
+
+                        <button class="btn btn-dark w-100">
+                            <i class="bi bi-funnel me-1"></i>
+                            Apply
+                        </button>
+
+                        <a href="{{ route('clients.index') }}"
+                           class="btn btn-outline-secondary w-100">
+                            <i class="bi bi-x-circle me-1"></i>
+                            Clear
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </form>
 
         </div>
-    </form>
+
+
+
 @endsection
 
 @section('content')

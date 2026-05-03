@@ -10,7 +10,9 @@ class Announcement extends Model
         'title',
         'message',
         'type',
+        'cover_image',
         'link_type',
+        'link_page',
         'link_id',
         'link_url',
         'is_active',
@@ -23,4 +25,9 @@ class Announcement extends Model
         'ends_at' => 'datetime',
         'is_active' => 'boolean',
     ];
+
+    public function images()
+    {
+        return $this->hasMany(AnnouncementImage::class);
+    }
 }

@@ -19,22 +19,37 @@
 
 @section('filter-area', true)
 @section('filter-form')
-    <form action="{{ route('therapists.index') }}" method="GET">
-        <div class="row g-3">
+
+<form action="{{ route('therapists.index') }}" method="GET">
+
+    {{-- MOBILE TOGGLE --}}
+    <button class="btn btn-outline-dark d-md-none w-100 mb-3"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#therapistFilter">
+        <i class="bi bi-funnel me-1"></i>
+        Show Filters
+    </button>
+
+    <div class="collapse d-md-block" id="therapistFilter">
+
+        <div class="row g-3 align-items-end">
 
             @php
-                $role = request('role');
                 $status = request('status', 'active');
             @endphp
 
-            <!-- Search -->
-            <div class="col-md-5">
-                <input type="text" name="search" class="form-control" placeholder="Search name, email, ID..."
-                    value="{{ request('search') }}">
+            {{-- SEARCH --}}
+            <div class="col-12 col-md-5">
+                <input type="text"
+                       name="search"
+                       class="form-control"
+                       placeholder="Search name, email, ID..."
+                       value="{{ request('search') }}">
             </div>
 
-            <!-- Status -->
-            <div class="col-md-4">
+            {{-- STATUS --}}
+            <div class="col-12 col-md-4">
                 <select name="status" class="form-select">
 
                     <option value="all" {{ $status == 'all' ? 'selected' : '' }}>
@@ -52,19 +67,28 @@
                 </select>
             </div>
 
-            <!-- Buttons -->
-            <div class="col-md-3 d-flex gap-2">
+            {{-- ACTIONS --}}
+            <div class="col-12 col-md-3 d-flex gap-2">
+
                 <button class="btn btn-dark w-100">
-                    Filter
+                    <i class="bi bi-funnel me-1"></i>
+                    Apply
                 </button>
 
-                <a href="{{ route('therapists.index') }}" class="btn btn-outline-secondary w-100">
+                <a href="{{ route('therapists.index') }}"
+                   class="btn btn-outline-secondary w-100">
+                    <i class="bi bi-x-circle me-1"></i>
                     Clear
                 </a>
+
             </div>
 
         </div>
-    </form>
+
+    </div>
+
+</form>
+
 @endsection
 
 @section('content')
@@ -156,8 +180,9 @@
                                         <i class="bi bi-pencil"></i>
                                     </a>
 
+                                    <!-- not yet implemented -->
                                     <a href="#" 
-                                       class="btn btn-sm btn-warning"
+                                       class="btn btn-sm btn-warning d-none"
                                        title="View Therapist's Commission">
                                         <i class="bi bi-cash-coin me-1"></i>
                                     </a>

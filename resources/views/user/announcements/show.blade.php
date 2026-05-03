@@ -3,81 +3,75 @@
 @section('page-title', 'Announcement')
 
 @section('breadcrumb', true)
-@section('breadcrumb-parent', 'Bookings')
-@section('breadcrumb-parent-url', route('bookings.index'))
 
 @section('page-header', true)
-@section('page-header-title', $announcement->title)
-@section('page-header-subtitle', 'View details of this announcement')
+@section('page-header-title', 'Announcement')
+@section('page-header-subtitle', 'Details and full information')
 
 @section('content')
-
 <div class="container px-lg-5">
 
+        <div class="col-12 col-lg-8">
 
-    <div class="card border shadow-sm">
+            <div class="card border-0 shadow-sm p-4">
 
-        <div class="card-body p-4 p-md-5">
+                {{-- TYPE BADGE --}}
+                <div class="mb-3">
+                    @php
+                        $typeClass = match($announcement->type) {
+                            'promo' => 'bg-primary',
+                            'update' => 'bg-info text-dark',
+                            'alert' => 'bg-danger',
+                            'info' => 'bg-secondary',
+                            default => 'bg-secondary',
+                        };
+                    @endphp
 
-            <!-- TYPE + DATE -->
-            <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                    <span class="badge {{ $typeClass }}">
+                        {{ ucfirst($announcement->type) }}
+                    </span>
+                </div>
 
-                @php
-                    $badgeClass = match($announcement->type) {
-                        'promo' => 'success',
-                        'update' => 'primary',
-                        'alert' => 'danger',
-                        default => 'secondary'
-                    };
-                @endphp
+                {{-- TITLE --}}
+                <h4 class="fw-bold mb-2">
+                    {{ $announcement->title }}
+                </h4>
 
-                <span class="badge bg-{{ $badgeClass }} px-3 py-2">
-                    {{ ucfirst($announcement->type) }}
-                </span>
-
-                <small class="text-muted">
-                    {{ $announcement->created_at->format('F d, Y') }}
+                {{-- DATE --}}
+                <small class="text-muted d-block mb-3">
+                    {{ $announcement->created_at->format('M d, Y • h:i A') }}
                 </small>
 
+                {{-- COVER IMAGE --}}
+                @if ($announcement->cover_image)
+                    <img src="{{ asset('storage/' . $announcement->cover_image) }}"
+                         class="img-fluid rounded mb-4"
+                         style="max-height: 300px; object-fit: cover; width:100%;">
+                @endif
+
+                {{-- MESSAGE --}}
+                <div class="mb-4 text-muted" style="line-height:1.6;">
+                    {{ $announcement->message }}
+                </div>
+
+                {{-- CTA LINK --}}
+                @if ($announcement->link_page)
+                    <div class="mt-3">
+
+                        <a href="{{ route($announcement->link_page . '.index') }}"
+                           class="btn btn-primary">
+
+                            <i class="bi bi-arrow-right me-2"></i>
+                            Visit {{ ucfirst($announcement->link_page) }}
+
+                        </a>
+
+                    </div>
+                @endif
+
             </div>
-
-            <!-- TITLE -->
-            <h2 class="fw-bold mb-3">
-                {{ $announcement->title }}
-            </h2>
-
-            <!-- MESSAGE -->
-            <div class="text-muted fs-6 lh-lg mb-4" style="white-space: pre-line;">
-                {{ $announcement->message }}
-            </div>
-
-            <!-- LINK -->
-            @if($announcement->link_url)
-                <a href="{{ $announcement->link_url }}"
-                   target="_blank"
-                   class="btn btn-outline-primary rounded-pill px-4">
-                    <i class="bi bi-box-arrow-up-right me-2"></i>
-                    Visit Link
-                </a>
-            @endif
 
         </div>
 
-    </div>
-
-    <!-- Status bar -->
-    <div class="text-center mt-3">
-        @if($announcement->is_active)
-            <span class="text-success small fw-bold">
-                • Active Announcement
-            </span>
-        @else
-            <span class="text-muted small">
-                • Inactive
-            </span>
-        @endif
-    </div>
-
 </div>
-
 @endsection

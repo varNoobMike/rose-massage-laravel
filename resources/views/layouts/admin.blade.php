@@ -107,10 +107,36 @@
                         @endif
 
                         <li class="nav-item mb-1">
+                            <a href="{{ route('announcements.index') }}"
+                                class="nav-link {{ request()->routeIs('announcements*') ? 'text-bg-primary fw-bold' : 'text-dark opacity-75' }} px-3 py-2 d-flex align-items-center">
+                                <i class="bi bi-megaphone me-3"></i>
+                                <span>Announcements</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item mb-1">
                             <a href="{{ route('reviews.index') }}"
                                 class="nav-link {{ request()->routeIs('reviews*') ? 'text-bg-primary fw-bold' : 'text-dark opacity-75' }} px-3 py-2 d-flex align-items-center">
                                 <i class="bi bi-star me-3"></i>
                                 <span>Reviews</span>
+                            </a>
+                        </li>
+
+                        @if ($role === 'admin' || $role === 'owner')
+                            <li class="nav-item mb-1">
+                                <a href="{{ route('reports.bookings') }}"
+                                    class="nav-link {{ request()->routeIs('reports*') ? 'text-bg-primary fw-bold' : 'text-dark opacity-75' }} px-3 py-2 d-flex align-items-center">
+                                    <i class="bi bi-bar-chart me-3"></i>
+                                    <span>Reports</span>
+                                </a>
+                            </li>
+                        @endif
+
+                        <li class="nav-item mb-1">
+                            <a href="{{ route('activity-logs.index') }}"
+                                class="nav-link {{ request()->routeIs('activity-logs*') ? 'text-bg-primary fw-bold' : 'text-dark opacity-75' }} px-3 py-2 d-flex align-items-center">
+                                <i class="bi bi-clock-history me-3"></i>
+                                <span>Activity Logs</span>
                             </a>
                         </li>
 
@@ -128,6 +154,8 @@
                 </div>
                 <div class="offcanvas-body p-0">
                     <ul class="nav flex-column gap-2">
+
+                        <!-- Dashboard -->
                         <li class="nav-item mb-1">
                             <a href="{{ route('dashboard') }}"
                                 class="nav-link {{ request()->routeIs('dashboard') ? 'text-primary bg-light fw-bold' : 'text-dark opacity-75' }} px-3 py-2 d-flex align-items-center">
@@ -136,6 +164,30 @@
                             </a>
                         </li>
 
+                        @php
+                            $unreadNotificationsCount = auth()->user()->unreadNotifications()->count();
+                            $announcementsCount = \App\Models\Announcement::where('is_active', 1)->count();
+                        @endphp
+
+                        <!-- Notifications -->
+                        <li class="nav-item mb-1">
+                            <a href="{{ route('notifications.index') }}"
+                                class="nav-link {{ request()->routeIs('notifications*') ? 'text-primary bg-light fw-bold' : 'text-dark opacity-75' }} px-3 py-2 d-flex align-items-center justify-content-between">
+
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-bell me-3"></i>
+                                    <span>Notifications</span>
+                                </div>
+
+                                @if ($unreadNotificationsCount > 0)
+                                    <span class="badge bg-danger rounded-pill" style="font-size:10px; padding:4px 6px;">
+                                        {{ $unreadNotificationsCount }}
+                                    </span>
+                                @endif
+                            </a>
+                        </li>
+
+                        <!-- Bookings -->
                         <li class="nav-item mb-1">
                             <a href="{{ route('bookings.index') }}"
                                 class="nav-link {{ request()->routeIs('bookings*') ? 'text-primary bg-light fw-bold' : 'text-dark opacity-75' }} px-3 py-2 d-flex align-items-center">
@@ -144,6 +196,7 @@
                             </a>
                         </li>
 
+                        <!-- Services -->
                         <li class="nav-item mb-1">
                             <a href="{{ route('services.index') }}"
                                 class="nav-link {{ request()->routeIs('services*') ? 'text-primary bg-light fw-bold' : 'text-dark opacity-75' }} px-3 py-2 d-flex align-items-center">
@@ -152,7 +205,8 @@
                             </a>
                         </li>
 
-                        @if (auth()->user()?->role === 'admin')
+                        <!-- Users -->
+                        @if ($role === 'admin')
                             <li class="nav-item mb-1">
                                 <a href="{{ route('users.index') }}"
                                     class="nav-link {{ request()->routeIs('users*') ? 'text-primary bg-light fw-bold' : 'text-dark opacity-75' }} px-3 py-2 d-flex align-items-center">
@@ -192,6 +246,15 @@
                             </li>
                         @endif
 
+                        <!-- Announcements -->
+                        <li class="nav-item mb-1">
+                            <a href="{{ route('announcements.index') }}"
+                                    class="nav-link {{ request()->routeIs('announcements*') ? 'text-primary bg-light fw-bold' : 'text-dark opacity-75' }} px-3 py-2 d-flex align-items-center">
+                                    <i class="bi bi-megaphone me-3"></i>
+                                    <span>Announcements</span>
+                            </a>
+                        </li>
+
                         <!-- Reviews -->
                         <li class="nav-item mb-1">
                             <a href="{{ route('reviews.index') }}"
@@ -201,47 +264,26 @@
                             </a>
                         </li>
 
-                        @php
-                            $unreadNotificationsCount = auth()->user()->unreadNotifications()->count();
-                            $announcementsCount = \App\Models\Announcement::where('is_active', 1)->count();
-                        @endphp
-                        <!-- Notifications -->
-                        <li class="nav-item mb-1">
-                            <a href="{{ route('notifications.index') }}"
-                                class="nav-link {{ request()->routeIs('notifications*') ? 'text-primary bg-light fw-bold' : 'text-dark opacity-75' }} px-3 py-2 d-flex align-items-center justify-content-between">
 
-                                <div class="d-flex align-items-center">
-                                    <i class="bi bi-bell me-3"></i>
-                                    <span>Notifications</span>
-                                </div>
-
-                                @if ($unreadNotificationsCount > 0)
-                                    <span class="badge bg-danger rounded-pill" style="font-size:10px; padding:4px 6px;">
-                                        {{ $unreadNotificationsCount }}
-                                    </span>
-                                @endif
+                        @if ($role === 'admin' || $role === 'owner')
+                            <li class="nav-item mb-1">
+                            <a href="{{ route('reports.bookings') }}"
+                                    class="nav-link {{ request()->routeIs('reports*') ? 'text-primary bg-light fw-bold' : 'text-dark opacity-75' }} px-3 py-2 d-flex align-items-center">
+                                    <i class="bi bi-bar-chart me-3"></i>
+                                    <span>Reports</span>
                             </a>
                         </li>
+                        @endif
 
-                        <!-- Announcements -->
+                        <!-- Activity Logs -->
                         <li class="nav-item mb-1">
-                            <a href="{{ route('announcements.index') }}"
-                                class="nav-link {{ request()->routeIs('announcements*') ? 'text-primary bg-light fw-bold' : 'text-dark opacity-75' }} px-3 py-2 d-flex align-items-center justify-content-between">
-
-                                <div class="d-flex align-items-center">
-                                    <i class="bi bi-megaphone me-3"></i>
-                                    <span>Announcements</span>
-                                </div>
-
-                                @if ($announcementsCount > 0)
-                                    <span class="badge bg-danger rounded-pill" style="font-size:10px; padding:4px 6px;">
-                                        {{ $announcementsCount }}
-                                    </span>
-                                @endif
+                            <a href="{{ route('activity-logs.index') }}"
+                                    class="nav-link {{ request()->routeIs('activity-logs*') ? 'text-primary bg-light fw-bold' : 'text-dark opacity-75' }} px-3 py-2 d-flex align-items-center">
+                                    <i class="bi bi-clock-history me-3"></i>
+                                    <span>Activity Logs</span>
                             </a>
                         </li>
-
-
+                        
                     </ul>
                 </div>
             </div>
@@ -266,7 +308,7 @@
 
                                 @auth
                                     @php
-                                        $unreadNotificationsCount = auth()->user()->unreadNotifications()->count();
+                                        $unreadNotificationsCount = auth()->user()?->unreadNotifications()?->count();
                                         $announcementsCount = \App\Models\Announcement::where('is_active', 1)->count();
                                     @endphp
 
@@ -288,30 +330,11 @@
                                         </a>
                                     </li>
 
-                                    <!-- Announcements -->
-                                    <li class="nav-item position-relative">
-                                        <a class="nav-link fs-5 d-flex align-items-center p-1 position-relative"
-                                            href="{{ route('announcements.index') }}">
-
-                                            <i class="bi bi-megaphone"></i>
-
-                                            @if ($announcementsCount > 0)
-                                                <span
-                                                    class="position-absolute top-0 start-100 translate-middle 
-    badge rounded-pill bg-danger"
-                                                    style="font-size: 10px; padding: 4px 6px; min-width: 18px;">
-                                                    {{ $announcementsCount }}
-                                                </span>
-                                            @endif
-                                        </a>
-                                    </li>
-                                @endauth
-
                                 <li class="nav-item dropdown">
                                     <a class="nav-link dropdown-toggle d-flex align-items-center p-0 shadow-none border-0"
                                         href="#" role="button" data-bs-toggle="dropdown">
                                         @if (auth()->user()->profile?->avatar)
-                                            <img src="{{ asset('storage/' . auth()->user()->profile->avatar) }}"
+                                            <img src="{{ asset('storage/' . auth()->user()?->profile?->avatar) }}"
                                                 alt="{{ auth()->user()->name }}" class="rounded-circle border"
                                                 style="width: 32px; height: 32px; object-fit: cover;">
                                         @else
@@ -324,7 +347,7 @@
                                     <ul class="dropdown-menu dropdown-menu-end border-0 shadow rounded mt-lg-3">
                                         <li class="dropdown-header text-dark">
                                             <h6>{{ auth()->user()->name }}</h6>
-                                            <p class="text-primary mb-1">{{ auth()->user()->role }}</p>
+                                            <p class="text-primary mb-1">{{ ucfirst(auth()->user()?->role) }}</p>
                                         </li>
                                         <li>
                                             <a href="" class="dropdown-item">
@@ -346,6 +369,7 @@
                                     </ul>
 
                                 </li>
+                                @endauth
                             </ul>
                         </div>
 
@@ -421,6 +445,7 @@
     </div>
 
     @include('partials.scripts')
+    @yield('page-scripts')
 
 </body>
 

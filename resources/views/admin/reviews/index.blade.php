@@ -14,23 +14,47 @@
 
 @section('filter-area', true)
 @section('filter-form')
-    <form action="{{ route('reviews.index') }}" method="GET">
-        <div class="row g-3">
 
-            <!-- Search -->
-            <div class="col-md-6">
-                <input type="text" name="search" class="form-control"
-                    placeholder="Search review, client name..."
-                    value="{{ request('search') }}">
+<form action="{{ route('reviews.index') }}" method="GET">
+
+    {{-- MOBILE TOGGLE --}}
+    <button class="btn btn-outline-dark d-md-none w-100 mb-3"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#reviewFilter">
+        <i class="bi bi-funnel me-1"></i>
+        Show Filters
+    </button>
+
+    <div class="collapse d-md-block" id="reviewFilter">
+
+        <div class="row g-3 align-items-end">
+
+            {{-- SEARCH --}}
+            <div class="col-12 col-md-3">
+                <input type="text"
+                       name="search"
+                       class="form-control"
+                       placeholder="Search review, author name..."
+                       value="{{ request('search') }}">
             </div>
 
-            <!-- Rating Filter -->
-            <div class="col-md-3">
+            {{-- DATE --}}
+            <div class="col-12 col-md-2">
+                <input type="date"
+                       name="date"
+                       class="form-control"
+                       value="{{ request('date') }}">
+            </div>
+
+            {{-- RATING --}}
+            <div class="col-12 col-md-2">
                 @php
                     $rating = request('rating', 'all');
                 @endphp
 
                 <select name="rating" class="form-select">
+
                     <option value="all" {{ $rating == 'all' ? 'selected' : '' }}>
                         All Ratings
                     </option>
@@ -40,22 +64,55 @@
                     <option value="3" {{ $rating == '3' ? 'selected' : '' }}>3 Stars</option>
                     <option value="2" {{ $rating == '2' ? 'selected' : '' }}>2 Stars</option>
                     <option value="1" {{ $rating == '1' ? 'selected' : '' }}>1 Star</option>
+
                 </select>
             </div>
 
-            <!-- Actions -->
-            <div class="col-md-3 d-flex gap-2">
+            {{-- STATUS --}}
+            <div class="col-12 col-md-2">
+                <select name="status" class="form-select">
+
+                    <option value="" {{ request('status') == null ? 'selected' : '' }}>
+                        All Status
+                    </option>
+
+                    <option value="approved" {{ request('status') == 'approved' ? 'selected' : '' }}>
+                        Approved
+                    </option>
+
+                    <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>
+                        Pending
+                    </option>
+
+                    <option value="rejected" {{ request('status') == 'rejected' ? 'selected' : '' }}>
+                        Rejected
+                    </option>
+
+                </select>
+            </div>
+
+            {{-- ACTIONS --}}
+            <div class="col-12 col-md-3 d-flex gap-2">
+
                 <button class="btn btn-dark w-100">
-                    Filter
+                    <i class="bi bi-funnel me-1"></i>
+                    Apply
                 </button>
 
-                <a href="{{ route('reviews.index') }}" class="btn btn-outline-secondary w-100">
+                <a href="{{ route('reviews.index') }}"
+                   class="btn btn-outline-secondary w-100">
+                    <i class="bi bi-x-circle me-1"></i>
                     Clear
                 </a>
+
             </div>
 
         </div>
-    </form>
+
+    </div>
+
+</form>
+
 @endsection
 
 @section('content')

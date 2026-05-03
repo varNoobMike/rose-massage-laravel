@@ -19,7 +19,7 @@ class StoreService
             $imagePath = null;
 
             // Upload image if exists
-            if ($data['image']) {
+            if (isset($data['image'])) {
                 $imagePath = $data['image']->store('services', 'public');
             }
 

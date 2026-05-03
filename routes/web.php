@@ -1,11 +1,13 @@
 <?php
 
+use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ReceptionistController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\TherapistController;
@@ -128,6 +130,17 @@ Route::get('/contact', [App\Http\Controllers\ContactController::class, 'index'])
     ->name('contact.index');
 
 
+/**
+ * Activity Log Routes 
+ */
+Route::prefix('/activity-logs')->middleware('auth')->name('activity-logs.')->group(function () {
+    // create
+    Route::get('/create', [ActivityLogController::class, 'create'])->name('create');
+    Route::post('/', [ActivityLogController::class, 'store'])->name('store');
+    // read
+    Route::get('/', [ActivityLogController::class, 'index'])->name('index'); 
+    Route::get('/{log}', [ActivityLogController::class, 'show'])->name('show');
+});
 
 /**
  * Announcement Routes 
@@ -142,6 +155,9 @@ Route::prefix('/announcements')->middleware('auth')->name('announcements.')->gro
     // update
     Route::get('/{announcement}/edit', [AnnouncementController::class, 'edit'])->name('edit');
     Route::put('/{announcement}', [AnnouncementController::class, 'update'])->name('update');
+    // delete
+    Route::delete('/{announcement}', [AnnouncementController::class, 'destroy'])
+        ->name('destroy');
 });
 
 
@@ -214,6 +230,14 @@ Route::prefix('/notifications')->middleware('auth')->name('notifications.')->gro
     Route::put('/{user}', [ReceptionistController::class, 'update'])->name('update');
 });
 
+
+/**
+ * Reports
+ */
+Route::prefix('/reports')->middleware('auth')->name('reports.')->group(function () {
+    // bookings
+    Route::get('/bookings', [ReportController::class, 'booking'])->name('bookings');
+});
 
 /**
  * Review Routes 

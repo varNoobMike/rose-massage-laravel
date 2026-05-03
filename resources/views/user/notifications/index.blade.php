@@ -47,8 +47,14 @@
 
             <!-- Actions -->
             <div class="col-md-3 d-flex gap-2">
-                <button class="btn btn-dark w-100">Filter</button>
-                <a href="{{ route('notifications.index') }}" class="btn btn-outline-secondary w-100">Clear</a>
+                <button class="btn btn-dark w-100">
+                    <i class="bi bi-funnel me-1"></i>
+                    Filter
+                </button>
+                <a href="{{ route('notifications.index') }}" class="btn btn-outline-secondary w-100">
+                    <i class="bi bi-x-circle me-1"></i>
+                    Clear
+                </a>
             </div>
 
         </div>
@@ -137,9 +143,15 @@
                                             </form>
                                         @endif
 
-                                        <!-- View booking -->
-                                        @if (isset($notification->data['booking_id']))
+                                        @php $type = $notification->type; @endphp
+
+                                        @if ($type === App\Notifications\NewBookingNotification::class)
                                             <a href="{{ route('bookings.show', $notification->data['booking_id']) }}"
+                                                class="btn btn-sm btn-outline-secondary">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                        @elseif ($type === App\Notifications\NewBookingReviewNotification::class)
+                                            <a href="{{ route('reviews.show', $notification->data['review_id']) }}"
                                                 class="btn btn-sm btn-outline-secondary">
                                                 <i class="bi bi-eye"></i>
                                             </a>

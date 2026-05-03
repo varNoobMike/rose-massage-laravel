@@ -84,6 +84,14 @@
                             </a>
                         </li>
 
+                         <!-- REVEWS -->
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('reviews.*') ? 'text-primary fw-bold border-bottom border-3 border-primary' : 'text-dark' }}"
+                                href="{{ route('reviews.index') }}">
+                                Reviews
+                            </a>
+                        </li>
+
                         <!-- BOOK NOW -->
                         <li class="nav-item ms-lg-2">
                             <a class="btn btn-primary shadow-sm px-3 py-2" href="{{ route('bookings.create') }}">
@@ -101,7 +109,6 @@
                             </li>
                             @php
                                 $unreadNotificationsCount = auth()->user()->unreadNotifications()->count();
-                                $announcementsCount = \App\Models\Announcement::count();
                             @endphp
 
                             <!-- Notifications -->
@@ -130,13 +137,6 @@
 
                                     <i class="bi bi-megaphone"></i>
 
-                                    @if ($announcementsCount > 0)
-                                        <span
-                                            class="position-absolute top-0 start-100 translate-middle badge bg-danger rounded-pill"
-                                            style="font-size:10px; padding:3px 5px; min-width:18px;">
-                                            {{ $announcementsCount }}
-                                        </span>
-                                    @endif
                                 </a>
                             </li>
                         @endauth
@@ -284,8 +284,24 @@
 
                         @php
                             $unreadNotificationsCount = auth()->user()->unreadNotifications()->count();
-                            $announcementsCount = \App\Models\Announcement::count();
                         @endphp
+
+
+
+                        
+
+                        <!-- ANNOUNCEMENTS -->
+                        <li class="nav-item">
+                            <a href="{{ route('announcements.index') }}"
+                                class="nav-link px-3 py-3 d-flex align-items-center justify-content-between
+        {{ request()->routeIs('announcements.*') ? 'text-primary fw-bold bg-light' : 'text-dark' }}">
+
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-megaphone me-3"></i>
+                                    <span>Announcements</span>
+                                </div>
+                            </a>
+                        </li>
 
                         <!-- NOTIFICATIONS -->
                         <li class="nav-item">
@@ -302,26 +318,6 @@
                                     <span class="badge bg-danger rounded-pill"
                                         style="font-size:10px; padding:4px 6px; min-width:18px;">
                                         {{ $unreadNotificationsCount }}
-                                    </span>
-                                @endif
-                            </a>
-                        </li>
-
-                        <!-- ANNOUNCEMENTS -->
-                        <li class="nav-item">
-                            <a href="{{ route('announcements.index') }}"
-                                class="nav-link px-3 py-3 d-flex align-items-center justify-content-between
-        {{ request()->routeIs('announcements.*') ? 'text-primary fw-bold bg-light' : 'text-dark' }}">
-
-                                <div class="d-flex align-items-center">
-                                    <i class="bi bi-megaphone me-3"></i>
-                                    <span>Announcements</span>
-                                </div>
-
-                                @if ($announcementsCount > 0)
-                                    <span class="badge bg-danger rounded-pill"
-                                        style="font-size:10px; padding:4px 6px; min-width:18px;">
-                                        {{ $announcementsCount }}
                                     </span>
                                 @endif
                             </a>

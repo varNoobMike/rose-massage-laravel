@@ -67,13 +67,15 @@ class StoreBooking
                 ]);
             }
 
-            // Send notifications (still inside transaction, needs future improvement ex: put notification outside transaction)
+            // Send notifications (still inside transaction, needs future improvement ex: put notification outside transaction or use queue)
             $recipients = User::whereIn('role', [
                 User::ROLE_ADMIN,
                 User::ROLE_OWNER,
                 User::ROLE_RECEPTIONIST,
-                User::ROLE_CLIENT,
             ])->get();
+
+            // include the owner only
+            $recipients->push($booking->client);
 
             Notification::send($recipients, new NewBookingNotification($booking));
 

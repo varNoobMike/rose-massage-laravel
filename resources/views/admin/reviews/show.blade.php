@@ -97,7 +97,7 @@
                                             @foreach ($review->images as $image)
                                                 <a href="{{ asset('storage/' . $image->path) }}" target="_blank">
                                                     <img src="{{ asset('storage/' . $image->path) }}"
-                                                        class="rounded shadow-sm"
+                                                        class="shadow-sm"
                                                         style="width:80px;height:80px;object-fit:cover;">
                                                 </a>
                                             @endforeach

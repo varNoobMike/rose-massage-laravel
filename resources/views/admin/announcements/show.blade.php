@@ -65,7 +65,12 @@
                                         Type
                                     </td>
                                     <td class="py-4 pe-4">
-                                        <span class="badge bg-{{ $announcement->type }}">
+                                         <span
+                                            class="badge
+                                            @if ($announcement->type == 'promo') bg-success
+                                            @elseif($announcement->type == 'update') bg-primary
+                                            @elseif($announcement->type == 'alert') bg-danger
+                                            @else bg-secondary @endif">
                                             {{ ucfirst($announcement->type) }}
                                         </span>
                                     </td>
@@ -74,16 +79,16 @@
                                 <!-- LINK -->
                                 <tr class="border-bottom border-light">
                                     <td class="ps-4 py-4 text-muted small fw-bold text-uppercase">
-                                        External Link
+                                        Page Link
                                     </td>
                                     <td class="py-4 pe-4">
-                                        @if ($announcement->link_url)
-                                            <a href="{{ $announcement->link_url }}" target="_blank"
+                                        @if ($announcement->link_page)
+                                            <a href="{{ route($announcement->link_page . '.index') }}"
                                                 class="text-decoration-none fw-bold">
-                                                {{ $announcement->link_url }}
+                                                {{ ucfirst($announcement->link_page) }}
                                             </a>
                                         @else
-                                            <span class="text-muted">No link attached</span>
+                                            <span class="text-muted">No link page attached</span>
                                         @endif
                                     </td>
                                 </tr>
@@ -146,6 +151,23 @@
                     <p class="text-muted small mb-0">
                         {{ $announcement->is_active ? 'Currently visible to users' : 'Currently hidden from users' }}
                     </p>
+                </div>
+            </div>
+
+            <!-- COVER IMAGE -->
+            <div class="card shadow-sm border mb-4 overflow-hidden">
+                <div class="card-header bg-white py-3 border-bottom text-center">
+                    <h6 class="mb-0 fw-bold small text-muted text-uppercase tracking-wider">Marketing Image</h6>
+                </div>
+                <div class="card-body p-3">
+                    @if ($announcement->cover_image)
+                        <img src="{{ asset('storage/' . $announcement->cover_image) }}"
+                            class="bg-light img-fluid w-100 object-fit-cover rounded-3" style="height: 200px;">
+                    @else
+                        <div class="bg-light text-center py-5 border border-dashed">
+                            <i class="bi bi-image text-muted fs-1 opacity-25"></i>
+                        </div>
+                    @endif
                 </div>
             </div>
 

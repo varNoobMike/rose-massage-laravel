@@ -14,22 +14,40 @@
 
 @section('filter-area', true)
 @section('filter-form')
-    <form action="{{ route('notifications.index') }}" method="GET">
-        <div class="row g-3">
 
-            <!-- Search -->
-            <div class="col-md-6">
-                <input type="text" name="search" class="form-control" placeholder="Search message..."
-                    value="{{ request('search') }}">
+<form action="{{ route('notifications.index') }}" method="GET">
+
+    {{-- MOBILE TOGGLE --}}
+    <button class="btn btn-outline-dark d-md-none w-100 mb-3"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#notificationFilter">
+        <i class="bi bi-funnel me-1"></i>
+        Show Filters
+    </button>
+
+    <div class="collapse d-md-block" id="notificationFilter">
+
+        <div class="row g-3 align-items-end">
+
+            {{-- SEARCH --}}
+            <div class="col-12 col-md-6">
+                <input type="text"
+                       name="search"
+                       class="form-control"
+                       placeholder="Search message..."
+                       value="{{ request('search') }}">
             </div>
 
-            <!-- Status -->
-            <div class="col-md-3">
+            {{-- STATUS --}}
+            <div class="col-12 col-md-3">
+
                 @php
                     $status = request('status', 'all');
                 @endphp
 
                 <select name="status" class="form-select">
+
                     <option value="all" {{ $status == 'all' ? 'selected' : '' }}>
                         All Notifications
                     </option>
@@ -41,22 +59,31 @@
                     <option value="read" {{ $status == 'read' ? 'selected' : '' }}>
                         Read
                     </option>
+
                 </select>
+
             </div>
 
-            <!-- Actions -->
-            <div class="col-md-3 d-flex gap-2">
+            {{-- ACTIONS --}}
+            <div class="col-12 col-md-3 d-flex gap-2">
+
                 <button class="btn btn-dark w-100">
                     Filter
                 </button>
 
-                <a href="{{ route('notifications.index') }}" class="btn btn-outline-secondary w-100">
+                <a href="{{ route('notifications.index') }}"
+                   class="btn btn-outline-secondary w-100">
                     Clear
                 </a>
+
             </div>
 
         </div>
-    </form>
+
+    </div>
+
+</form>
+
 @endsection
 
 @section('content')
@@ -140,8 +167,16 @@
                                         </form>
                                     @endif
 
-                                    @if (isset($notification->data['booking_id']))
+
+                                    @php $type = $notification->type; @endphp
+
+                                    @if ($type === 'App\Notifications\NewBookingNotification')
                                         <a href="{{ route('bookings.show', $notification->data['booking_id']) }}"
+                                            class="btn btn-sm btn-secondary">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                    @elseif ($type === 'App\Notifications\NewBookingReviewNotification')
+                                        <a href="{{ route('reviews.show', $notification->data['review_id']) }}"
                                             class="btn btn-sm btn-secondary">
                                             <i class="bi bi-eye"></i>
                                         </a>

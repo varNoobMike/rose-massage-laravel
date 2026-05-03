@@ -12,17 +12,32 @@ class AnnouncementController extends Controller
     {
         $query = Announcement::query();
 
+        // 👤 Client sees only active
         if (Auth::user()->role === 'client') {
             $query->where('is_active', 1);
         }
 
+        // 🔍 Search (FIXED: wrapped OR)
         if ($request->search) {
-            $query->where('title', 'like', "%{$request->search}%")
-                ->orWhere('message', 'like', "%{$request->search}%");
+            $query->where(function ($q) use ($request) {
+                $q->where('title', 'like', "%{$request->search}%")
+                  ->orWhere('message', 'like', "%{$request->search}%");
+            });
         }
 
+        // 🏷 Type filter
         if ($request->type) {
             $query->where('type', $request->type);
+        }
+
+        // ✅ STATUS filter
+        if ($request->filled('status')) {
+            $query->where('is_active', $request->status);
+        }
+
+        // 📅 DATE filter (created_at)
+        if ($request->date) {
+            $query->whereDate('created_at', $request->date);
         }
 
         $announcements = $query->latest()->paginate(10);
@@ -52,28 +67,37 @@ class AnnouncementController extends Controller
             'title' => 'required|string|max:255',
             'message' => 'required|string',
             'type' => 'required|in:promo,update,alert,info',
-            'link_url' => 'nullable|url',
+            'link_page' => 'nullable|in:bookings,services',
             'is_active' => 'nullable|boolean',
             'starts_at' => 'nullable|date',
             'ends_at' => 'nullable|date|after_or_equal:starts_at',
+            'cover_image' => 'nullable|image|max:2048',
         ]);
+
+        // handle image upload
+        $coverImagePath = null;
+
+        if ($request->hasFile('cover_image')) {
+            $coverImagePath = $request->file('cover_image')
+                ->store('announcements', 'public');
+        }
 
         $announcement = Announcement::create([
             'title' => $data['title'],
             'message' => $data['message'],
             'type' => $data['type'],
-            'link_type' => !empty($data['link_url']) ? 'external' : null,
-            'link_id' => null,
-            'link_url' => $data['link_url'] ?? null,
+            'link_page' => $data['link_page'] ?? null,
             'is_active' => $data['is_active'] ?? true,
             'starts_at' => $data['starts_at'] ?? null,
             'ends_at' => $data['ends_at'] ?? null,
+            'cover_image' => $coverImagePath,
         ]);
 
         return redirect()
             ->route('announcements.show', $announcement->id)
             ->with('success', 'Announcement created successfully.');
     }
+
 
     public function edit(Announcement $announcement)
     {
@@ -89,19 +113,34 @@ class AnnouncementController extends Controller
             'title' => 'required|string|max:255',
             'message' => 'required|string',
             'type' => 'required|in:promo,update,alert,info',
-            'link_url' => 'nullable|url',
+            'link_page' => 'nullable|in:bookings,services',
+            'cover_image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'is_active' => 'nullable|boolean',
             'starts_at' => 'nullable|date',
             'ends_at' => 'nullable|date|after_or_equal:starts_at',
         ]);
+
+        // ✅ HANDLE IMAGE UPLOAD
+        if ($request->hasFile('cover_image')) {
+
+            // delete old image (optional but recommended)
+            if ($announcement->cover_image && \Storage::disk('public')->exists($announcement->cover_image)) {
+                \Storage::disk('public')->delete($announcement->cover_image);
+            }
+
+            // store new image
+            $path = $request->file('cover_image')->store('announcements', 'public');
+
+            $data['cover_image'] = $path;
+        }
 
         $announcement->update([
             'title' => $data['title'],
             'message' => $data['message'],
             'type' => $data['type'],
             'link_type' => !empty($data['link_url']) ? 'external' : null,
-            'link_id' => null,
-            'link_url' => $data['link_url'] ?? null,
+            'link_page' => $data['link_page'] ?? null,
+            'cover_image' => $data['cover_image'] ?? $announcement->cover_image,
             'is_active' => $data['is_active'] ?? true,
             'starts_at' => $data['starts_at'] ?? null,
             'ends_at' => $data['ends_at'] ?? null,
@@ -110,5 +149,12 @@ class AnnouncementController extends Controller
         return redirect()
             ->route('announcements.show', $announcement->id)
             ->with('success', 'Announcement updated successfully.');
+    }
+
+    public function destroy(Announcement $announcement)
+    {
+        $announcement->delete();
+
+        return to_route('announcements.index')->with('success', 'Announcement deleted successfully.');
     }
 }

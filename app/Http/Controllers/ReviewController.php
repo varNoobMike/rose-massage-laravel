@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\Review\GetFilteredReviews;
 use App\Actions\Review\DestroyReview;
 use App\Actions\Review\StoreReview;
 use App\Actions\Review\UpdateReview;
@@ -13,9 +14,16 @@ use Illuminate\Support\Facades\Auth;
 
 class ReviewController extends Controller
 {
-    public function index()
+    public function index(Request $request, GetFilteredReviews $action)
     {
-        $reviews = Review::paginate(10);
+        $filters = $request->only([
+            'search',
+            'date',
+            'rating',
+            'status',
+        ]);
+
+        $reviews = $action->execute($filters);
 
         return view($this->currentRoleView() . '.reviews.index', compact('reviews'));
     }

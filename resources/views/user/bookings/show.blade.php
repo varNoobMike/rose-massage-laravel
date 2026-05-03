@@ -142,7 +142,7 @@
                                 <div class="d-flex flex-wrap gap-2 mt-2">
                                     @foreach ($booking->review->images as $img)
                                         <img src="{{ asset('storage/' . $img->path) }}"
-                                            class="rounded border"
+                                            class="border"
                                             style="width:70px;height:70px;object-fit:cover;">
                                     @endforeach
                                 </div>

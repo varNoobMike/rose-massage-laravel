@@ -4,6 +4,9 @@ namespace App\Actions\Review;
 
 use App\Models\Booking;
 use App\Models\Review;
+use App\Models\User;
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\NewBookingReviewNotification;
 use Illuminate\Support\Facades\DB;
 
 class StoreReview
@@ -42,6 +45,21 @@ class StoreReview
                     'path' => $path,
                 ]);
             }
+
+            // Send notifications (still inside transaction, needs future improvement ex: put notification outside transaction or use queue)
+            $recipients = User::whereIn('role', [
+                User::ROLE_ADMIN,
+                User::ROLE_OWNER,
+                User::ROLE_RECEPTIONIST,
+            ])->get();
+
+            // include the owner only
+            $recipients->push($booking->client);
+
+            Notification::send(
+                $recipients->unique('id'),
+                new NewBookingReviewNotification($review)
+            );
 
             return $review;
         });

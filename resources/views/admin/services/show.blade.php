@@ -94,7 +94,7 @@
                 <div class="card-body p-3">
                     @if ($service->image)
                         <img src="{{ asset('storage/' . $service->image) }}"
-                            class="img-fluid shadow-sm w-100 object-fit-cover" style="height: 200px;">
+                            class="bg-light img-fluid w-100 object-fit-cover rounded-3" style="height: 200px;">
                     @else
                         <div class="bg-light text-center py-5 border border-dashed">
                             <i class="bi bi-image text-muted fs-1 opacity-25"></i>

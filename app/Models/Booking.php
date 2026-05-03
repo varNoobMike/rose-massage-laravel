@@ -17,7 +17,6 @@ class Booking extends Model
         'end_time',
         'status',
         'total_amount',
-        'therapist_assigned',
         'notes',
     ];
 
@@ -43,4 +42,6 @@ class Booking extends Model
     {
         return $this->hasOne(Review::class);
     }
+
+
 }

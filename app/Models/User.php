@@ -56,6 +56,10 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasOne(UserProfile::class);
     }
 
+    public function logs(){
+        return $this->hasMany(ActivityLog::class);
+    }
+
     // role constants
     public const ROLE_ADMIN = 'admin';
     public const ROLE_OWNER = 'owner';

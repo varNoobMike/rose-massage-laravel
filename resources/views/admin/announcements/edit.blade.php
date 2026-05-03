@@ -10,7 +10,7 @@
 @section('page-header-subtitle', 'Update, manage, this announcement')
 
 @section('content')
-    <form action="{{ route('announcements.update', $announcement->id) }}" method="POST">
+    <form action="{{ route('announcements.update', $announcement->id) }}" method="POST" enctype="multipart/form-data" novalidate>
         @csrf
         @method('PUT')
 
@@ -113,23 +113,21 @@
                                     </td>
                                 </tr>
 
-                                <!-- LINK -->
-                                <tr>
+                                <!-- LINK PAGE -->
+                                <tr class="border-bottom border-light">
                                     <td class="ps-4 py-4 text-muted small fw-bold text-uppercase">
-                                        External Link
+                                        Link Page
                                     </td>
-
                                     <td class="py-4 pe-4">
-                                        <input type="url"
-                                               name="link_url"
-                                               class="form-control border-2 @error('link_url') is-invalid @enderror"
-                                               value="{{ old('link_url', $announcement->link_url) }}"
-                                               placeholder="https://example.com">
+                                        <select name="link_page"
+                                                class="form-select border-2 @error('link_page') is-invalid @enderror">
+                                            <option value="" {{ old('link_page') == '' ? 'selected' : '' }}>-- Select --</option>
+                                            <option value="bookings" {{ old('link_page') == 'bookings' ? 'selected' : '' }}>Bookings</option>
+                                            <option value="services" {{ old('link_page') == 'services' ? 'selected' : '' }}>Services</option>
+                                        </select>
 
-                                        @error('link_url')
-                                            <div class="small text-danger mt-1 fw-bold">
-                                                {{ $message }}
-                                            </div>
+                                        @error('link_page')
+                                            <div class="small text-danger mt-1 fw-bold">{{ $message }}</div>
                                         @enderror
                                     </td>
                                 </tr>
@@ -166,6 +164,51 @@
                         </select>
 
                         @error('is_active')
+                            <div class="small text-danger mt-1 fw-bold">
+                                {{ $message }}
+                            </div>
+                        @enderror
+
+                    </div>
+                </div>
+
+                <!-- Cover Image -->
+                <div class="card shadow-sm border mb-4">
+                    <div class="card-header bg-white py-3 border-bottom text-center">
+                        <h6 class="mb-0 fw-bold small text-muted text-uppercase">
+                            Cover Image
+                        </h6>
+                    </div>
+
+                    <div class="card-body p-3 text-center">
+
+                        <div id="coverImageWrapper"
+                             class="bg-light d-flex align-items-center justify-content-center mb-3 rounded-3"
+                             style="height:180px; overflow:hidden;">
+
+                            @if (!empty($announcement?->cover_image))
+                                <img id="coverPreview"
+                                     src="{{ asset('storage/' . $announcement->cover_image) }}"
+                                     class="w-100 h-100 object-fit-cover rounded-3">
+                            @else
+                                <div id="coverFallback"
+                                     class="text-muted d-flex align-items-center justify-content-center w-100 h-100 rounded-3">
+                                    <i class="bi bi-image fs-1"></i>
+                                </div>
+                            @endif
+
+                        </div>
+
+                        <label class="form-label small fw-bold text-uppercase text-muted">
+                            Upload Image
+                        </label>
+
+                        <input type="file"
+                               name="cover_image"
+                               id="coverImageInput"
+                               class="form-control form-control-sm border-2 @error('cover_image') is-invalid @enderror">
+
+                        @error('cover_image')
                             <div class="small text-danger mt-1 fw-bold">
                                 {{ $message }}
                             </div>
@@ -232,4 +275,60 @@
         </div>
 
     </form>
+@endsection
+
+@section('page-scripts')
+<script>
+$(document).ready(function () {
+
+    $('#coverImageInput').on('change', function (e) {
+
+        let file = e.target.files[0];
+
+        if (!file) {
+            resetCoverImage();
+            return;
+        }
+
+        let reader = new FileReader();
+
+        reader.onload = function (e) {
+
+            $('#coverImageWrapper').html(`
+                <img id="coverPreview"
+                     src="${e.target.result}"
+                     class="w-100 h-100 object-fit-cover rounded-3">
+            `);
+        };
+
+        reader.readAsDataURL(file);
+    });
+
+    function resetCoverImage() {
+
+        $('#coverImageInput').val('');
+
+        let original = "{{ !empty($announcement->cover_image) ? asset('storage/' . $announcement->cover_image) : '' }}";
+
+        if (original) {
+
+            $('#coverImageWrapper').html(`
+                <img id="coverPreview"
+                     src="${original}"
+                     class="w-100 h-100 object-fit-cover rounded-3">
+            `);
+
+        } else {
+
+            $('#coverImageWrapper').html(`
+                <div id="coverFallback"
+                     class="text-muted d-flex align-items-center justify-content-center w-100 h-100 rounded-3">
+                    <i class="bi bi-image fs-1"></i>
+                </div>
+            `);
+        }
+    }
+
+});
+</script>
 @endsection

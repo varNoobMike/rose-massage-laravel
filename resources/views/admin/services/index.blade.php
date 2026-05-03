@@ -19,48 +19,77 @@
 
 @section('filter-area', true)
 @section('filter-form')
-    <form action="{{ route('services.index') }}" method="GET">
-        <div class="row g-3">
 
-            <div class="col-md-6">
-                <input type="text" name="search" class="form-control" placeholder="Search service name, id..."
-                    value="{{ request('search') }}">
-            </div>
 
-            <div class="col-md-3">
-                @php
-                    $status = request('status', 'active');
-                @endphp
 
-                <select name="status" class="form-select">
+        {{-- Toggle button (mobile only) --}}
+        <button class="btn btn-outline-dark d-md-none w-100 mb-3"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#filterCollapse">
+            <i class="bi bi-funnel me-1"></i> Show Filters
+        </button>
 
-                    <option value="all" {{ $status == 'all' ? 'selected' : '' }}>
-                        All Status
-                    </option>
+        <div class="collapse d-md-block" id="filterCollapse">
 
-                    <option value="active" {{ $status == 'active' ? 'selected' : '' }}>
-                        Active
-                    </option>
+            <form action="{{ route('services.index') }}" method="GET">
 
-                    <option value="inactive" {{ $status == 'inactive' ? 'selected' : '' }}>
-                        Inactive
-                    </option>
+                <div class="row g-2 align-items-end">
 
-                </select>
-            </div>
+                    {{-- SEARCH --}}
+                    <div class="col-12 col-md-6">
+                        <input type="text"
+                               name="search"
+                               class="form-control"
+                               placeholder="Search service name, id..."
+                               value="{{ request('search') }}">
+                    </div>
 
-            <div class="col-md-3 d-flex gap-2">
-                <button class="btn btn-dark w-100">
-                    Filter
-                </button>
+                    {{-- STATUS --}}
+                    <div class="col-12 col-md-3">
+                        @php $status = request('status', 'active'); @endphp
 
-                <a href="{{ route('services.index') }}" class="btn btn-outline-secondary w-100">
-                    Clear
-                </a>
-            </div>
+                        <select name="status" class="form-select">
+
+                            <option value="all" {{ $status == 'all' ? 'selected' : '' }}>
+                                All Status
+                            </option>
+
+                            <option value="active" {{ $status == 'active' ? 'selected' : '' }}>
+                                Active
+                            </option>
+
+                            <option value="inactive" {{ $status == 'inactive' ? 'selected' : '' }}>
+                                Inactive
+                            </option>
+
+                        </select>
+                    </div>
+
+                    {{-- ACTIONS --}}
+                    <div class="col-12 col-md-3 d-flex gap-2">
+
+                        <button class="btn btn-dark w-100">
+                            <i class="bi bi-funnel me-1"></i>
+                            Filter
+                        </button>
+
+                        <a href="{{ route('services.index') }}"
+                           class="btn btn-outline-secondary w-100">
+                            <i class="bi bi-x-circle me-1"></i>
+                            Clear
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </form>
 
         </div>
-    </form>
+
+    
+
 @endsection
 
 @section('content')
@@ -90,9 +119,9 @@
 
                                     @if ($service->image)
                                         <img src="{{ asset('storage/' . $service->image) }}" alt="{{ $service->name }}"
-                                            class="me-3 object-fit-cover" width="50" height="50">
+                                            class="me-3 object-fit-cover rounded" width="50" height="50">
                                     @else
-                                        <div class="bg-light text-muted d-flex align-items-center justify-content-center me-3"
+                                        <div class="bg-light text-muted d-flex align-items-center justify-content-center me-3 rounded"
                                             style="width:50px; height:50px;">
                                             <i class="bi bi-image"></i>
                                         </div>

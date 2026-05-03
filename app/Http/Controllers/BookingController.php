@@ -27,7 +27,9 @@ class BookingController extends Controller
         $filters = $request->only([
             'search',
             'status',
-            'date'
+            'from',
+            'to',
+            'therapist_assignment_status'
         ]);
 
         $bookings = $action->execute(
@@ -114,6 +116,7 @@ class BookingController extends Controller
 
     public function update(Request $request, Booking $booking, UpdateBooking $action)
     {
+
         $validated = $request->validate([
             'booking_date' => 'required|date',
             'start_time' => 'required',

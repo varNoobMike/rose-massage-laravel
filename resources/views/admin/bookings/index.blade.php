@@ -19,60 +19,117 @@
 
 @section('filter-area', true)
 @section('filter-form')
-    <form action="{{ route('bookings.index') }}" method="GET">
-        <div class="row g-3">
 
-            <div class="col-md-5">
-                <input type="text" name="search" class="form-control"
-                    placeholder="Search booking client name, id, email..." value="{{ request('search') }}">
+    {{-- MOBILE TOGGLE BUTTON --}}
+    <div class="d-md-none mb-2">
+        <button class="btn btn-outline-dark w-100"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#bookingFilters">
+            <i class="bi bi-funnel me-1"></i> Show Filters
+        </button>
+    </div>
+
+    <div class="collapse d-md-block" id="bookingFilters">
+
+        <form action="{{ route('bookings.index') }}" method="GET">
+
+            <div class="row g-3">
+
+                {{-- SEARCH --}}
+                <div class="col-md-4">
+                    <input type="text"
+                           name="search"
+                           class="form-control"
+                           placeholder="Search booking client name, id, email..."
+                           value="{{ request('search') }}">
+                </div>
+
+                {{-- FROM DATE --}}
+                <div class="col-md-2">
+                    <input type="date"
+                           name="from"
+                           class="form-control"
+                           value="{{ request('from') }}">
+                </div>
+
+                {{-- TO DATE --}}
+                <div class="col-md-2">
+                    <input type="date"
+                           name="to"
+                           class="form-control"
+                           value="{{ request('to') }}">
+                </div>
+
+                {{-- STATUS --}}
+                <div class="col-md-2">
+                    <select name="status" class="form-select">
+
+                        <option value="" @selected(request('status') == '')>
+                            All Status
+                        </option>
+
+                        <option value="pending" @selected(request('status') == 'pending')>
+                            Pending
+                        </option>
+
+                        <option value="confirmed" @selected(request('status') == 'confirmed')>
+                            Confirmed
+                        </option>
+
+                        <option value="active" @selected(request('status') == 'active')>
+                            Active
+                        </option>
+
+                        <option value="completed" @selected(request('status') == 'completed')>
+                            Completed
+                        </option>
+
+                        <option value="cancelled" @selected(request('status') == 'cancelled')>
+                            Cancelled
+                        </option>
+
+                    </select>
+                </div>
+
+                {{-- THERAPIST ASSIGNMENT --}}
+                <div class="col-md-2">
+                    <select name="therapist_assignment_status" class="form-select">
+
+                        <option value="" @selected(request('therapist_assignment_status') == '')>
+                            All Assignment
+                        </option>
+
+                        <option value="unassigned" @selected(request('therapist_assignment_status') == 'unassigned')>
+                            Unassigned
+                        </option>
+
+                        <option value="assigned" @selected(request('therapist_assignment_status') == 'assigned')>
+                            Assigned
+                        </option>
+
+                    </select>
+                </div>
+
+                {{-- ACTIONS --}}
+                <div class="col-md-3 d-flex gap-2">
+                    <button class="btn btn-dark w-100">
+                        <i class="bi bi-funnel me-1"></i>
+                        Filter
+                    </button>
+
+                    <a href="{{ route('bookings.index') }}" class="btn btn-outline-secondary w-100">
+                        <i class="bi bi-x-circle me-1"></i>
+                        Clear
+                    </a>
+                </div>
+
             </div>
 
-            <div class="col-md-2">
-                <input type="date" name="date" class="form-control" value="{{ request('date') }}">
-            </div>
+        </form>
 
-            <div class="col-md-2">
-                <select name="status" class="form-select" onchange="this.form.submit()">
+    </div>
 
-                    <option value="" {{ request('status') == null ? 'selected' : '' }}>
-                        All Status
-                    </option>
-
-                    <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>
-                        Pending
-                    </option>
-
-                    <option value="confirmed" {{ request('status') == 'confirmed' ? 'selected' : '' }}>
-                        Confirmed
-                    </option>
-
-                    <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>
-                        Active
-                    </option>
-
-                    <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>
-                        Completed
-                    </option>
-
-                    <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>
-                        Cancelled
-                    </option>
-
-                </select>
-            </div>
-
-            <div class="col-md-3 d-flex gap-2">
-                <button class="btn btn-dark w-100">
-                    Filter
-                </button>
-
-                <a href="{{ route('bookings.index') }}" class="btn btn-outline-secondary w-100">
-                    Clear
-                </a>
-            </div>
-
-        </div>
-    </form>
 @endsection
 
 @section('content')
