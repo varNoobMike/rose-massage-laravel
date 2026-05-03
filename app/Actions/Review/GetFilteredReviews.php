@@ -3,58 +3,63 @@
 namespace App\Actions\Review;
 
 use App\Models\Review;
+use App\Models\User;
 
 class GetFilteredReviews
 {
-    public function execute(array $filters)
+    public function execute(array $filters, string $userRole)
     {
+        $search = $filters['search'] ?? null;
+        $dateFrom = $filters['from'] ?? null;
+        $dateTo = $filters['to'] ?? null;
+        $rating = $filters['rating'] ?? null;
+        $status = $filters['status'] ?? null;
+
         $query = Review::query()
             ->with(['user.profile', 'booking']); // eager load to avoid N+1
 
-        /**
-         * SEARCH
-         * - comment
-         * - booking id
-         * - user name/email
-         */
-        $query->when($filters['search'] ?? null, function ($q, $search) {
+        // fetch only approved reviews if current user is client
+        if($userRole === User::ROLE_CLIENT) {
+            $query->where('status', 'approved');
+        }
+
+        // Search comment, booking id, user name, email, id
+        $query->when($search, function ($q, $search) {
             $q->where(function ($sub) use ($search) {
                 $sub->where('comment', 'like', "%{$search}%")
                     ->orWhere('booking_id', $search)
                     ->orWhereHas('user', function ($user) use ($search) {
                         $user->where('name', 'like', "%{$search}%")
-                             ->orWhere('email', 'like', "%{$search}%");
+                             ->orWhere('email', 'like', "%{$search}%")
+                             ->orWhere('id', $search);
                     });
             });
         });
 
-        /**
-         * DATE FILTER
-         */
-        $query->when($filters['date'] ?? null, function ($q, $date) {
-            $q->whereDate('created_at', $date);
+        // Date from
+        $query->when($dateFrom, function ($q, $date) {
+            $q->whereDate('created_at', '>=', $date);
         });
 
-        /**
-         * RATING FILTER
-         */
-        $query->when($filters['rating'] ?? null, function ($q, $rating) {
+        // Date to
+        $query->when($dateTo, function ($q, $date) {
+            $q->whereDate('created_at', '<=', $date);
+        });
+
+        // Rating
+        $query->when($rating, function ($q, $rating) {
             if ($rating !== 'all') {
                 $q->where('rating', $rating);
             }
         });
 
-        /**
-         * STATUS FILTER
-         */
+        // Status
         $query->when(
-            $filters['status'] ?? null,
+            $status,
             fn ($q, $status) => $q->where('status', $status)
         );
 
-        /**
-         * SORT (latest first)
-         */
+        // Final result
         return $query
             ->latest()
             ->paginate(10)

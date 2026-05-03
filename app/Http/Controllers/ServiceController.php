@@ -14,8 +14,10 @@ class ServiceController extends Controller
     {
         $filters = $request->only([
             'search',
-            'rate',
-            'duration',
+            'price_from',
+            'price_to',
+            'duration_from',
+            'duration_to',
             'status',
         ]);
 

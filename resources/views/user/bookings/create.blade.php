@@ -87,7 +87,8 @@
                                     @foreach ($services as $service)
                                         <option value="{{ $service->id }}" data-name="{{ $service->name }}"
                                             data-price="{{ $service->price }}"
-                                            data-duration="{{ $service->duration_minutes }}">
+                                            data-duration="{{ $service->duration_minutes }}"
+                                            {{ request('service') == $service->id ? 'selected' : '' }}>
                                             {{ $service->name }}
                                             ({{ $service->duration_minutes }} min •
                                             ₱{{ number_format($service->price, 2) }})

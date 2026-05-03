@@ -8,10 +8,18 @@ class GetFilteredServices
 {
     public function execute(array $filters)
     {
+        
+        $search = $filters['search'] ?? null;
+        $priceFrom = $filters['price_from'] ?? null;
+        $priceTo = $filters['price_to'] ?? null;
+        $durationFrom = $filters['duration_from'] ?? null;
+        $durationTo = $filters['duration_to'] ?? null;
+        $status = $filters['status'] ?? null;
+
         $query = Service::query();
 
         // Search by name, id, or description
-        $query->when($filters['search'] ?? null, function ($q, $search) {
+        $query->when($search, function ($q, $search) {
             $q->where(function ($sub) use ($search) {
                 $sub->where('name', 'like', "%{$search}%")
                     ->orWhere('id', $search)
@@ -19,35 +27,32 @@ class GetFilteredServices
             });
         });
 
-        // Filter by price range
-        $query->when($filters['rate'] ?? null, function ($q, $price) {
-            match ($price) {
-                'low'  => $q->where('price', '<', 1500),
-                'mid'  => $q->whereBetween('price', [1500, 3000]),
-                'high' => $q->where('price', '>', 3000),
-                default => null,
-            };
+        // Price from
+        $query->when($priceFrom, function ($q, $price) {
+            $q->where('price', '>=', $price);
         });
 
-        // Filter by duration
-        $query->when($filters['duration'] ?? null, function ($q, $duration) {
-            match ($duration) {
-                'short' => $q->where('duration_minutes', '<', 60),
-                '60'    => $q->where('duration_minutes', 60),
-                '90'    => $q->where('duration_minutes', 90),
-                'long'  => $q->where('duration_minutes', '>', 90),
-                default => null,
-            };
+        // Price to
+        $query->when($priceTo, function ($q, $price) {
+            $q->where('price', '<=', $price);
         });
 
-        // Filter by status (default: active)
-        $query->when(
-            $filters['status'] ?? null,
-            fn($q, $status) => $status === 'all'
-                ? $q
-                : $q->where('status', $status),
-            fn($q) => $q->where('status', 'active')
-        );
+        // Duration from
+        $query->when($durationFrom, function ($q, $minutes) {
+            $q->where('duration_minutes', '>=', $minutes);
+        });
+
+        // Duration to
+        $query->when($durationTo, function ($q, $minutes) {
+            $q->where('duration_minutes', '<=', $minutes);
+        });
+
+        // Status (default: active)
+        if (!$status) {
+            $query->where('status', 'active');
+        } elseif ($status !== 'all') {
+            $query->where('status', $status);
+        }
 
         // Final result
         return $query

@@ -5,7 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\Announcement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
+
+/**
+ * refactor later, put in action classes
+ */
 class AnnouncementController extends Controller
 {
     public function index(Request $request)
@@ -17,7 +22,7 @@ class AnnouncementController extends Controller
             $query->where('is_active', 1);
         }
 
-        // 🔍 Search (FIXED: wrapped OR)
+        // 🔍 Search 
         if ($request->search) {
             $query->where(function ($q) use ($request) {
                 $q->where('title', 'like', "%{$request->search}%")
@@ -35,9 +40,14 @@ class AnnouncementController extends Controller
             $query->where('is_active', $request->status);
         }
 
-        // 📅 DATE filter (created_at)
-        if ($request->date) {
-            $query->whereDate('created_at', $request->date);
+        // Date from
+        if ($request->from) {
+            $query->whereDate('created_at', '>=', $request->from);
+        }
+
+        // Date to
+        if ($request->to) {
+            $query->whereDate('created_at', '<=', $request->to);
         }
 
         $announcements = $query->latest()->paginate(10);
@@ -124,8 +134,8 @@ class AnnouncementController extends Controller
         if ($request->hasFile('cover_image')) {
 
             // delete old image (optional but recommended)
-            if ($announcement->cover_image && \Storage::disk('public')->exists($announcement->cover_image)) {
-                \Storage::disk('public')->delete($announcement->cover_image);
+            if ($announcement->cover_image && Storage::disk('public')->exists($announcement->cover_image)) {
+                Storage::disk('public')->delete($announcement->cover_image);
             }
 
             // store new image

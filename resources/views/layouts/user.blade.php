@@ -84,7 +84,7 @@
                             </a>
                         </li>
 
-                         <!-- REVEWS -->
+                        <!-- REVEWS -->
                         <li class="nav-item">
                             <a class="nav-link {{ request()->routeIs('reviews.*') ? 'text-primary fw-bold border-bottom border-3 border-primary' : 'text-dark' }}"
                                 href="{{ route('reviews.index') }}">
@@ -286,9 +286,22 @@
                             $unreadNotificationsCount = auth()->user()->unreadNotifications()->count();
                         @endphp
 
-
-
                         
+
+                        <!-- REVIEWS -->
+                        <li class="nav-item">
+                            <a href="{{ route('reviews.index') }}"
+                                class="nav-link px-3 py-3 d-flex align-items-center justify-content-between
+        {{ request()->routeIs('reviews.*') ? 'text-primary fw-bold bg-light' : 'text-dark' }}">
+
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-star me-3"></i>
+                                    <span>Reviews</span>
+                                </div>
+                            </a>
+                        </li>
+
+
 
                         <!-- ANNOUNCEMENTS -->
                         <li class="nav-item">

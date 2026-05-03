@@ -27,13 +27,29 @@
         <div class="row g-3">
 
             <!-- Search -->
-            <div class="col-md-6">
+            <div class="col-md-3">
                 <input type="text" name="search" class="form-control" placeholder="Search notifications..."
                     value="{{ request('search') }}">
             </div>
 
+            {{-- DATE FROM --}}
+            <div class="col-md-2">
+                <div class="input-group">
+                    <span class="input-group-text">From</span>
+                    <input type="date" name="from" class="form-control" value="{{ request('from') }}">
+                </div>
+            </div>
+
+            {{-- DATE TO --}}
+            <div class="col-md-2">
+                <div class="input-group">
+                    <span class="input-group-text">To</span>
+                    <input type="date" name="to" class="form-control" value="{{ request('to') }}">
+                </div>
+            </div>
+
             <!-- Status -->
-            <div class="col-md-3">
+            <div class="col-md-2">
                 @php
                     $status = request('status', 'all');
                 @endphp
@@ -64,6 +80,53 @@
 @section('content')
 
     <div class="container px-lg-5">
+
+        @php
+            $hasFilters =
+                request()->filled('search') ||
+                request()->filled('from') ||
+                request()->filled('to') ||
+                request()->filled('status');
+        @endphp
+
+        @if ($hasFilters)
+            <div class="alert alert-info d-flex justify-content-between align-items-center py-2 px-3 mb-3">
+
+                <div class="d-flex flex-wrap gap-2 align-items-center">
+
+                    <strong class="me-2">
+                        <i class="bi bi-funnel-fill"></i> Filters applied:
+                    </strong>
+
+                    @if (request('search'))
+                        <span class="badge bg-dark">
+                            Search: {{ request('search') }}
+                        </span>
+                    @endif
+
+                    @if (request('from') || request('to'))
+                        <span class="badge bg-secondary">
+                            Date:
+                            {{ request('from') ?? '...' }}
+                            →
+                            {{ request('to') ?? '...' }}
+                        </span>
+                    @endif
+
+                    @if (request('status'))
+                        <span @class([
+                            'badge text-capitalize',
+                            'bg-success' => request('status') === 'unread',
+                            'bg-secondary' => request('status') === 'read',
+                        ])>
+                            Status: {{ ucfirst(request('status')) }}
+                        </span>
+                    @endif
+
+                </div>
+
+            </div>
+        @endif
 
         <!-- Table -->
         <div class="card shadow-sm border">
@@ -110,7 +173,12 @@
                                 <!-- TYPE -->
                                 <td class="text-center">
                                     <span class="badge bg-light text-dark">
-                                        Booking
+                                        @php $type = $notification->type @endphp
+                                        @if ($type === App\Notifications\NewBookingNotification::class)
+                                            Booking
+                                        @elseif($type === App\Notifications\NewBookingReviewNotification::class)
+                                            Review
+                                        @endif
                                     </span>
                                 </td>
 
@@ -163,15 +231,28 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="text-center py-5">
+                                <td colspan="7" class="text-center py-5">
 
-                                    <i class="bi bi-bell-slash fs-1 text-muted"></i>
+                                    @if ($hasFilters)
+                                        {{-- EMPTY DUE TO FILTERS --}}
+                                        <i class="bi bi-bell fs-1 text-muted"></i>
+                                        <h5 class="mt-3">No results found</h5>
+                                        <p class="text-muted mb-3">
+                                            No notifications match your filters.
+                                        </p>
 
-                                    <h5 class="mt-3">No notifications found</h5>
-
-                                    <p class="text-muted mb-0">
-                                        You're all caught up.
-                                    </p>
+                                        <a href="{{ route('notifications.index') }}" class="btn btn-outline-dark">
+                                            <i class="bi bi-x-circle me-1"></i>
+                                            Clear Filters
+                                        </a>
+                                    @else
+                                        {{-- EMPTY DATABASE --}}
+                                        <i class="bi bi-bell fs-1 text-muted"></i>
+                                        <h5 class="mt-3">No notifications yet</h5>
+                                        <p class="text-muted mb-0">
+                                            Once notifications are created, they will appear here.
+                                        </p>
+                                    @endif
 
                                 </td>
                             </tr>

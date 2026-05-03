@@ -36,6 +36,12 @@ Route::get('/test-email', function () {
 });
 
 
+Route::get('clear-session', function(){
+    Auth::logout();
+    return to_route('login');
+});
+
+
 // test xendit api key
 Route::get('/test-xendit', function () {
 

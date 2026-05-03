@@ -140,6 +140,31 @@
                                 </td>
                             </tr>
 
+                            <tr>
+                                    <td class="ps-4 py-4 text-muted small fw-bold text-uppercase">
+                                        System Logs
+                                    </td>
+                                    <td class="py-4 pe-4 text-muted small">
+
+                                        <div class="mb-1">
+                                            <i class="bi bi-calendar-check me-2 opacity-50"></i>
+                                            Created:
+                                            <strong>
+                                                {{ $booking->created_at->format('M d, Y') }}
+                                            </strong>
+                                        </div>
+
+                                        <div>
+                                            <i class="bi bi-arrow-repeat me-2 opacity-50"></i>
+                                            Last Update:
+                                            <strong>
+                                                {{ $booking->updated_at->diffForHumans() }}
+                                            </strong>
+                                        </div>
+
+                                    </td>
+                            </tr>
+
                         </tbody>
                     </table>
 

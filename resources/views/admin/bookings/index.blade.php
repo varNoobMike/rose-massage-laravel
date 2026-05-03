@@ -22,10 +22,7 @@
 
     {{-- MOBILE TOGGLE BUTTON --}}
     <div class="d-md-none mb-2">
-        <button class="btn btn-outline-dark w-100"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#bookingFilters">
+        <button class="btn btn-outline-dark w-100" type="button" data-bs-toggle="collapse" data-bs-target="#bookingFilters">
             <i class="bi bi-funnel me-1"></i> Show Filters
         </button>
     </div>
@@ -38,27 +35,24 @@
 
                 {{-- SEARCH --}}
                 <div class="col-md-4">
-                    <input type="text"
-                           name="search"
-                           class="form-control"
-                           placeholder="Search booking client name, id, email..."
-                           value="{{ request('search') }}">
+                    <input type="text" name="search" class="form-control"
+                        placeholder="Search booking id, client name, email, or id..." value="{{ request('search') }}">
                 </div>
 
-                {{-- FROM DATE --}}
+                {{-- DATE FROM --}}
                 <div class="col-md-2">
-                    <input type="date"
-                           name="from"
-                           class="form-control"
-                           value="{{ request('from') }}">
+                    <div class="input-group">
+                        <span class="input-group-text">From</span>
+                        <input type="date" name="from" class="form-control" value="{{ request('from') }}">
+                    </div>
                 </div>
 
-                {{-- TO DATE --}}
+                {{-- DATE TOa --}}
                 <div class="col-md-2">
-                    <input type="date"
-                           name="to"
-                           class="form-control"
-                           value="{{ request('to') }}">
+                    <div class="input-group">
+                        <span class="input-group-text">To</span>
+                        <input type="date" name="to" class="form-control" value="{{ request('to') }}">
+                    </div>
                 </div>
 
                 {{-- STATUS --}}
@@ -133,6 +127,70 @@
 @endsection
 
 @section('content')
+
+    @php
+        $hasFilters =
+            request()->filled('search') ||
+            request()->filled('status') ||
+            request()->filled('therapist_assignment_status') ||
+            request()->filled('from') ||
+            request()->filled('to');
+    @endphp
+
+    @if ($hasFilters)
+        <div class="alert alert-info d-flex justify-content-between align-items-center py-2 px-3 mb-3">
+            <div class="d-flex flex-wrap gap-2 align-items-center">
+
+                <strong class="me-2">
+                    <i class="bi bi-funnel-fill"></i> Filters applied:
+                </strong>
+
+                @if (request('search'))
+                    <span class="badge bg-dark">
+                        Search: {{ request('search') }}
+                    </span>
+                @endif
+
+                @if (request('status'))
+                    <span @class([
+                        'badge',
+                        'text-capitalize',
+                        'bg-warning text-dark' => request('status') === 'pending',
+                        'bg-primary' => request('status') === 'confirmed',
+                        'bg-success' => request('status') === 'active',
+                        'bg-secondary' => request('status') === 'completed',
+                        'bg-danger' => request('status') === 'cancelled',
+                        'bg-dark' => request('status') === 'all' || !request('status'),
+                    ])>
+                        Status: {{ ucfirst(request('status') ?? 'all') }}
+                    </span>
+                @endif
+
+                @if (request('therapist_assignment_status'))
+                    <span @class([
+                        'badge',
+                        'text-capitalize',
+                        'bg-success-subtle text-success' => request('therapist_assignment_status') === 'assigned',
+                        'bg-warning text-dark' =>
+                            request('therapist_assignment_status') === 'unassigned',
+                    ])>
+                        {{ ucfirst(request('therapist_assignment_status')) }}
+                    </span>
+                @endif
+
+                @if (request('from') || request('to'))
+                    <span class="badge bg-secondary">
+                        Date:
+                        {{ request('from') ?? '...' }}
+                        →
+                        {{ request('to') ?? '...' }}
+                    </span>
+                @endif
+
+            </div>
+
+        </div>
+    @endif
 
     <!-- Table -->
     <div class="card shadow-sm border">
@@ -262,7 +320,7 @@
                                     @elseif($status == 'completed') bg-secondary
                                     @elseif($status == 'cancelled') bg-danger @endif
                                         text-uppercase small">
-                                            {{ $status }}
+                                    {{ $status }}
                                 </span>
 
                             </td>
@@ -272,7 +330,8 @@
 
                                 <div class="btn-group gap-2">
 
-                                    <a href="{{ route('bookings.show', $booking->id) }}" class="btn btn-sm btn-secondary">
+                                    <a href="{{ route('bookings.show', $booking->id) }}"
+                                        class="btn btn-sm btn-secondary">
                                         <i class="bi bi-eye"></i>
                                     </a>
 
@@ -288,10 +347,29 @@
                     @empty
 
                         <tr>
-                            <td colspan="6" class="text-center py-5">
-                                <i class="bi bi-calendar-x fs-1 text-muted"></i>
-                                <h5 class="mt-3">No bookings found</h5>
-                                <p class="text-muted mb-0">Try adjusting your filters.</p>
+                            <td colspan="7" class="text-center py-5">
+
+                                @if ($hasFilters)
+                                    {{-- EMPTY DUE TO FILTERS --}}
+                                    <i class="bi bi-search fs-1 text-muted"></i>
+                                    <h5 class="mt-3">No results found</h5>
+                                    <p class="text-muted mb-3">
+                                        No bookings match your filters.
+                                    </p>
+
+                                    <a href="{{ route('bookings.index') }}" class="btn btn-outline-dark">
+                                        <i class="bi bi-x-circle me-1"></i>
+                                        Clear Filters
+                                    </a>
+                                @else
+                                    {{-- EMPTY DATABASE --}}
+                                    <i class="bi bi-calendar-x fs-1 text-muted"></i>
+                                    <h5 class="mt-3">No bookings yet</h5>
+                                    <p class="text-muted mb-0">
+                                        Once bookings are created, they will appear here.
+                                    </p>
+                                @endif
+
                             </td>
                         </tr>
 

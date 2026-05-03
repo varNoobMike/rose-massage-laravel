@@ -12,8 +12,8 @@ class GetFilteredBookings
         $search = $filters['search'] ?? null;
         $status = $filters['status'] ?? null;
         $therapist_assignment_status = $filters['therapist_assignment_status'] ?? null;
-        $from   = $filters['from'] ?? null;
-        $to = $filters['to'] ?? null;
+        $dateFrom   = $filters['from'] ?? null;
+        $dateTo = $filters['to'] ?? null;
 
 
         // Spa Insider
@@ -33,14 +33,14 @@ class GetFilteredBookings
                     });
                 })
 
-                // Status filter
+                // Status
                 ->when($status, function ($query, $status) {
                     return $status === 'all'
                         ? $query
                         : $query->where('status', $status);
                 })
 
-                // therapist assignment
+                // Therapist assignment
                 ->when($therapist_assignment_status, function ($query, $status) {
                     if ($status === 'assigned') {
                         $query->whereDoesntHave('items', function ($q) {
@@ -57,15 +57,16 @@ class GetFilteredBookings
                                 
 
                 // Date from
-                ->when($from, function ($q, $from) {
-                    $q->whereDate('booking_date', '>=', $from);
+                ->when($dateFrom, function ($query, $from) {
+                    $query->whereDate('booking_date', '>=', $from);
                 })
 
                 // Date to
-                ->when($to, function ($q, $to) {
-                    $q->whereDate('booking_date', '<=', $to);
+                ->when($dateTo, function ($query, $to) {
+                    $query->whereDate('booking_date', '<=', $to);
                 })
 
+                // Final result 
                 ->latest()
                 ->paginate(10)
                 ->withQueryString();
@@ -85,18 +86,24 @@ class GetFilteredBookings
                     $query->where('id', $search);
                 })
 
-                // Status filter
+                // Status
                 ->when($status, function ($query, $status) {
                     return $status === 'all'
                         ? $query
                         : $query->where('status', $status);
                 })
 
-                // Date filter
-                ->when($date, function ($query, $date) {
-                    $query->whereDate('booking_date', $date);
+                // Date from
+                ->when($dateFrom, function ($query, $from) {
+                    $query->whereDate('booking_date', '>=', $from);
                 })
 
+                // Date to
+                ->when($dateTo, function ($query, $to) {
+                    $query->whereDate('booking_date', '<=', $to);
+                })
+
+                // Final result 
                 ->latest()
                 ->paginate(10)
                 ->withQueryString();

@@ -5,7 +5,7 @@
 @section('breadcrumb', true)
 
 @section('page-header', true)
-@section('page-header-title-indexpage', 'About Us')
+@section('page-header-title', 'About Us')
 @section('page-header-subtitle', 'Know our story')
 
 @section('content')

@@ -18,12 +18,13 @@ class ReviewController extends Controller
     {
         $filters = $request->only([
             'search',
-            'date',
+            'from',
+            'to',
             'rating',
             'status',
         ]);
 
-        $reviews = $action->execute($filters);
+        $reviews = $action->execute($filters, $this->currentUserRole());
 
         return view($this->currentRoleView() . '.reviews.index', compact('reviews'));
     }

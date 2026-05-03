@@ -45,22 +45,40 @@
                         <div class="card h-100 border-0 shadow-sm overflow-hidden">
 
                             <!-- IMAGE -->
-                            <img src="{{ asset('storage/' . $service->image) }}" alt="{{ $service->name }}" class="w-100"
-                                style="height: 280px; object-fit: cover;">
+                            <div class="position-relative">
+
+                                <img src="{{ asset('storage/' . $service->image) }}" alt="{{ $service->name }}"
+                                    class="w-100" style="height: 260px; object-fit: cover;">
+
+                                <!-- DURATION BADGE -->
+                                <span class="badge bg-dark position-absolute top-0 end-0 m-3 px-3 py-2">
+                                    ⏱ {{ $service->duration_minutes }} mins
+                                </span>
+
+                            </div>
 
                             <!-- BODY -->
                             <div class="card-body p-4 text-center">
 
+                                <!-- NAME -->
                                 <h5 class="fw-semibold mb-2">
                                     {{ $service->name }}
                                 </h5>
 
-                                <p class="text-primary fw-bold fs-5 mb-3">
-                                    ₱{{ number_format($service->price, 2) }}
-                                </p>
+                                <!-- PRICE -->
+                                <div class="mb-3">
+                                    <span class="text-primary fw-bold fs-4">
+                                        ₱{{ number_format($service->price, 2) }}
+                                    </span>
 
+                                    <small class="text-muted d-block">
+                                        per session
+                                    </small>
+                                </div>
+
+                                <!-- CTA -->
                                 <a href="{{ route('bookings.create', ['service' => $service->id]) }}"
-                                    class="btn btn-outline-primary w-100">
+                                    class="btn btn-primary w-100 fw-semibold">
                                     Book Now
                                 </a>
 
@@ -71,9 +89,13 @@
                     </div>
 
                 @empty
-
-                    <div class="col-12 text-center py-5">
-                        <p class="text-muted fst-italic mb-0">No services available yet</p>
+                    <div class="d-flex flex-column justify-content-center align-items-center">
+                        {{-- EMPTY DATABASE --}}
+                        <i class="bi bi-flower2 fs-1 text-muted"></i>
+                        <h5 class="mt-3">No services yet</h5>
+                        <p class="text-muted mb-0">
+                            No services available yet.
+                        </p>
                     </div>
                 @endforelse
 
@@ -446,50 +468,93 @@
                 @forelse ($reviews as $review)
                     <div class="col-12 col-md-6 col-lg-4">
 
-                        <a href="{{ route('reviews.show',  $review->id) }}"
+                        <a href="{{ route('reviews.show', $review->id) }}"
                             class="text-decoration-none text-reset d-block h-100">
 
-                            <div class="card border-0 shadow-sm h-100 p-3" style="min-height: 280px;">
+                            <div class="card border-0 shadow-sm h-100 p-4">
 
-                                <div class="fw-semibold mb-1">
-                                    {{ $review->user->name ?? 'Anonymous' }}
+                                <!-- HEADER -->
+                                <div class="d-flex align-items-center mb-3">
+
+                                    {{-- Avatar --}}
+                                    @if ($review->user?->profile?->avatar)
+                                        <img src="{{ asset('storage/' . $review->user?->profile->avatar) }}"
+                                            class="rounded-circle me-3 object-fit-cover" width="48" height="48">
+                                    @else
+                                        <div class="bg-light text-muted rounded-circle d-flex align-items-center justify-content-center me-3"
+                                            style="width:48px; height:48px;">
+                                            <i class="bi bi-person"></i>
+                                        </div>
+                                    @endif
+
+                                    {{-- Name + Date --}}
+                                    <div class="flex-grow-1">
+                                        <div class="fw-semibold">
+                                            @php
+                                                $isMe = $review->user_id === auth()->id();
+                                            @endphp
+
+                                            {{ $review->user?->name }}
+                                            @if ($isMe)
+                                                <span class="text-muted">(You)</span>
+                                            @endif
+                                        </div>
+
+                                        <small class="text-muted">
+                                            {{ $review->created_at->format('M d, Y • h:i A') }}
+                                        </small>
+                                    </div>
+
                                 </div>
 
-                                <!-- Rating -->
+                                <!-- RATING -->
                                 <div class="text-warning mb-2">
                                     @for ($i = 1; $i <= 5; $i++)
                                         <i class="bi bi-star{{ $i <= $review->rating ? '-fill' : '' }}"></i>
                                     @endfor
                                 </div>
 
-                                <p class="text-muted mb-3">
-                                    {{ Str::limit($review->comment, 100) }}
+                                <!-- COMMENT -->
+                                <p class="text-muted mb-3" style="line-height: 1.5;">
+                                    {{ Str::limit($review->comment, 120) }}
                                 </p>
 
+                                <!-- IMAGES -->
                                 @if ($review->images && $review->images->count())
                                     <div class="d-flex flex-wrap gap-2 mb-3">
-                                        @foreach ($review->images as $image)
-                                            <img src="{{ asset('storage/' . $image->path) }}"
+                                        @foreach ($review->images->take(3) as $image)
+                                            <img src="{{ asset('storage/' . $image->path) }}" class="rounded"
                                                 style="width: 70px; height: 70px; object-fit: cover;">
                                         @endforeach
+
+                                        @if ($review->images->count() > 3)
+                                            <div class="d-flex align-items-center justify-content-center bg-light text-muted rounded"
+                                                style="width:70px; height:70px; font-size: 12px;">
+                                                +{{ $review->images->count() - 3 }}
+                                            </div>
+                                        @endif
                                     </div>
                                 @endif
 
-                                <!-- UX CTA (still visible, not a button) -->
-                                <div class="mt-auto pt-2 d-flex align-items-center text-primary fw-semibold small" style="line-height:1;">
-                                    <span>View review</span>
-                                    <i class="bi bi-arrow-right ms-1" style="display:inline-flex; align-items:center; line-height:1; vertical-align:middle;"></i>
+                                <!-- CTA -->
+                                <div class="mt-auto d-flex align-items-center text-primary fw-semibold small">
+                                    <span>Read full review</span>
+                                    <i class="bi bi-arrow-right ms-1"></i>
                                 </div>
 
                             </div>
 
                         </a>
-                    </div>
-                
 
-                 @empty
-                    <div class="col-12 text-center py-5">
-                        <p class="text-muted fst-italic mb-0">No customer feedback yet</p>
+                    </div>
+                @empty
+                    <div class="d-flex flex-column justify-content-center align-items-center">
+                        {{-- EMPTY DATABASE --}}
+                        <i class="bi bi-star fs-1 text-muted"></i>
+                        <h5 class="mt-3">No reviews yet</h5>
+                        <p class="text-muted mb-0">
+                            No reviews available yet.
+                        </p>
                     </div>
                 @endforelse
 

@@ -22,7 +22,19 @@ class NotificationController extends Controller
             });
         });
 
-        // 2. Status filter (same style as your Service code)
+
+        // 2.Date from
+        $query->when($request->from, function ($q, $from) {
+            return $q->whereDate('created_at', '>=', $from);
+        });
+
+        // 3. Date to
+        $query->when($request->to, function ($q, $to) {
+            return $q->whereDate('created_at', '<=', $to);
+        });
+
+
+        // 4. Status
         $query->when($request->status, function ($q, $status) {
             return match ($status) {
                 'read'   => $q->whereNotNull('read_at'),
