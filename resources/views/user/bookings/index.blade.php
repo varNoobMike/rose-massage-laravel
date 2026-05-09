@@ -35,7 +35,7 @@
 
                 {{-- SEARCH --}}
                 <div class="col-12 col-md-3">
-                    <input type="text" name="search" class="form-control" placeholder="Search booking id..."
+                    <input type="text" name="search" class="form-control" placeholder="Search by booking ID or service..."
                         value="{{ request('search') }}">
                 </div>
 
@@ -43,7 +43,7 @@
                 <div class="col-12 col-md-2">
                     <div class="input-group">
                         <span class="input-group-text">From</span>
-                        <input type="date" name="from" class="form-control" value="{{ request('from') }}">
+                        <input type="date" name="date_from" class="form-control" value="{{ request('date_from') }}">
                     </div>
                 </div>
 
@@ -51,7 +51,7 @@
                 <div class="col-12 col-md-2">
                     <div class="input-group">
                         <span class="input-group-text">To</span>
-                        <input type="date" name="to" class="form-control" value="{{ request('to') }}">
+                        <input type="date" name="date_to" class="form-control" value="{{ request('date_to') }}">
                     </div>
                 </div>
 
@@ -77,10 +77,39 @@
                         Filter
                     </button>
 
+                    {{-- MORE --}}
+                    <button class="btn btn-primary w-100" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#advancedFilters">
+                        <i class="bi bi-three-dots"></i>
+                    </button>
+
                     <a href="{{ route('bookings.index') }}" class="btn btn-outline-secondary w-100">
                         <i class="bi bi-x-circle me-1"></i>
                         Clear
                     </a>
+
+                </div>
+
+            </div>
+
+            {{-- ADVANCED FILTERS --}}
+            <div class="collapse mt-3 {{ request()->filled('service') ? 'show' : '' }}" id="advancedFilters">
+
+                <div class="row g-3">
+
+                    {{-- SERVICE --}}
+                    <div class="col-md-4">
+                        <select name="service" class="form-select">
+                            <option value="">All Services</option>
+                            @forelse($services as $service)
+                                <option value="{{ $service->id }}" @selected(request('service') == $service->id)>
+                                    {{ $service->name }}
+                                </option>
+                            @empty
+                                <option value="" disabled>No services yet</option>
+                            @endforelse
+                        </select>
+                    </div>
 
                 </div>
 
@@ -100,12 +129,8 @@
 
 
         @php
-            $hasFilters =
-                request()->filled('search') ||
-                request()->filled('status') ||
-                request()->filled('therapist_assignment_status') ||
-                request()->filled('from') ||
-                request()->filled('to');
+            $hasFilters = request()->filled('search') || request()->filled('date_from') || request()->filled('date_to');
+            request()->filled('status') || request()->filled('service');
         @endphp
 
         @if ($hasFilters)
@@ -143,12 +168,18 @@
                         </span>
                     @endif
 
-                    @if (request('from') || request('to'))
+                    @if (request('date_from') || request('date_to'))
                         <span class="badge bg-secondary">
                             Date:
-                            {{ request('from') ?? '...' }}
+                            {{ request('date_from') ?? '...' }}
                             →
-                            {{ request('to') ?? '...' }}
+                            {{ request('date_to') ?? '...' }}
+                        </span>
+                    @endif
+
+                    @if ($selectedService)
+                        <span class="badge bg-dark">
+                            Service: {{ $selectedService->name }}
                         </span>
                     @endif
 
@@ -242,6 +273,7 @@
                                         @elseif($status == 'confirmed') bg-primary
                                         @elseif($status == 'active') bg-success
                                         @elseif($status == 'completed') bg-secondary
+                                         @elseif($status == 'rejected') bg-danger
                                         @elseif($status == 'cancelled') bg-danger @endif">
                                         {{ ucfirst($status) }}
                                     </span>

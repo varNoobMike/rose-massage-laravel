@@ -31,91 +31,121 @@
 
         <form action="{{ route('bookings.index') }}" method="GET">
 
-            <div class="row g-3">
+            <div class="row g-3 align-items-end">
 
                 {{-- SEARCH --}}
-                <div class="col-md-4">
+                <div class="col-md-5">
                     <input type="text" name="search" class="form-control"
-                        placeholder="Search booking id, client name, email, or id..." value="{{ request('search') }}">
+                        placeholder="Search by booking ID, client name, email..." value="{{ request('search') }}">
                 </div>
 
                 {{-- DATE FROM --}}
                 <div class="col-md-2">
-                    <div class="input-group">
-                        <span class="input-group-text">From</span>
-                        <input type="date" name="from" class="form-control" value="{{ request('from') }}">
-                    </div>
+                    <input type="date" name="date_from" class="form-control" value="{{ request('date_from') }}">
                 </div>
 
-                {{-- DATE TOa --}}
+                {{-- DATE TO --}}
                 <div class="col-md-2">
-                    <div class="input-group">
-                        <span class="input-group-text">To</span>
-                        <input type="date" name="to" class="form-control" value="{{ request('to') }}">
-                    </div>
-                </div>
-
-                {{-- STATUS --}}
-                <div class="col-md-2">
-                    <select name="status" class="form-select">
-
-                        <option value="" @selected(request('status') == '')>
-                            All Status
-                        </option>
-
-                        <option value="pending" @selected(request('status') == 'pending')>
-                            Pending
-                        </option>
-
-                        <option value="confirmed" @selected(request('status') == 'confirmed')>
-                            Confirmed
-                        </option>
-
-                        <option value="active" @selected(request('status') == 'active')>
-                            Active
-                        </option>
-
-                        <option value="completed" @selected(request('status') == 'completed')>
-                            Completed
-                        </option>
-
-                        <option value="cancelled" @selected(request('status') == 'cancelled')>
-                            Cancelled
-                        </option>
-
-                    </select>
-                </div>
-
-                {{-- THERAPIST ASSIGNMENT --}}
-                <div class="col-md-2">
-                    <select name="therapist_assignment_status" class="form-select">
-
-                        <option value="" @selected(request('therapist_assignment_status') == '')>
-                            All Assignment
-                        </option>
-
-                        <option value="unassigned" @selected(request('therapist_assignment_status') == 'unassigned')>
-                            Unassigned
-                        </option>
-
-                        <option value="assigned" @selected(request('therapist_assignment_status') == 'assigned')>
-                            Assigned
-                        </option>
-
-                    </select>
+                    <input type="date" name="date_to" class="form-control" value="{{ request('date_to') }}">
                 </div>
 
                 {{-- ACTIONS --}}
                 <div class="col-md-3 d-flex gap-2">
-                    <button class="btn btn-dark w-100">
-                        <i class="bi bi-funnel me-1"></i>
-                        Filter
+
+                    {{-- FILTER --}}
+                    <button class="btn btn-dark w-100" type="submit">
+                        <i class="bi bi-funnel"></i>
                     </button>
 
+                    {{-- MORE --}}
+                    <button class="btn btn-primary w-100" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#advancedFilters">
+                        <i class="bi bi-three-dots"></i>
+                    </button>
+
+                    {{-- CLEAR --}}
                     <a href="{{ route('bookings.index') }}" class="btn btn-outline-secondary w-100">
-                        <i class="bi bi-x-circle me-1"></i>
-                        Clear
+                        <i class="bi bi-x-circle"></i>
                     </a>
+
+                </div>
+
+                {{-- STATUS --}}
+                <div class="col-md-4 mt-2">
+                    <select name="status" class="form-select">
+
+                        <option value="">All Status</option>
+
+                        <option value="pending" @selected(request('status') == 'pending')>Pending</option>
+                        <option value="confirmed" @selected(request('status') == 'confirmed')>Confirmed</option>
+                        <option value="active" @selected(request('status') == 'active')>Active</option>
+                        <option value="completed" @selected(request('status') == 'completed')>Completed</option>
+                        <option value="cancelled" @selected(request('status') == 'cancelled')>Cancelled</option>
+
+                    </select>
+                </div>
+
+            </div>
+
+            {{-- ADVANCED FILTERS --}}
+            <div class="collapse mt-3 {{ request()->filled('therapist_assignment_status') ||
+            request()->filled('therapist') ||
+            request()->filled('service')
+                ? 'show'
+                : '' }}"
+                id="advancedFilters">
+
+                <div class="row g-3">
+
+                    {{-- THERAPIST ASSIGNMENT --}}
+                    <div class="col-md-4">
+                        <select name="therapist_assignment_status" class="form-select">
+
+                            <option value="">All Assignment</option>
+
+                            <option value="unassigned" @selected(request('therapist_assignment_status') == 'unassigned')>
+                                Unassigned
+                            </option>
+
+                            <option value="partial" @selected(request('therapist_assignment_status') == 'partial')>
+                                Partially Assigned
+                            </option>
+
+                            <option value="completed" @selected(request('therapist_assignment_status') == 'completed')>
+                                Completely Assigned
+                            </option>
+
+                        </select>
+                    </div>
+
+                    {{-- SERVICE --}}
+                    <div class="col-md-4">
+                        <select name="service" class="form-select">
+                            <option value="">All Services</option>
+                            @forelse($services as $service)
+                                <option value="{{ $service->id }}" @selected(request('service') == $service->id)>
+                                    {{ $service->name }}
+                                </option>
+                            @empty
+                                <option value="" disabled>No services yet</option>
+                            @endforelse
+                        </select>
+                    </div>
+
+                    {{-- THERAPIST --}}
+                    <div class="col-md-4">
+                        <select name="therapist" class="form-select">
+                            <option value="">All Therapists</option>
+                            @forelse($therapists as $therapist)
+                                <option value="{{ $therapist->id }}" @selected(request('therapist') == $therapist->id)>
+                                    {{ $therapist->name }}
+                                </option>
+                            @empty
+                                <option value="" disabled>No therapists yet</option>
+                            @endforelse
+                        </select>
+                    </div>
+
                 </div>
 
             </div>
@@ -131,10 +161,12 @@
     @php
         $hasFilters =
             request()->filled('search') ||
+            request()->filled('date_from') ||
+            request()->filled('date_to') ||
             request()->filled('status') ||
             request()->filled('therapist_assignment_status') ||
-            request()->filled('from') ||
-            request()->filled('to');
+            request()->filled('service') ||
+            request()->filled('therapist');
     @endphp
 
     @if ($hasFilters)
@@ -151,6 +183,15 @@
                     </span>
                 @endif
 
+                @if (request('date_from') || request('date_to'))
+                    <span class="badge bg-secondary">
+                        Date:
+                        {{ request('date_from') ?? '...' }}
+                        →
+                        {{ request('date_to') ?? '...' }}
+                    </span>
+                @endif
+
                 @if (request('status'))
                     <span @class([
                         'badge',
@@ -160,7 +201,7 @@
                         'bg-success' => request('status') === 'active',
                         'bg-secondary' => request('status') === 'completed',
                         'bg-danger' => request('status') === 'cancelled',
-                        'bg-dark' => request('status') === 'all' || !request('status'),
+                        'bg-dark' => !request('status'),
                     ])>
                         Status: {{ ucfirst(request('status') ?? 'all') }}
                     </span>
@@ -170,20 +211,27 @@
                     <span @class([
                         'badge',
                         'text-capitalize',
-                        'bg-success-subtle text-success' => request('therapist_assignment_status') === 'assigned',
                         'bg-warning text-dark' =>
                             request('therapist_assignment_status') === 'unassigned',
+                        'bg-white text-dark' =>
+                            request('therapist_assignment_status') === 'partial',
+                        'bg-success-subtle text-success' =>
+                            request('therapist_assignment_status') === 'completed',
                     ])>
-                        {{ ucfirst(request('therapist_assignment_status')) }}
+                        Therapist Assignment: {{ ucfirst(request('therapist_assignment_status')) }}
                     </span>
                 @endif
 
-                @if (request('from') || request('to'))
-                    <span class="badge bg-secondary">
-                        Date:
-                        {{ request('from') ?? '...' }}
-                        →
-                        {{ request('to') ?? '...' }}
+
+                @if ($selectedService)
+                    <span class="badge bg-dark">
+                        Service: {{ $selectedService->name }}
+                    </span>
+                @endif
+
+                @if ($selectedTherapist)
+                    <span class="badge bg-dark">
+                        Therapist: {{ $selectedTherapist->name }}
                     </span>
                 @endif
 
@@ -193,7 +241,7 @@
     @endif
 
     <!-- Table -->
-    <div class="card shadow-sm border">
+    <div id="bookings-table-wrapper" class="card shadow-sm border">
         <div class="table-responsive">
 
             <table class="table table-hover align-middle mb-0">
@@ -210,9 +258,22 @@
                     </tr>
                 </thead>
 
-                <tbody>
+                <tbody id="bookings-table-body">
 
                     @forelse($bookings as $booking)
+
+                        @php
+                            $status = $booking->status;
+                            $assignedTherapists = $booking->items
+                                ->whereNotNull('therapist_id')
+                                ->pluck('therapist')
+                                ->filter()
+                                ->unique('id');
+
+                            $totalItems = $booking->items->count();
+                            $assignedCount = $booking->items->whereNotNull('therapist_id')->count();
+                        @endphp
+
                         <tr>
 
                             <!-- BOOKING ID -->
@@ -261,16 +322,6 @@
 
                             <!-- THERAPIST -->
                             <td class="d-none d-lg-table-cell">
-                                @php
-                                    $assignedTherapists = $booking->items
-                                        ->whereNotNull('therapist_id')
-                                        ->pluck('therapist')
-                                        ->filter()
-                                        ->unique('id');
-
-                                    $totalItems = $booking->items->count();
-                                    $assignedCount = $booking->items->whereNotNull('therapist_id')->count();
-                                @endphp
 
                                 @if ($assignedTherapists->count())
                                     <div class="d-flex flex-wrap gap-1">
@@ -310,15 +361,13 @@
                             <!-- STATUS -->
                             <td class="d-none d-lg-table-cell">
 
-                                @php $status = $booking->status; @endphp
-
                                 <span
                                     class="badge
                                     @if ($status == 'pending') bg-warning text-dark
                                     @elseif($status == 'confirmed') bg-primary
                                     @elseif($status == 'active') bg-success
                                     @elseif($status == 'completed') bg-secondary
-                                    @elseif($status == 'cancelled') bg-danger @endif
+                                    @elseif($status == 'cancelled' || $status === 'rejected') bg-danger @endif
                                         text-uppercase small">
                                     {{ $status }}
                                 </span>
@@ -327,20 +376,69 @@
 
                             <!-- ACTIONS -->
                             <td class="text-end">
+                                <div class="d-flex justify-content-end gap-2">
 
-                                <div class="btn-group gap-2">
+                                    {{-- DROPDOWN --}}
+                                    <div class="dropdown">
+                                        <button class="btn btn-sm btn-secondary" data-bs-toggle="dropdown">
+                                            <i class="bi bi-three-dots-vertical"></i>
+                                        </button>
 
-                                    <a href="{{ route('bookings.show', $booking->id) }}"
-                                        class="btn btn-sm btn-secondary">
-                                        <i class="bi bi-eye"></i>
-                                    </a>
+                                        <ul class="dropdown-menu dropdown-menu-end shadow-sm">
 
-                                    <a href="{{ route('bookings.edit', $booking->id) }}" class="btn btn-sm btn-primary">
-                                        <i class="bi bi-pencil"></i>
-                                    </a>
+                                            {{-- VIEW --}}
+                                            <li>
+                                                <a href="{{ route('bookings.show', $booking->id) }}"
+                                                    class="dropdown-item btn btn-sm btn-outline-secondary" title="View">
+                                                    <i class="bi bi-eye me-2"></i> View
+                                                </a>
+                                            </li>
+
+                                            {{-- PENDING --}}
+                                            @if ($status === 'pending')
+                                                <li>
+                                                    <form action="{{ route('bookings.confirm', $booking->id) }}"
+                                                        method="POST" onsubmit="return confirm('Confirm this booking?')">
+                                                        @csrf
+                                                        <button class="dropdown-item text-success">
+                                                            <i class="bi bi-check-lg me-2"></i> Confirm
+                                                        </button>
+                                                    </form>
+                                                </li>
+
+                                                <li>
+                                                    <form action="{{ route('bookings.reject', $booking->id) }}"
+                                                        method="POST" onsubmit="return confirm('Reject this booking?')">
+                                                        @csrf
+                                                        <button class="dropdown-item text-danger">
+                                                            <i class="bi bi-x-circle me-2"></i> Reject
+                                                        </button>
+                                                    </form>
+                                                </li>
+                                            @endif
+
+                                            {{-- CONFIRMED, etc --}}
+                                            @if (in_array($status, ['confirmed', 'active', 'completed']))
+                                                <li>
+                                                    <a href="{{ route('therapist-assignments.index', $booking->id) }}"
+                                                        class="dropdown-item text-success">
+                                                        <i class="bi bi-person-plus me-2"></i> Assign Therapist
+                                                    </a>
+                                                </li>
+                                            @endif
+
+
+                                            <li>
+                                                <a href="{{ route('bookings.edit', $booking->id) }}"
+                                                    class="dropdown-item btn btn-sm btn-outline-secondary" title="Edit">
+                                                    <i class="bi bi-pencil-square me-2"></i> Edit
+                                                </a>
+                                            </li>
+
+                                        </ul>
+                                    </div>
 
                                 </div>
-
                             </td>
 
                         </tr>
@@ -401,3 +499,4 @@
     </div>
 
 @endsection
+

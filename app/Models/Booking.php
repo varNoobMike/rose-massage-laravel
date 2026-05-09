@@ -9,6 +9,22 @@ class Booking extends Model
 {
     use HasFactory;
 
+    public const STATUS_PENDING = 'pending';
+    public const STATUS_CONFIRMED = 'confirmed';
+    public const STATUS_ACTIVE = 'active';
+    public const STATUS_COMPLETED = 'completed';
+    public const STATUS_CANCELLED = 'cancelled';
+    public const STATUS_REJECTED = 'rejected';
+
+    public const STATUSES = [
+        self::STATUS_PENDING,
+        self::STATUS_CONFIRMED,
+        self::STATUS_ACTIVE,
+        self::STATUS_COMPLETED,
+        self::STATUS_CANCELLED,
+        self::STATUS_REJECTED,
+    ];
+
     protected $fillable = [
         'client_id',
         'spa_id',
@@ -20,7 +36,7 @@ class Booking extends Model
         'notes',
     ];
 
-    // 👤 Client (user who booked)
+    // Client (user who booked)
     public function client()
     {
         return $this->belongsTo(User::class, 'client_id');
@@ -38,10 +54,9 @@ class Booking extends Model
         return $this->belongsTo(Spa::class);
     }
 
+    // Each booking have one review
     public function review()
     {
         return $this->hasOne(Review::class);
     }
-
-
 }

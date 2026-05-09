@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Actions\ActivityLog\GetFilteredLogs;
 use App\Models\ActivityLog;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class ActivityLogController extends Controller
 {
@@ -23,7 +24,7 @@ class ActivityLogController extends Controller
                 'to',
             ]),
             $this->currentUserRole(),
-            auth()->id()
+           Auth::id()
         );
 
         return view(

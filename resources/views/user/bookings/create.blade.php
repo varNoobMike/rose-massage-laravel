@@ -10,7 +10,6 @@
 @section('page-header-title', 'Book Therapy')
 @section('page-header-subtitle', 'Schedule massage therapy')
 
-
 @section('content')
 
     <div class="container px-lg-5">
@@ -20,22 +19,49 @@
             @if ($errors->any())
                 <div class="col-12">
                     <div class="alert alert-danger alert-dismissible fade show">
-                        <strong>Please fix the following:</strong>
+                        <strong>Please review your booking:</strong>
                         <ul class="mb-0 mt-2">
                             @foreach ($errors->all() as $error)
                                 <li>{{ $error }}</li>
                             @endforeach
                         </ul>
-
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
                 </div>
             @endif
 
-
-
             {{-- LEFT FORM --}}
             <div class="col-lg-7">
+
+                {{-- 🔥 MOBILE QUICK SUMMARY --}}
+                <div class="d-lg-none mb-3">
+
+                    <div class="card shadow-sm border">
+                        <div class="card-body py-2">
+
+                            <div class="d-flex justify-content-between align-items-center">
+
+                                <div>
+                                    <div class="fw-bold">Selected</div>
+                                    <small class="text-muted" id="mobileServiceCount">0 services</small>
+                                </div>
+
+                                <div class="text-end">
+                                    <div class="fw-bold text-primary" id="mobileTotal">₱0.00</div>
+                                    <small class="text-muted" id="mobileDuration">0 min</small>
+                                </div>
+
+                            </div>
+
+                            {{-- QUICK SERVICE CHIPS --}}
+                            <div id="mobileServiceList" class="mt-2 d-flex flex-wrap gap-1">
+                                <span class="text-muted small">No services selected</span>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
 
                 <div class="card shadow-sm border">
                     <div class="card-body p-4">
@@ -46,32 +72,30 @@
                             {{-- DATE / TIME --}}
                             <div class="row g-3 mb-3">
 
+                                {{-- DATE --}}
                                 <div class="col-md-6">
                                     <label class="form-label fw-bold">Date</label>
 
                                     <input type="date" id="dateInput" name="booking_date"
                                         min="{{ now()->format('Y-m-d') }}"
                                         class="form-control @error('booking_date') is-invalid @enderror"
-                                        value="{{ old('booking_date') }}" required>
+                                        value="{{ old('booking_date') }}">
 
                                     @error('booking_date')
-                                        <div class="invalid-feedback">
-                                            {{ $message }}
-                                        </div>
+                                        <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
 
+                                {{-- TIME --}}
                                 <div class="col-md-6">
                                     <label class="form-label fw-bold">Time</label>
 
                                     <input type="time" id="timeInput" name="start_time"
                                         class="form-control @error('start_time') is-invalid @enderror"
-                                        value="{{ old('start_time') }}" required>
+                                        value="{{ old('start_time') }}">
 
                                     @error('start_time')
-                                        <div class="invalid-feedback">
-                                            {{ $message }}
-                                        </div>
+                                        <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
 
@@ -81,23 +105,25 @@
                             <div class="mb-3">
                                 <label class="form-label fw-bold">Service</label>
 
-                                <select id="serviceSelect" class="form-select @error('services') is-invalid @enderror">
+                                <select id="serviceSelect" name="service_select"
+                                    class="form-select @error('services') is-invalid @enderror">
+
                                     <option value="">Select service</option>
 
                                     @foreach ($services as $service)
                                         <option value="{{ $service->id }}" data-name="{{ $service->name }}"
                                             data-price="{{ $service->price }}"
-                                            data-duration="{{ $service->duration_minutes }}"
-                                            {{ request('service') == $service->id ? 'selected' : '' }}>
+                                            data-duration="{{ $service->duration_minutes }}">
                                             {{ $service->name }}
                                             ({{ $service->duration_minutes }} min •
                                             ₱{{ number_format($service->price, 2) }})
                                         </option>
                                     @endforeach
+
                                 </select>
 
                                 @error('services')
-                                    <div class="text-danger small mt-1">
+                                    <div class="invalid-feedback">
                                         {{ $message }}
                                     </div>
                                 @enderror
@@ -107,7 +133,7 @@
                                 + Add Service
                             </button>
 
-                            {{-- STRUCTURED INPUTS --}}
+                            {{-- SERVICES --}}
                             <div id="servicesContainer"></div>
 
                             {{-- NOTES --}}
@@ -117,15 +143,20 @@
                                 <textarea name="notes" class="form-control @error('notes') is-invalid @enderror" rows="3">{{ old('notes') }}</textarea>
 
                                 @error('notes')
-                                    <div class="invalid-feedback">
-                                        {{ $message }}
-                                    </div>
+                                    <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
 
-                            <button type="submit" id="submitBtn" class="btn btn-success w-100 fw-bold" disabled>
+                            {{-- SUBMIT --}}
+                            <button type="submit" class="btn btn-success w-100 fw-bold">
                                 Confirm Booking
                             </button>
+
+                            <div class="text-center mt-2">
+                                <small id="submitHint" class="text-muted">
+                                    You can submit anytime. Add services for a complete booking.
+                                </small>
+                            </div>
 
                         </form>
 
@@ -134,10 +165,10 @@
 
             </div>
 
-            {{-- RIGHT SUMMARY --}}
+            {{-- RIGHT SUMMARY (DESKTOP ONLY) --}}
             <div class="col-lg-5">
 
-                <div class="card shadow-sm border sticky-top" style="top:100px;">
+                <div class="card shadow-sm border sticky-top d-none d-lg-block" style="top:100px;">
                     <div class="card-body">
 
                         <h5 class="fw-bold mb-3">Booking Summary</h5>
@@ -154,8 +185,8 @@
 
                         <hr>
 
-                        <div id="cartList" class="text-muted small">
-                            <div class="text-center py-3">No services selected</div>
+                        <div id="cartList" class="text-muted small text-center py-3">
+                            No services selected
                         </div>
 
                         <hr>
@@ -185,6 +216,43 @@
         $(function() {
 
             let cart = [];
+
+            function formatDuration(minutes) {
+                if (minutes < 60) return minutes + ' min';
+
+                let hrs = Math.floor(minutes / 60);
+                let mins = minutes % 60;
+
+                return mins === 0 ?
+                    `${hrs} hr${hrs > 1 ? 's' : ''}` :
+                    `${hrs} hr${hrs > 1 ? 's' : ''} ${mins} min`;
+            }
+
+            function updateMobileSummary(total, duration) {
+
+                $('#mobileTotal').text(
+                    '₱' + total.toLocaleString('en-PH', {
+                        minimumFractionDigits: 2
+                    })
+                );
+
+                $('#mobileDuration').text(duration + ' min');
+                $('#mobileServiceCount').text(cart.length + ' services');
+
+                let chips = '';
+
+                cart.forEach(item => {
+                    chips += `
+                <span class="badge bg-primary">
+                    ${item.name}
+                </span>
+            `;
+                });
+
+                $('#mobileServiceList').html(
+                    chips || `<span class="text-muted small">No services selected</span>`
+                );
+            }
 
             function render() {
 
@@ -223,7 +291,6 @@
                     $('#servicesContainer').append(`
                 <input type="hidden" name="services[${i}][id]" value="${item.id}">
             `);
-
                 });
 
                 $('#cartList').html(html);
@@ -234,14 +301,10 @@
                     })
                 );
 
-                $('#summaryDuration').text(duration + ' min');
+                $('#summaryDuration').text(formatDuration(duration));
 
-                let valid =
-                    cart.length > 0 &&
-                    $('#dateInput').val() &&
-                    $('#timeInput').val();
-
-                $('#submitBtn').prop('disabled', !valid);
+                // 🔥 mobile sync
+                updateMobileSummary(total, duration);
             }
 
             // ADD SERVICE
@@ -254,9 +317,11 @@
                 let id = parseInt(opt.val());
 
                 if (cart.find(x => x.id == id)) {
-                    alert('Already added');
+                    $('#serviceSelect').addClass('is-invalid');
                     return;
                 }
+
+                $('#serviceSelect').removeClass('is-invalid');
 
                 cart.push({
                     id: id,
@@ -276,30 +341,30 @@
                 render();
             });
 
-            // DATE/TIME
-            $('#dateInput, #timeInput').on('change', function() {
+            function formatTime12hr(time) {
+                if (!time) return '—';
 
+                let [hour, minute] = time.split(':');
+                hour = parseInt(hour);
+
+                let ampm = hour >= 12 ? 'PM' : 'AM';
+                hour = hour % 12;
+                hour = hour ? hour : 12;
+
+                return `${hour}:${minute} ${ampm}`;
+            }
+
+            $('#dateInput, #timeInput').on('change', function() {
                 $('#summaryDate').text($('#dateInput').val() || '—');
-                $('#summaryTime').text($('#timeInput').val() || '—');
+
+                let rawTime = $('#timeInput').val();
+                $('#summaryTime').text(formatTime12hr(rawTime));
 
                 render();
             });
 
-            // FINAL SUBMIT VALIDATION
-            $('#bookingForm').submit(function(e) {
-
-                if (cart.length === 0) {
-                    e.preventDefault();
-                    alert('Please add at least one service.');
-                    return;
-                }
-
-                if (!$('#dateInput').val() || !$('#timeInput').val()) {
-                    e.preventDefault();
-                    alert('Please select date and time.');
-                    return;
-                }
-
+            $('#bookingForm').submit(function() {
+                // no blocking logic
             });
 
         });

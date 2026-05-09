@@ -4,7 +4,7 @@
 
 @section('breadcrumb', true)
 
-@if($review->user_id === auth()->user()->id)
+@if($review->user_id === auth()->user()?->id)
     @section('breadcrumb-parent', 'Booking #' . ($review->booking->id ?? ''))
     @section('breadcrumb-parent-url', route('bookings.show', $review->booking_id))
     @section('page-header', true)
@@ -19,14 +19,13 @@
 @endif
 
 
-
 @section('content')
 
     <div class="container px-lg-5">
 
         <div class="row g-4">
 
-            @if($review->user_id === auth()->user()->id)
+            @if($review->user_id === auth()->user()?->id)
                 <!-- LEFT: BOOKING SUMMARY -->
                 <div class="col-md-4 order-2 order-md-1">
 
@@ -70,7 +69,7 @@
             @endif
 
             <!-- RIGHT: REVIEW DETAILS -->
-            <div class="{{ $review->user_id === auth()->user()->id ? 'col-md-12' : 'col-md-8' }} order-1 order-md-2">
+            <div class="{{ $review->user_id === auth()->user()?->id ? 'col-md-12' : 'col-md-8' }} order-1 order-md-2">
 
                 <!-- REVIEW CARD -->
                 <div class="card shadow-sm border">
@@ -81,11 +80,11 @@
                         <div class="d-flex justify-content-between align-items-start mb-3">
 
                             <div>
-                                <h5 class="fw-bold mb-1">{{ $review->user_id === auth()->user()->id ? 'Your' : '' }} Review</h5>
+                                <h5 class="fw-bold mb-1">{{ $review->user_id === auth()->user()?->id ? 'Your' : '' }} Review</h5>
 
                             
                                 <small class="text-muted">
-                                    @if($review->user_id === auth()->user()->id)
+                                    @if($review->user_id === auth()->user()?->id)
                                         Booking #{{ $review->booking_id }}
                                     @else
                                         Review #{{ $review->id }}
@@ -96,7 +95,7 @@
 
                             <div class="text-end">
 
-                                @if($review->user_id === auth()->user()->id)
+                                @if($review->user_id === auth()->user()?->id)
                                     <span class="badge
                                         @if ($review->status === 'approved') bg-success
                                         @elseif ($review->status === 'rejected') bg-danger
@@ -168,7 +167,7 @@
 
                             <div class="d-flex gap-2">             
 
-                                @if($review->user_id === auth()->user()->id)
+                                @if($review->user_id === auth()->user()?->id)
 
                                     <a href="{{ route('bookings.show', $review->booking_id) }}"
                                         class="btn btn-outline-secondary btn-sm">

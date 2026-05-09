@@ -13,15 +13,11 @@ use Carbon\Carbon;
 
 class StoreBooking
 {
-    public function execute($user, array $data): Booking
+    public function execute(User $user, array $data): Booking
     {
         return DB::transaction(function () use ($user, $data) {
 
             $services = array_values($data['services'] ?? []);
-
-            if (empty($services)) {
-                throw new \Exception('Services cannot be empty.');
-            }
 
             $startTime = Carbon::parse($data['start_time']);
 
@@ -46,7 +42,7 @@ class StoreBooking
                 'booking_date' => $data['booking_date'],
                 'start_time' => $startTime->format('H:i:s'),
                 'end_time' => $endTime->format('H:i:s'),
-                'status' => 'pending',
+                'status' => Booking::STATUS_PENDING,
                 'total_amount' => $totalAmount,
                 'therapist_assigned' => 0,
                 'notes' => $data['notes'] ?? null,
@@ -67,14 +63,14 @@ class StoreBooking
                 ]);
             }
 
-            // Send notifications (still inside transaction, needs future improvement ex: put notification outside transaction or use queue)
+            // Send notification
             $recipients = User::whereIn('role', [
                 User::ROLE_ADMIN,
                 User::ROLE_OWNER,
                 User::ROLE_RECEPTIONIST,
             ])->get();
 
-            // include the owner only
+            // include the owner(client who created the booking) only
             $recipients->push($booking->client);
 
             Notification::send($recipients, new NewBookingNotification($booking));

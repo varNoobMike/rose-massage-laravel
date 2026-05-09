@@ -67,7 +67,7 @@ class ReviewController extends Controller
         );
 
         return to_route('bookings.show', $booking->id)
-            ->with('success', 'Review submitted successfully!');
+            ->with('success', 'Review submitted successfully. Please wait for admin approval to publish your review.');
        
     }
 

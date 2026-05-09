@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('page-title', 'Rose Massage Services')</title>
@@ -78,7 +79,7 @@
                             </li>
                         @endif
 
-                        @if ($role === 'owner') 
+                        @if ($role === 'owner')
                             <li class="nav-item mb-1">
                                 <a href="{{ route('clients.index') }}"
                                     class="nav-link {{ request()->routeIs('clients*') ? 'text-bg-primary fw-bold' : 'text-dark opacity-75' }} px-3 py-2 d-flex align-items-center">
@@ -216,7 +217,7 @@
                             </li>
                         @endif
 
-                         <!-- Clients, Receptionists -->
+                        <!-- Clients, Receptionists -->
                         @if ($role === 'owner')
                             <li class="nav-item mb-1">
                                 <a href="{{ route('clients.index') }}"
@@ -249,42 +250,92 @@
                         <!-- Announcements -->
                         <li class="nav-item mb-1">
                             <a href="{{ route('announcements.index') }}"
-                                    class="nav-link {{ request()->routeIs('announcements*') ? 'text-primary bg-light fw-bold' : 'text-dark opacity-75' }} px-3 py-2 d-flex align-items-center">
-                                    <i class="bi bi-megaphone me-3"></i>
-                                    <span>Announcements</span>
+                                class="nav-link {{ request()->routeIs('announcements*') ? 'text-primary bg-light fw-bold' : 'text-dark opacity-75' }} px-3 py-2 d-flex align-items-center">
+                                <i class="bi bi-megaphone me-3"></i>
+                                <span>Announcements</span>
                             </a>
                         </li>
 
                         <!-- Reviews -->
                         <li class="nav-item mb-1">
                             <a href="{{ route('reviews.index') }}"
-                                    class="nav-link {{ request()->routeIs('reviews*') ? 'text-primary bg-light fw-bold' : 'text-dark opacity-75' }} px-3 py-2 d-flex align-items-center">
-                                    <i class="bi bi-star me-3"></i>
-                                    <span>Reviews</span>
+                                class="nav-link {{ request()->routeIs('reviews*') ? 'text-primary bg-light fw-bold' : 'text-dark opacity-75' }} px-3 py-2 d-flex align-items-center">
+                                <i class="bi bi-star me-3"></i>
+                                <span>Reviews</span>
                             </a>
                         </li>
 
 
                         @if ($role === 'admin' || $role === 'owner')
                             <li class="nav-item mb-1">
-                            <a href="{{ route('reports.bookings') }}"
+                                <a href="{{ route('reports.bookings') }}"
                                     class="nav-link {{ request()->routeIs('reports*') ? 'text-primary bg-light fw-bold' : 'text-dark opacity-75' }} px-3 py-2 d-flex align-items-center">
                                     <i class="bi bi-bar-chart me-3"></i>
                                     <span>Reports</span>
-                            </a>
-                        </li>
+                                </a>
+                            </li>
                         @endif
 
                         <!-- Activity Logs -->
                         <li class="nav-item mb-1">
                             <a href="{{ route('activity-logs.index') }}"
-                                    class="nav-link {{ request()->routeIs('activity-logs*') ? 'text-primary bg-light fw-bold' : 'text-dark opacity-75' }} px-3 py-2 d-flex align-items-center">
-                                    <i class="bi bi-clock-history me-3"></i>
-                                    <span>Activity Logs</span>
+                                class="nav-link {{ request()->routeIs('activity-logs*') ? 'text-primary bg-light fw-bold' : 'text-dark opacity-75' }} px-3 py-2 d-flex align-items-center">
+                                <i class="bi bi-clock-history me-3"></i>
+                                <span>Activity Logs</span>
                             </a>
                         </li>
-                        
+
                     </ul>
+
+                    <div class="p-3 border-bottom">
+
+                        @auth
+                            <div class="dropdown">
+
+                                <a href="#"
+                                    class="d-flex align-items-center gap-3 text-decoration-none dropdown-toggle"
+                                    data-bs-toggle="dropdown">
+
+                                    @if (auth()->user()->profile?->avatar)
+                                        <img src="{{ asset('storage/' . auth()->user()->profile?->avatar) }}"
+                                            class="rounded-circle" style="width:45px; height:45px; object-fit:cover;">
+                                    @else
+                                        <img src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name) }}&background=5f4be6&color=fff"
+                                            class="rounded-circle" style="width:45px; height:45px;">
+                                    @endif
+
+                                    <div>
+                                        <h6 class="mb-0 fw-bold text-dark">{{ auth()->user()->name }}</h6>
+                                        <small class="text-muted text-capitalize">{{ auth()->user()->role }}</small>
+                                    </div>
+
+                                </a>
+
+                                <ul class="dropdown-menu w-100 mt-2 shadow border-0 rounded">
+
+                                    <li>
+                                        <a href="/profile" class="dropdown-item">
+                                            <i class="bi bi-person-circle me-2"></i> Profile
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
+
+                                    <li>
+                                        <a href="#" class="dropdown-item text-danger"
+                                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                            <i class="bi bi-box-arrow-right me-2"></i> Logout
+                                        </a>
+                                    </li>
+
+                                </ul>
+
+                            </div>
+                        @endauth
+
+                    </div>
                 </div>
             </div>
 
@@ -330,45 +381,45 @@
                                         </a>
                                     </li>
 
-                                <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle d-flex align-items-center p-0 shadow-none border-0"
-                                        href="#" role="button" data-bs-toggle="dropdown">
-                                        @if (auth()->user()->profile?->avatar)
-                                            <img src="{{ asset('storage/' . auth()->user()?->profile?->avatar) }}"
-                                                alt="{{ auth()->user()->name }}" class="rounded-circle border"
-                                                style="width: 32px; height: 32px; object-fit: cover;">
-                                        @else
-                                            <img src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name) }}&background=5f4be6&color=fff"
-                                                alt="{{ auth()->user()->name }}" class="rounded-circle"
-                                                style="width: 32px; height: 32px;">
-                                        @endif
-                                    </a>
+                                    <li class="nav-item dropdown">
+                                        <a class="nav-link dropdown-toggle d-flex align-items-center p-0 shadow-none border-0"
+                                            href="#" role="button" data-bs-toggle="dropdown">
+                                            @if (auth()->user()->profile?->avatar)
+                                                <img src="{{ asset('storage/' . auth()->user()?->profile?->avatar) }}"
+                                                    alt="{{ auth()->user()->name }}" class="rounded-circle border"
+                                                    style="width: 32px; height: 32px; object-fit: cover;">
+                                            @else
+                                                <img src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name) }}&background=5f4be6&color=fff"
+                                                    alt="{{ auth()->user()->name }}" class="rounded-circle"
+                                                    style="width: 32px; height: 32px;">
+                                            @endif
+                                        </a>
 
-                                    <ul class="dropdown-menu dropdown-menu-end border-0 shadow rounded mt-lg-3">
-                                        <li class="dropdown-header text-dark">
-                                            <h6>{{ auth()->user()->name }}</h6>
-                                            <p class="text-primary mb-1">{{ ucfirst(auth()->user()?->role) }}</p>
-                                        </li>
-                                        <li>
-                                            <a href="" class="dropdown-item">
-                                                <i class="bi bi-person-circle me-1"></i> Profile
-                                            </a>
-                                        </li>
-                                        <hr class="dropdown-divider">
-                                        <li>
-                                            <a href="#" class="dropdown-item text-danger"
-                                                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                                <i class="bi bi-box-arrow-right me-1"></i> Logout
-                                            </a>
+                                        <ul class="dropdown-menu dropdown-menu-end border-0 shadow rounded mt-lg-3">
+                                            <li class="dropdown-header text-dark">
+                                                <h6>{{ auth()->user()->name }}</h6>
+                                                <p class="text-primary mb-1">{{ ucfirst(auth()->user()?->role) }}</p>
+                                            </li>
+                                            <li>
+                                                <a href="" class="dropdown-item">
+                                                    <i class="bi bi-person-circle me-1"></i> Profile
+                                                </a>
+                                            </li>
+                                            <hr class="dropdown-divider">
+                                            <li>
+                                                <a href="#" class="dropdown-item text-danger"
+                                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                                    <i class="bi bi-box-arrow-right me-1"></i> Logout
+                                                </a>
 
-                                            <form id="logout-form" action="{{ route('logout') }}" method="POST"
-                                                class="d-none">
-                                                @csrf
-                                            </form>
-                                        </li>
-                                    </ul>
+                                                <form id="logout-form" action="{{ route('logout') }}" method="POST"
+                                                    class="d-none">
+                                                    @csrf
+                                                </form>
+                                            </li>
+                                        </ul>
 
-                                </li>
+                                    </li>
                                 @endauth
                             </ul>
                         </div>

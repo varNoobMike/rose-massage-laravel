@@ -174,7 +174,8 @@
                                 <td class="text-center">
                                     <span class="badge bg-light text-dark">
                                         @php $type = $notification->type @endphp
-                                        @if ($type === App\Notifications\NewBookingNotification::class)
+                                        @if (($type === App\Notifications\NewBookingNotification::class) ||
+                                            ($type === App\Notifications\BookingStatusNotification::class))
                                             Booking
                                         @elseif($type === App\Notifications\NewBookingReviewNotification::class)
                                             Review
@@ -213,7 +214,9 @@
 
                                         @php $type = $notification->type; @endphp
 
-                                        @if ($type === App\Notifications\NewBookingNotification::class)
+                                        @if (
+                                            $type === App\Notifications\NewBookingNotification::class ||
+                                                $type === App\Notifications\BookingStatusNotification::class)
                                             <a href="{{ route('bookings.show', $notification->data['booking_id']) }}"
                                                 class="btn btn-sm btn-outline-secondary">
                                                 <i class="bi bi-eye"></i>

@@ -7,7 +7,7 @@ use App\Models\User;
 
 class GetFilteredReviews
 {
-    public function execute(array $filters, string $userRole)
+    public function execute(array $filters, ?string $userRole = null)
     {
         $search = $filters['search'] ?? null;
         $dateFrom = $filters['from'] ?? null;
@@ -19,7 +19,7 @@ class GetFilteredReviews
             ->with(['user.profile', 'booking']); // eager load to avoid N+1
 
         // fetch only approved reviews if current user is client
-        if($userRole === User::ROLE_CLIENT) {
+        if($userRole === User::ROLE_CLIENT || !$userRole) {
             $query->where('status', 'approved');
         }
 

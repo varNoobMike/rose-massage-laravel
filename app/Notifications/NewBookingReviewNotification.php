@@ -2,14 +2,15 @@
 
 namespace App\Notifications;
 
+use App\Models\Review;
 use App\Models\User;
 use Illuminate\Notifications\Notification;
 
 class NewBookingReviewNotification extends Notification
 {
-    public $review;
+    public Review $review;
 
-    public function __construct($review)
+    public function __construct(Review $review)
     {
         $this->review = $review;
     }

@@ -34,7 +34,7 @@
 
                 {{-- SEARCH --}}
                 <div class="col-12 col-md-3">
-                    <input type="text" name="search" class="form-control" placeholder="Search service name, id..."
+                    <input type="text" name="search" class="form-control" placeholder="Search by service ID, name..."
                         value="{{ request('search') }}">
                 </div>
 
@@ -184,7 +184,7 @@
 
                 <thead class="table-light">
                     <tr>
-                        <th>ID</th>
+                        <th>Service ID</th>
                         <th>Service Details</th>
                         <th class="text-center d-none d-lg-table-cell">Duration</th>
                         <th>Price</th>

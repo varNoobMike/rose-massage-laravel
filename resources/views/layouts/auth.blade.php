@@ -38,6 +38,10 @@
             </div>
             <div class="col-lg-4">
                 <div class="container p-5">
+                    <a href="{{ route('home') }}" class="fw-semibold text-decoration-none">
+                        <i class="bi bi-arrow-left me-1"></i>
+                        Back to Home
+                    </a>
                     <div class="row d-flex justify-content-center align-items-center mt-5">
                          @yield('content')
                     </div>

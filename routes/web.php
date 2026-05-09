@@ -10,6 +10,7 @@ use App\Http\Controllers\ReceptionistController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\TherapistAssignmentController;
 use App\Http\Controllers\TherapistController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -36,7 +37,7 @@ Route::get('/test-email', function () {
 });
 
 
-Route::get('clear-session', function(){
+Route::get('clear-session', function () {
     Auth::logout();
     return to_route('login');
 });
@@ -144,7 +145,7 @@ Route::prefix('/activity-logs')->middleware('auth')->name('activity-logs.')->gro
     Route::get('/create', [ActivityLogController::class, 'create'])->name('create');
     Route::post('/', [ActivityLogController::class, 'store'])->name('store');
     // read
-    Route::get('/', [ActivityLogController::class, 'index'])->name('index'); 
+    Route::get('/', [ActivityLogController::class, 'index'])->name('index');
     Route::get('/{log}', [ActivityLogController::class, 'show'])->name('show');
 });
 
@@ -156,7 +157,7 @@ Route::prefix('/announcements')->middleware('auth')->name('announcements.')->gro
     Route::get('/create', [AnnouncementController::class, 'create'])->name('create');
     Route::post('/', [AnnouncementController::class, 'store'])->name('store');
     // read
-    Route::get('/', [AnnouncementController::class, 'index'])->name('index'); 
+    Route::get('/', [AnnouncementController::class, 'index'])->name('index');
     Route::get('/{announcement}', [AnnouncementController::class, 'show'])->name('show');
     // update
     Route::get('/{announcement}/edit', [AnnouncementController::class, 'edit'])->name('edit');
@@ -181,10 +182,26 @@ Route::prefix('/bookings')->middleware('auth')->name('bookings.')->group(functio
     Route::get('/{booking}/edit', [BookingController::class, 'edit'])->name('edit');
     Route::put('/{booking}', [BookingController::class, 'update'])->name('update');
     // custom
+    Route::get('/list', [BookingController::class, 'list'])->name('list');
     Route::post('/{booking}/confirm', [BookingController::class, 'confirm'])->name('confirm');
-    Route::post('/{booking}/complete', [BookingController::class, 'complete'])->name('complete');
+    Route::post('/{booking}/reject', [BookingController::class, 'reject'])->name('reject');
     Route::post('/{booking}/cancel', [BookingController::class, 'cancel'])->name('cancel');
+    Route::post('/sync-statuses', [BookingController::class, 'syncStatuses'])->name('sync-statuses');
+    Route::post('/{booking}/assign-therapist', [BookingController::class, 'assignTherapist'])->name('assign-therapist');
 });
+
+
+/**
+ * Therapist Assignment
+ * 
+ */
+Route::prefix('/therapist-assignments')->middleware('auth')->name('therapist-assignments.')->group(function () {
+    //read
+    Route::get('/{booking}', [TherapistAssignmentController::class, 'index'])->name('index');
+    Route::put('/{booking}', [TherapistAssignmentController::class, 'update'])->name('update');
+});
+
+
 
 
 /**
@@ -227,7 +244,7 @@ Route::prefix('/notifications')->middleware('auth')->name('notifications.')->gro
 /**
  * Receptionist Routes
  */
-    Route::prefix('/receptionists')->middleware('auth')->name('receptionists.')->group(function () {
+Route::prefix('/receptionists')->middleware('auth')->name('receptionists.')->group(function () {
     Route::get('/', [ReceptionistController::class, 'index'])->name('index');
     Route::get('/create', [ReceptionistController::class, 'create'])->name('create');
     Route::post('/', [ReceptionistController::class, 'store'])->name('store');
@@ -322,5 +339,3 @@ Route::prefix('/users')->middleware('auth')->name('users.')->group(function () {
     Route::get('/{user}/edit', [UserController::class, 'edit'])->name('edit');
     Route::put('/{user}', [UserController::class, 'update'])->name('update');
 });
-
-

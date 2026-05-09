@@ -64,7 +64,7 @@
             </div>
         </div>
 
-        <button type="submit" class="btn btn-primary w-100 shadow-sm">
+        <button type="submit" class="btn btn-success w-100 shadow-sm">
             <i class="bi bi-box-arrow-in-right me-2"></i> Login
         </button>
 
