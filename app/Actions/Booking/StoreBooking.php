@@ -24,7 +24,7 @@ class StoreBooking
             $totalAmount = 0;
             $totalDuration = 0;
 
-            // Compute totals
+            // compute totals
             foreach ($services as $item) {
                 $service = Service::findOrFail($item['id']);
                 $totalAmount += $service->price;
@@ -35,7 +35,7 @@ class StoreBooking
 
             $firstService = Service::findOrFail($services[0]['id']);
 
-            // Create booking
+            // create booking
             $booking = Booking::create([
                 'client_id' => $user->id,
                 'spa_id' => $firstService->spa_id,
@@ -48,7 +48,7 @@ class StoreBooking
                 'notes' => $data['notes'] ?? null,
             ]);
 
-            // Create booking items
+            // create booking items
             foreach ($services as $item) {
                 $service = Service::findOrFail($item['id']);
 
@@ -63,7 +63,7 @@ class StoreBooking
                 ]);
             }
 
-            // Send notification
+            // send notification
             $recipients = User::whereIn('role', [
                 User::ROLE_ADMIN,
                 User::ROLE_OWNER,

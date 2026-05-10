@@ -7,14 +7,10 @@ use App\Actions\User\StoreUser;
 use App\Actions\User\UpdateUser;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 
 class TherapistController extends Controller
 {
-
+    
     public function index(Request $request, GetFilteredUsers $action)
     {
         $userRole = $this->currentUserRole();

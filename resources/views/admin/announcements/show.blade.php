@@ -7,13 +7,6 @@
 @section('page-header', true)
 @section('page-header-title-showpage', 'Announcement #' . $announcement->id)
 @section('page-header-subtitle', 'Review and manage this announcement')
-@section('page-header-actions')
-    @if (auth()->user()->role !== 'receptionist')
-        <a href="{{ route('announcements.edit', $announcement->id) }}" class="btn btn-primary px-4 shadow-sm">
-            <i class="bi bi-pencil-square me-2"></i> Edit
-        </a>
-    @endif
-@endsection
 
 @section('content')
     <div class="row g-4">
@@ -65,12 +58,13 @@
                                         Type
                                     </td>
                                     <td class="py-4 pe-4">
-                                         <span
-                                            class="badge
-                                            @if ($announcement->type == 'promo') bg-success
-                                            @elseif($announcement->type == 'update') bg-primary
-                                            @elseif($announcement->type == 'alert') bg-danger
-                                            @else bg-secondary @endif">
+                                        <span @class([
+                                            'badge',
+                                            'bg-success' => $announcement->type === 'promo',
+                                            'bg-primary' => $announcement->type === 'update',
+                                            'bg-danger' => $announcement->type === 'alert',
+                                            'bg-secondary' => $announcement->type === 'info',
+                                        ])>
                                             {{ ucfirst($announcement->type) }}
                                         </span>
                                     </td>
@@ -116,6 +110,41 @@
                                         </div>
                                     </td>
                                 </tr>
+
+                                <!-- ACTIONS -->
+                                @if (in_array(auth()->user()?->role, ['admin', 'owner']))
+                                    <tr>
+                                        <td class="ps-4 py-4 text-muted small fw-bold text-uppercase">
+                                            Actions
+                                        </td>
+
+                                        <td class="py-4 pe-4">
+
+                                            <div class="d-flex flex-wrap gap-2">
+
+                                                <a href="{{ route('announcements.edit', $announcement->id) }}"
+                                                    class="btn btn-sm btn-primary">
+                                                    <i class="bi bi-pencil-square me-1"></i>
+                                                    Edit
+                                                </a>
+
+                                                <form action="{{ route('announcements.destroy', $announcement->id) }}"
+                                                    method="POST"
+                                                    onsubmit="return confirm('Confirm delete? This action cannot be undone.')">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-sm btn-danger">
+                                                        <i class="bi bi-trash me-1"></i>
+                                                        Delete
+                                                    </button>
+                                                </form>
+
+                                            </div>
+
+                                        </td>
+                                    </tr>
+                                @endif
+
 
                             </tbody>
                         </table>
@@ -171,8 +200,8 @@
                 </div>
             </div>
 
-            <!-- SCHEDULE -->
-            <div class="card shadow-sm border">
+            <!-- SCHEDULE (future feature, not yet implemented) -->
+            <div class="d-none card shadow-sm border">
                 <div class="card-header bg-white py-3 border-bottom text-center">
                     <h6 class="mb-0 fw-bold small text-muted text-uppercase">
                         Schedule Information

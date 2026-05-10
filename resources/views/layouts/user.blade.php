@@ -111,10 +111,21 @@
                                 $unreadNotificationsCount = auth()->user()->unreadNotifications()->count();
                             @endphp
 
+                            <!-- Announcements -->
+                            <li class="nav-item position-relative">
+                                <a class="nav-link fs-5 position-relative
+                                    {{ request()->routeIs('announcements.*') ? 'text-primary fw-bold border-bottom border-3 border-primary' : 'text-dark' }}"
+                                    href="{{ route('announcements.index') }}">
+
+                                    <i class="bi bi-megaphone"></i>
+
+                                </a>
+                            </li>
+
                             <!-- Notifications -->
                             <li class="nav-item position-relative">
                                 <a class="nav-link fs-5 position-relative
-        {{ request()->routeIs('notifications.*') ? 'text-primary fw-bold border-bottom border-3 border-primary' : 'text-dark' }}"
+                                    {{ request()->routeIs('notifications.*') ? 'text-primary fw-bold border-bottom border-3 border-primary' : 'text-dark' }}"
                                     href="{{ route('notifications.index') }}">
 
                                     <i class="bi bi-bell"></i>
@@ -129,16 +140,6 @@
                                 </a>
                             </li>
 
-                            <!-- Announcements -->
-                            <li class="nav-item position-relative">
-                                <a class="nav-link fs-5 position-relative
-        {{ request()->routeIs('announcements.*') ? 'text-primary fw-bold border-bottom border-3 border-primary' : 'text-dark' }}"
-                                    href="{{ route('announcements.index') }}">
-
-                                    <i class="bi bi-megaphone"></i>
-
-                                </a>
-                            </li>
                         @endauth
 
                         <!-- GUEST -->
@@ -239,7 +240,7 @@
                     <li class="nav-item">
                         <a href="{{ route('home') }}"
                             class="nav-link px-3 py-3 d-flex align-items-center
-                {{ request()->routeIs('home') ? 'text-primary fw-bold bg-light' : 'text-dark' }}">
+                                {{ request()->routeIs('home') ? 'text-primary fw-bold bg-light' : 'text-dark' }}">
                             <i class="bi bi-house me-3"></i> Home
                         </a>
                     </li>
@@ -248,7 +249,7 @@
                     <li class="nav-item">
                         <a href="{{ route('services.index') }}"
                             class="nav-link px-3 py-3 d-flex align-items-center
-                {{ request()->routeIs('services.*') ? 'text-primary fw-bold bg-light' : 'text-dark' }}">
+                                {{ request()->routeIs('services.*') ? 'text-primary fw-bold bg-light' : 'text-dark' }}">
                             <i class="bi bi-flower1 me-3"></i> Our Services
                         </a>
                     </li>
@@ -257,7 +258,7 @@
                     <li class="nav-item">
                         <a href="{{ route('about.index') }}"
                             class="nav-link px-3 py-3 d-flex align-items-center
-                {{ request()->routeIs('about.*') ? 'text-primary fw-bold bg-light' : 'text-dark' }}">
+                                {{ request()->routeIs('about.*') ? 'text-primary fw-bold bg-light' : 'text-dark' }}">
                             <i class="bi bi-info-circle me-3"></i> About Us
                         </a>
                     </li>
@@ -266,7 +267,7 @@
                     <li class="nav-item">
                         <a href="{{ route('contact.index') }}"
                             class="nav-link px-3 py-3 d-flex align-items-center
-                {{ request()->routeIs('contact.*') ? 'text-primary fw-bold bg-light' : 'text-dark' }}">
+                                {{ request()->routeIs('contact.*') ? 'text-primary fw-bold bg-light' : 'text-dark' }}">
                             <i class="bi bi-envelope me-3"></i> Contact Us
                         </a>
                     </li>
@@ -277,7 +278,7 @@
                         <li class="nav-item">
                             <a href="{{ route('bookings.index') }}"
                                 class="nav-link px-3 py-3 d-flex align-items-center
-                    {{ request()->routeIs('bookings.*') ? 'text-primary fw-bold bg-light' : 'text-dark' }}">
+                                    {{ request()->routeIs('bookings.*') ? 'text-primary fw-bold bg-light' : 'text-dark' }}">
                                 <i class="bi bi-calendar-event me-3"></i> My Bookings
                             </a>
                         </li>
@@ -286,13 +287,13 @@
                             $unreadNotificationsCount = auth()->user()->unreadNotifications()->count();
                         @endphp
 
-                        
+
 
                         <!-- REVIEWS -->
                         <li class="nav-item">
                             <a href="{{ route('reviews.index') }}"
                                 class="nav-link px-3 py-3 d-flex align-items-center justify-content-between
-        {{ request()->routeIs('reviews.*') ? 'text-primary fw-bold bg-light' : 'text-dark' }}">
+                                    {{ request()->routeIs('reviews.*') ? 'text-primary fw-bold bg-light' : 'text-dark' }}">
 
                                 <div class="d-flex align-items-center">
                                     <i class="bi bi-star me-3"></i>
@@ -307,7 +308,7 @@
                         <li class="nav-item">
                             <a href="{{ route('announcements.index') }}"
                                 class="nav-link px-3 py-3 d-flex align-items-center justify-content-between
-        {{ request()->routeIs('announcements.*') ? 'text-primary fw-bold bg-light' : 'text-dark' }}">
+                                    {{ request()->routeIs('announcements.*') ? 'text-primary fw-bold bg-light' : 'text-dark' }}">
 
                                 <div class="d-flex align-items-center">
                                     <i class="bi bi-megaphone me-3"></i>
@@ -320,7 +321,7 @@
                         <li class="nav-item">
                             <a href="{{ route('notifications.index') }}"
                                 class="nav-link px-3 py-3 d-flex align-items-center justify-content-between
-        {{ request()->routeIs('notifications.*') ? 'text-primary fw-bold bg-light' : 'text-dark' }}">
+                                    {{ request()->routeIs('notifications.*') ? 'text-primary fw-bold bg-light' : 'text-dark' }}">
 
                                 <div class="d-flex align-items-center">
                                     <i class="bi bi-bell me-3"></i>

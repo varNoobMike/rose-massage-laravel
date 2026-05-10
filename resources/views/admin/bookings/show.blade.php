@@ -7,11 +7,6 @@
 @section('page-header', true)
 @section('page-header-title-showpage', 'Booking #' . $booking->id)
 @section('page-header-subtitle', 'Review and manage this booking')
-@section('page-header-actions')
-    <a href="{{ route('bookings.edit', $booking->id) }}" class="btn btn-primary px-4 shadow-sm">
-        <i class="bi bi-pencil-square me-2"></i> Edit
-    </a>
-@endsection
 
 @section('content')
     <div class="row g-4">
@@ -140,32 +135,108 @@
                                 </td>
                             </tr>
 
+                            <!-- SYSTEM LOGS -->
                             <tr>
-                                    <td class="ps-4 py-4 text-muted small fw-bold text-uppercase">
-                                        System Logs
-                                    </td>
-                                    <td class="py-4 pe-4 text-muted small">
+                                <td class="ps-4 py-4 text-muted small fw-bold text-uppercase">
+                                    System Logs
+                                </td>
+                                <td class="py-4 pe-4 text-muted small">
 
-                                        <div class="mb-1">
-                                            <i class="bi bi-calendar-check me-2 opacity-50"></i>
-                                            Created:
-                                            <strong>
-                                                {{ $booking->created_at->format('M d, Y') }}
-                                            </strong>
-                                        </div>
+                                    <div class="mb-1">
+                                        <i class="bi bi-calendar-check me-2 opacity-50"></i>
+                                        Created:
+                                        <strong>
+                                            {{ $booking->created_at->format('M d, Y') }}
+                                        </strong>
+                                    </div>
 
-                                        <div>
-                                            <i class="bi bi-arrow-repeat me-2 opacity-50"></i>
-                                            Last Update:
-                                            <strong>
-                                                {{ $booking->updated_at->diffForHumans() }}
-                                            </strong>
-                                        </div>
+                                    <div>
+                                        <i class="bi bi-arrow-repeat me-2 opacity-50"></i>
+                                        Last Update:
+                                        <strong>
+                                            {{ $booking->updated_at->diffForHumans() }}
+                                        </strong>
+                                    </div>
 
-                                    </td>
+                                </td>
+                            </tr>
+
+                            <!-- ACTIONS -->
+                            <tr>
+                                <td class="ps-4 py-4 text-muted small fw-bold text-uppercase">
+                                    Actions
+                                </td>
+
+                                <td class="py-4 pe-4">
+
+                                    <div class="d-flex flex-wrap gap-2">
+
+                                        {{-- pending: confirm / reject --}}
+                                        @if ($booking->status === 'pending')
+                                            <form method="POST" action="{{ route('bookings.confirm', $booking->id) }}">
+                                                @csrf
+                                                <button type="submit" class="btn btn-sm btn-success">
+                                                    <i class="bi bi-check-circle me-1"></i>
+                                                    Confirm
+                                                </button>
+                                            </form>
+
+                                            <form method="POST" action="{{ route('bookings.reject', $booking->id) }}">
+                                                @csrf
+                                                <button type="submit" class="btn btn-sm btn-danger">
+                                                    <i class="bi bi-x-circle me-1"></i>
+                                                    Reject
+                                                </button>
+                                            </form>
+                                        @endif
+
+
+                                        {{-- confirmed / active / completed --}}
+                                        @if (in_array($booking->status, ['confirmed', 'active', 'completed']))
+
+                                            {{-- edit --}}
+                                            @if ($booking->status === 'confirmed')
+                                                <a href="{{ route('bookings.edit', $booking->id) }}"
+                                                    class="btn btn-sm btn-primary">
+                                                    <i class="bi bi-pencil-square me-1"></i>
+                                                    Edit
+                                                </a>
+                                            @endif
+
+                                            {{-- assign --}}
+                                            <a href="{{ route('therapist-assignments.index', $booking->id) }}"
+                                                class="btn btn-sm btn-info text-white">
+                                                <i class="bi bi-person-plus me-1"></i>
+                                                Assign
+                                            </a>
+
+                                            {{-- cancel --}}
+                                            <form method="POST" action="{{ route('bookings.cancel', $booking->id) }}">
+                                                @csrf
+                                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                    <i class="bi bi-x-octagon me-1"></i>
+                                                    Cancel
+                                                </button>
+                                            </form>
+
+                                        @endif
+
+
+                                        {{-- fallback --}}
+                                        @if (!in_array($booking->status, ['pending', 'confirmed', 'active', 'completed']))
+                                            <span class="badge bg-light text-muted border">
+                                                <i class="bi bi-lock me-1"></i>
+                                                No actions available
+                                            </span>
+                                        @endif
+
+                                    </div>
+
+                                </td>
                             </tr>
 
                         </tbody>
+
                     </table>
 
                 </div>

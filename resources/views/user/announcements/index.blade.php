@@ -16,31 +16,50 @@
 
 @section('filter-area', true)
 @section('filter-form')
+
+    {{-- FILTER FORM --}}
     <form action="{{ route('announcements.index') }}" method="GET">
+
         <div class="row g-3">
 
+            {{-- SEARCH FILTER --}}
             <div class="col-md-3">
-                <input type="text" name="search" class="form-control" placeholder="Search announcement title, message..."
-                    value="{{ request('search') }}">
+                <input type="text" name="search" class="form-control" placeholder="Search title or message..."
+                    value="{{ $filters['search'] ?? '' }}">
             </div>
 
-            {{-- TYPE --}}
+            {{-- TYPE FILTER --}}
             <div class="col-12 col-md-2">
                 <select name="type" class="form-select">
-                    <option value="">All Types</option>
-                    <option value="promo" {{ request('type') == 'promo' ? 'selected' : '' }}>Promo</option>
-                    <option value="update" {{ request('type') == 'update' ? 'selected' : '' }}>Update</option>
-                    <option value="alert" {{ request('type') == 'alert' ? 'selected' : '' }}>Alert</option>
-                    <option value="info" {{ request('type') == 'info' ? 'selected' : '' }}>Info</option>
+
+                    <option value="" @selected(empty($filters['type'] ?? null))>
+                        All Types
+                    </option>
+
+                    <option value="promo" @selected(($filters['type'] ?? null) === 'promo')>
+                        Promo
+                    </option>
+
+                    <option value="update" @selected(($filters['type'] ?? null) === 'update')>
+                        Update
+                    </option>
+
+                    <option value="alert" @selected(($filters['type'] ?? null) === 'alert')>
+                        Alert
+                    </option>
+
+                    <option value="info" @selected(($filters['type'] ?? null) === 'info')>
+                        Info
+                    </option>
+
                 </select>
             </div>
-
 
             {{-- DATE FROM --}}
             <div class="col-md-2">
                 <div class="input-group">
                     <span class="input-group-text">From</span>
-                    <input type="date" name="from" class="form-control" value="{{ request('from') }}">
+                    <input type="date" name="date_from" class="form-control" value="{{ $filters['date_from'] ?? '' }}">
                 </div>
             </div>
 
@@ -48,11 +67,13 @@
             <div class="col-md-2">
                 <div class="input-group">
                     <span class="input-group-text">To</span>
-                    <input type="date" name="to" class="form-control" value="{{ request('to') }}">
+                    <input type="date" name="date_to" class="form-control" value="{{ $filters['date_to'] ?? '' }}">
                 </div>
             </div>
 
+            {{-- ACTION BUTTONS --}}
             <div class="col-md-3 d-flex gap-2">
+
                 <button class="btn btn-dark w-100">
                     <i class="bi bi-funnel me-1"></i>
                     Filter
@@ -62,24 +83,20 @@
                     <i class="bi bi-x-circle me-1"></i>
                     Clear
                 </a>
+
             </div>
 
         </div>
+
     </form>
+
 @endsection
 
 @section('content')
+
     <div class="container px-lg-5">
 
-        @php
-            $hasFilters =
-                request()->filled('search') ||
-                request()->filled('type') ||
-                request()->filled('status') ||
-                request()->filled('from') ||
-                request()->filled('to');
-        @endphp
-
+        {{-- FILTER SUMMARY --}}
         @if ($hasFilters)
             <div class="alert alert-info d-flex justify-content-between align-items-center py-2 px-3 mb-3">
 
@@ -89,40 +106,33 @@
                         <i class="bi bi-funnel-fill"></i> Filters applied:
                     </strong>
 
-                    {{-- SEARCH --}}
-                    @if (request('search'))
+                    {{-- SEARCH BADGE --}}
+                    @if (!empty($filters['search']))
                         <span class="badge bg-dark">
-                            Search: {{ request('search') }}
+                            Search: {{ $filters['search'] }}
                         </span>
                     @endif
 
-                    {{-- TYPE --}}
-                    @if (request('type'))
+                    {{-- TYPE BADGE --}}
+                    @if (!empty($filters['type']))
                         <span @class([
-                            'badge',
-                            'text-capitalize',
-                            'bg-success' => request('type') === 'promo',
-                            'bg-primary' => request('type') === 'update',
-                            'bg-danger' => request('type') === 'alert',
-                            'bg-secondary' => request('type') === 'info',
-                            'bg-dark' => !in_array(request('type'), [
-                                'promo',
-                                'update',
-                                'alert',
-                                'info',
-                            ]),
+                            'badge text-capitalize',
+                            'bg-success' => $filters['type'] === 'promo',
+                            'bg-primary' => $filters['type'] === 'update',
+                            'bg-danger' => $filters['type'] === 'alert',
+                            'bg-secondary' => $filters['type'] === 'info',
                         ])>
-                            Type: {{ request('type') }}
+                            Type: {{ ucfirst($filters['type']) }}
                         </span>
                     @endif
 
-                    {{-- DATE RANGE --}}
-                    @if (request('from') || request('to'))
+                    {{-- DATE BADGE --}}
+                    @if (!empty($filters['date_from']) || !empty($filters['date_to']))
                         <span class="badge bg-secondary">
                             Date:
-                            {{ request('from') ?? '...' }}
+                            {{ $filters['date_from'] ?? '...' }}
                             →
-                            {{ request('to') ?? '...' }}
+                            {{ $filters['date_to'] ?? '...' }}
                         </span>
                     @endif
 
@@ -131,6 +141,7 @@
             </div>
         @endif
 
+        {{-- GRID --}}
         <div class="row d-flex justify-content-center g-4">
 
             @forelse ($announcements as $announcement)
@@ -144,19 +155,17 @@
 
                             {{-- TYPE BADGE --}}
                             <div class="mb-2">
-                                @php
-                                    $typeClass = match ($announcement->type) {
-                                        'success' => 'bg-success',
-                                        'warning' => 'bg-warning text-dark',
-                                        'danger' => 'bg-danger',
-                                        'promo' => 'bg-primary',
-                                        default => 'bg-secondary',
-                                    };
-                                @endphp
 
-                                <span class="badge {{ $typeClass }}">
+                                <span @class([
+                                    'badge',
+                                    'bg-success' => $announcement->type === 'promo',
+                                    'bg-primary' => $announcement->type === 'update',
+                                    'bg-danger' => $announcement->type === 'alert',
+                                    'bg-secondary' => $announcement->type === 'info',
+                                ])>
                                     {{ ucfirst($announcement->type) }}
                                 </span>
+
                             </div>
 
                             {{-- IMAGE --}}
@@ -185,23 +194,19 @@
                                 {{ $announcement->created_at->format('M d, Y') }}
                             </small>
 
-                            {{-- CTA --}}
-                            @if ($announcement->link)
-                                <div class="mt-auto pt-2 d-flex align-items-center text-primary fw-semibold small">
-                                    <span>View details</span>
-                                    <i class="bi bi-arrow-right ms-1"></i>
-                                </div>
-                            @endif
-
                         </div>
 
                     </a>
+
                 </div>
 
             @empty
+
+                {{-- EMPTY STATE --}}
                 <div class="d-flex flex-column justify-content-center align-items-center">
+
                     @if ($hasFilters)
-                        {{-- EMPTY DUE TO FILTERS --}}
+                        {{-- NO RESULTS --}}
                         <i class="bi bi-search fs-1 text-muted"></i>
                         <h5 class="mt-3">No results found</h5>
                         <p class="text-muted mb-3">
@@ -213,13 +218,14 @@
                             Clear Filters
                         </a>
                     @else
-                        {{-- EMPTY DATABASE --}}
+                        {{-- NO DATA --}}
                         <i class="bi bi-megaphone fs-1 text-muted"></i>
-                        <h5 class="mt-3">No services yet</h5>
+                        <h5 class="mt-3">No announcements yet</h5>
                         <p class="text-muted mb-0">
                             Once announcements are created, they will appear here.
                         </p>
                     @endif
+
                 </div>
             @endforelse
 
@@ -228,6 +234,7 @@
         {{-- PAGINATION --}}
         @if ($announcements->hasPages())
             <div class="card-footer bg-white shadow-sm p-3 mt-4">
+
                 <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
 
                     <small class="text-muted">
@@ -239,8 +246,10 @@
                     {{ $announcements->appends(request()->query())->links() }}
 
                 </div>
+
             </div>
         @endif
 
     </div>
+
 @endsection

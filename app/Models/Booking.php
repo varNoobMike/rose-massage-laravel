@@ -36,6 +36,7 @@ class Booking extends Model
         'notes',
     ];
 
+
     // Client (user who booked)
     public function client()
     {

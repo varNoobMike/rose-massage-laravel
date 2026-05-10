@@ -174,11 +174,14 @@
                                 <td class="text-center">
                                     <span class="badge bg-light text-dark">
                                         @php $type = $notification->type @endphp
-                                        @if (($type === App\Notifications\NewBookingNotification::class) ||
-                                            ($type === App\Notifications\BookingStatusNotification::class))
+                                        @if (
+                                            $type === App\Notifications\NewBookingNotification::class ||
+                                                $type === App\Notifications\BookingStatusNotification::class)
                                             Booking
                                         @elseif($type === App\Notifications\NewBookingReviewNotification::class)
                                             Review
+                                        @elseif($type === App\Notifications\NewBAnnouncementNotification::class)
+                                            Announcement
                                         @endif
                                     </span>
                                 </td>

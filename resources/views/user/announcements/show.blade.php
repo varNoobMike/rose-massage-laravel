@@ -1,15 +1,17 @@
 @extends('layouts.user')
 
-@section('page-title', 'Announcement')
+@section('page-title', 'Announcements Details')
 
 @section('breadcrumb', true)
+@section('breadcrumb-parent', 'Announcements')
+@section('breadcrumb-parent-url', route('announcements.index'))
 
 @section('page-header', true)
-@section('page-header-title', 'Announcement')
-@section('page-header-subtitle', 'Details and full information')
+@section('page-header-title', 'Announcement Details')
+@section('page-header-subtitle', 'View details of this announcement')
 
 @section('content')
-<div class="container px-lg-5">
+    <div class="container px-lg-5">
 
         <div class="col-12 col-lg-8">
 
@@ -17,17 +19,13 @@
 
                 {{-- TYPE BADGE --}}
                 <div class="mb-3">
-                    @php
-                        $typeClass = match($announcement->type) {
-                            'promo' => 'bg-primary',
-                            'update' => 'bg-info text-dark',
-                            'alert' => 'bg-danger',
-                            'info' => 'bg-secondary',
-                            default => 'bg-secondary',
-                        };
-                    @endphp
-
-                    <span class="badge {{ $typeClass }}">
+                    <span @class([
+                        'badge',
+                        'bg-success' => $announcement->type === 'promo',
+                        'bg-primary' => $announcement->type === 'update',
+                        'bg-danger' => $announcement->type === 'alert',
+                        'bg-secondary' => $announcement->type === 'info',
+                    ])>
                         {{ ucfirst($announcement->type) }}
                     </span>
                 </div>
@@ -44,9 +42,8 @@
 
                 {{-- COVER IMAGE --}}
                 @if ($announcement->cover_image)
-                    <img src="{{ asset('storage/' . $announcement->cover_image) }}"
-                         class="img-fluid rounded mb-4"
-                         style="max-height: 300px; object-fit: cover; width:100%;">
+                    <img src="{{ asset('storage/' . $announcement->cover_image) }}" class="img-fluid rounded mb-4"
+                        style="max-height: 300px; object-fit: cover; width:100%;">
                 @endif
 
                 {{-- MESSAGE --}}
@@ -58,8 +55,7 @@
                 @if ($announcement->link_page)
                     <div class="mt-3">
 
-                        <a href="{{ route($announcement->link_page . '.index') }}"
-                           class="btn btn-primary">
+                        <a href="{{ route($announcement->link_page . '.index') }}" class="btn btn-primary">
 
                             <i class="bi bi-arrow-right me-2"></i>
                             Visit {{ ucfirst($announcement->link_page) }}
@@ -73,5 +69,5 @@
 
         </div>
 
-</div>
+    </div>
 @endsection

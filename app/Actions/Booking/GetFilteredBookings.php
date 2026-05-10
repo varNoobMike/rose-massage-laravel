@@ -7,178 +7,143 @@ use App\Models\User;
 
 class GetFilteredBookings
 {
-    public function __construct(
-        protected SyncBookingStatuses $syncBookingStatuses
-    ) {}
-
-    public function execute(User $user, array $filters = [])
+    public function execute(array $filters, User $user)
     {
-        $this->syncBookingStatuses->execute();
+        return match ($user->role) {
 
+            User::ROLE_ADMIN,
+            User::ROLE_OWNER,
+            User::ROLE_RECEPTIONIST => $this->adminQuery($filters),
+
+            User::ROLE_CLIENT => $this->clientQuery($filters, $user),
+
+            default => throw new \Exception('unauthorized action'),
+        };
+    }
+
+    private function adminQuery(array $filters)
+    {
         $search = $filters['search'] ?? null;
-        $dateFrom   = $filters['date_from'] ?? null;
+        $dateFrom = $filters['date_from'] ?? null;
         $dateTo = $filters['date_to'] ?? null;
         $status = $filters['status'] ?? null;
-        $therapist_assignment_status = $filters['therapist_assignment_status'] ?? null;
+        $assignment = $filters['therapist_assignment_status'] ?? null;
         $service = $filters['service'] ?? null;
         $therapist = $filters['therapist'] ?? null;
 
-        /**
-         * Admin, Staff
-         */
-        if (in_array($user->role, [User::ROLE_ADMIN, User::ROLE_OWNER, User::ROLE_RECEPTIONIST])) {
+        $query = Booking::with([
+            'client.profile',
+            'items.therapist',
+        ]);
 
-            return Booking::with([
-                'client.profile',
-                'items',
-                'items.therapist',
-            ])
+        // search
+        $query->when($search, function ($q, $search) {
 
-                // Search booking id, client name or email
-                ->when($search, function ($query, $search) {
+            $q->where(function ($sub) use ($search) {
 
-                    $query->where(function ($q) use ($search) {
+                if (is_numeric($search)) {
+                    $sub->orWhere('id', (int) $search);
+                }
 
-                        // booking id
-                        if (is_numeric($search)) {
-                            $q->orWhere('id', $search);
-                        }
-                        
-                        // client name or email
-                        $q->orWhereHas('client', function ($client) use ($search) {
-                            $client->where('name', 'like', "%{$search}%")
-                                ->orWhere('email', 'like', "%{$search}%");
-                        });
-                    });
-                })
+                $sub->orWhereHas('client', function ($client) use ($search) {
+                    $client->where('name', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%");
+                });
+            });
+        });
 
-                // Date from
-                ->when($dateFrom, function ($query, $from) {
-                    $query->whereDate('booking_date', '>=', $from);
-                })
+        // date from
+        $query->when($dateFrom, fn($q) => $q->whereDate('booking_date', '>=', $dateFrom));
 
-                // Date to
-                ->when($dateTo, function ($query, $to) {
-                    $query->whereDate('booking_date', '<=', $to);
-                })
+        // date to
+        $query->when($dateTo, fn($q) => $q->whereDate('booking_date', '<=', $dateTo));
 
-                // Status
-                ->when($status, function ($query, $status) {
-                    $query->where('status', $status);
-                })
+        // status
+        $query->when($status, fn($q) => $q->where('status', $status));
 
-                // Therapist assignment status
-                ->when($therapist_assignment_status, function ($query, $status) {
+        // service filter
+        $query->when($service, function ($q, $service) {
+            $q->whereHas('items', fn($i) => $i->where('service_id', $service));
+        });
 
-                    if ($status === 'unassigned') {
-                        $query->whereHas('items')
-                            ->whereDoesntHave('items', function ($q) {
-                                $q->whereNotNull('therapist_id');
-                            });
-                    }
+        // therapist filter
+        $query->when($therapist, function ($q, $therapist) {
+            $q->whereHas('items', fn($i) => $i->where('therapist_id', $therapist));
+        });
 
-                    if ($status === 'partial') {
-                        $query->whereHas('items', function ($q) {
-                            $q->whereNull('therapist_id');
-                        })
-                            ->whereHas('items', function ($q) {
-                                $q->whereNotNull('therapist_id');
-                            });
-                    }
+        // assignment status
+        $query->when($assignment, function ($q, $assignment) {
 
-                    if ($status === 'completed') {
-                        $query->whereHas('items')
-                            ->whereDoesntHave('items', function ($q) {
-                                $q->whereNull('therapist_id');
-                            });
-                    }
-                })
+            // unassigned
+            if ($assignment === 'unassigned') {
+                $q->whereDoesntHave('items', fn($i) => $i->whereNotNull('therapist_id'));
+            }
 
-                // Service
-                ->when($service, function ($query, $service_id) {
-                    $query->whereHas('items', function ($q) use ($service_id) {
-                        $q->where('service_id', $service_id);
-                    });
-                })
+            // partial assignment
+            if ($assignment === 'partial') {
+                $q->whereHas('items', fn($i) => $i->whereNull('therapist_id'))
+                    ->whereHas('items', fn($i) => $i->whereNotNull('therapist_id'));
+            }
 
-                // Therapist
-                ->when($therapist, function ($query, $therapist_id) {
-                    $query->whereHas('items', function ($q) use ($therapist_id) {
-                        $q->where('therapist_id', $therapist_id);
-                    });
-                })
+            // fully assigned
+            if ($assignment === 'fully_assigned') {
+                $q->whereDoesntHave('items', fn($i) => $i->whereNull('therapist_id'));
+            }
+        });
 
-                // Final result 
-                ->latest()
-                ->paginate(10)
-                ->withQueryString();
-        }
+        // final result
+        return $query->latest()
+            ->paginate(10)
+            ->withQueryString();
+    }
 
+    private function clientQuery(array $filters, User $user)
+    {
+        $search = $filters['search'] ?? null;
+        $dateFrom = $filters['date_from'] ?? null;
+        $dateTo = $filters['date_to'] ?? null;
+        $status = $filters['status'] ?? null;
+        $service = $filters['service'] ?? null;
 
-        /**
-         * Client
-         */
-        if ($user->role === User::ROLE_CLIENT) {
+        $query = Booking::with([
+            'client.profile',
+            'items.service',
+        ])->where('client_id', $user->id);
 
-            return Booking::with([
-                'client.profile',
-                'items',
-                'items.service',
-                'items.therapist',
-            ])
+        // search
+        $query->when($search, function ($q, $search) {
 
-                // Search
-                ->when($search, function ($query, $search) {
+            $q->where(function ($sub) use ($search) {
 
-                    $query->where(function ($q) use ($search) {
+                // booking id search
+                if (is_numeric($search)) {
+                    $sub->orWhere('id', (int) $search);
+                }
 
-                        // booking id
-                        if (is_numeric($search)) {
-                            $q->orWhere('id', $search);
-                        }
+                // service name search
+                $sub->orWhereHas('items.service', function ($s) use ($search) {
+                    $s->where('name', 'like', "%{$search}%");
+                });
+            });
+        });
 
-                        // client name/email
-                        $q->orWhereHas('client', function ($client) use ($search) {
-                            $client->where('name', 'like', "%{$search}%")
-                                ->orWhere('email', 'like', "%{$search}%");
-                        });
+        // date from
+        $query->when($dateFrom, fn($q) => $q->whereDate('booking_date', '>=', $dateFrom));
 
-                        // service name 
-                        $q->orWhereHas('items.service', function ($service) use ($search) {
-                            $service->where('name', 'like', "%{$search}%");
-                        });
-                        
-                    });
-                })
+        // date to
+        $query->when($dateTo, fn($q) => $q->whereDate('booking_date', '<=', $dateTo));
 
-                // Date from
-                ->when($dateFrom, function ($query, $from) {
-                    $query->whereDate('booking_date', '>=', $from);
-                })
+        // status
+        $query->when($status, fn($q) => $q->where('status', $status));
 
-                // Date to
-                ->when($dateTo, function ($query, $to) {
-                    $query->whereDate('booking_date', '<=', $to);
-                })
+        // service filter
+        $query->when($service, function ($q, $service) {
+            $q->whereHas('items', fn($i) => $i->where('service_id', $service));
+        });
 
-                // Status
-                ->when($status, function ($query, $status) {
-                    return $query->where('status', $status);
-                })
-
-                // Service
-                ->when($service, function ($query, $service_id) {
-                    $query->whereHas('items', function ($q) use ($service_id) {
-                        $q->where('service_id', $service_id);
-                    });
-                })
-
-                // Final result 
-                ->latest()
-                ->paginate(10)
-                ->withQueryString();
-        }
-
-        throw new \Exception('Unauthorized action.');
+        // final result
+        return $query->latest()
+            ->paginate(10)
+            ->withQueryString();
     }
 }

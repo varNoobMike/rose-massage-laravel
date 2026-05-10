@@ -19,13 +19,21 @@ class Service extends Model
         'status',
     ];
 
-    // 🏢 Spa branch this service belongs to
+    public const STATUS_ACTIVE = 'active';
+    public const STATUS_INACTIVE = 'inactive';
+
+    public const STATUSES = [
+        self::STATUS_ACTIVE,
+        self::STATUS_INACTIVE,
+    ];
+
+    // Spa branch this service belongs to
     public function spa()
     {
         return $this->belongsTo(Spa::class);
     }
 
-    // 🧾 Bookings that include this service
+    // Bookings that include this service
     public function bookingItems()
     {
         return $this->hasMany(BookingItem::class);

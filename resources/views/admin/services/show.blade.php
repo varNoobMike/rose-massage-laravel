@@ -7,13 +7,6 @@
 @section('page-header', true)
 @section('page-header-title-showpage', 'Service #' . $service->id)
 @section('page-header-subtitle', 'Review and manage this service')
-@section('page-header-actions')
-    @if (auth()->user()->role !== 'receptionist')
-        <a href="{{ route('services.edit', $service->id) }}" class="btn btn-primary px-4 shadow-sm">
-            <i class="bi bi-pencil-square me-2"></i> Edit
-        </a>
-    @endif
-@endsection
 
 @section('content')
 
@@ -65,6 +58,28 @@
                                         </div>
                                     </td>
                                 </tr>
+                                <!-- ACTIONS -->
+                                @if (in_array(auth()->user()?->role, ['admin', 'owner']))
+                                    <tr>
+                                        <td class="ps-4 py-4 text-muted small fw-bold text-uppercase">
+                                            Actions
+                                        </td>
+
+                                        <td class="py-4 pe-4">
+
+                                            <div class="d-flex flex-wrap gap-2">
+
+                                                <a href="{{ route('services.edit', $service->id) }}"
+                                                    class="btn btn-sm btn-primary">
+                                                    <i class="bi bi-pencil-square me-1"></i>
+                                                    Edit
+                                                </a>
+
+                                            </div>
+
+                                        </td>
+                                    </tr>
+                                @endif
                             </tbody>
                         </table>
                     </div>

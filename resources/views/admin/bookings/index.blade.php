@@ -36,51 +36,49 @@
                 {{-- SEARCH --}}
                 <div class="col-md-5">
                     <input type="text" name="search" class="form-control"
-                        placeholder="Search by booking ID, client name, email..." value="{{ request('search') }}">
+                        placeholder="Search by booking ID, client name, email..."
+                        value="{{ $filters['search'] ?? '' }}">
                 </div>
 
                 {{-- DATE FROM --}}
                 <div class="col-md-2">
-                    <input type="date" name="date_from" class="form-control" value="{{ request('date_from') }}">
+                    <input type="date" name="date_from" class="form-control"
+                        value="{{ $filters['date_from'] ?? '' }}">
                 </div>
 
                 {{-- DATE TO --}}
                 <div class="col-md-2">
-                    <input type="date" name="date_to" class="form-control" value="{{ request('date_to') }}">
+                    <input type="date" name="date_to" class="form-control"
+                        value="{{ $filters['date_to'] ?? '' }}">
                 </div>
 
                 {{-- ACTIONS --}}
-                <div class="col-md-3 d-flex gap-2">
-
-                    {{-- FILTER --}}
-                    <button class="btn btn-dark w-100" type="submit">
-                        <i class="bi bi-funnel"></i>
+                <div class="col-12 col-md-3 d-flex gap-2">
+                    <button class="btn btn-dark w-100">
+                        <i class="bi bi-funnel me-1"></i> Filter
                     </button>
 
-                    {{-- MORE --}}
                     <button class="btn btn-primary w-100" type="button" data-bs-toggle="collapse"
                         data-bs-target="#advancedFilters">
-                        <i class="bi bi-three-dots"></i>
+                        <i class="bi bi-three-dots me-1"></i> More
                     </button>
 
-                    {{-- CLEAR --}}
                     <a href="{{ route('bookings.index') }}" class="btn btn-outline-secondary w-100">
-                        <i class="bi bi-x-circle"></i>
+                        <i class="bi bi-x-circle me-1"></i> Clear
                     </a>
-
                 </div>
 
                 {{-- STATUS --}}
                 <div class="col-md-4 mt-2">
                     <select name="status" class="form-select">
 
-                        <option value="">All Status</option>
+                        <option value="" @selected(empty($filters['status'] ?? null))>All Status</option>
 
-                        <option value="pending" @selected(request('status') == 'pending')>Pending</option>
-                        <option value="confirmed" @selected(request('status') == 'confirmed')>Confirmed</option>
-                        <option value="active" @selected(request('status') == 'active')>Active</option>
-                        <option value="completed" @selected(request('status') == 'completed')>Completed</option>
-                        <option value="cancelled" @selected(request('status') == 'cancelled')>Cancelled</option>
+                        <option value="pending" @selected(($filters['status'] ?? null) === 'pending')>Pending</option>
+                        <option value="confirmed" @selected(($filters['status'] ?? null) === 'confirmed')>Confirmed</option>
+                        <option value="active" @selected(($filters['status'] ?? null) === 'active')>Active</option>
+                        <option value="completed" @selected(($filters['status'] ?? null) === 'completed')>Completed</option>
+                        <option value="cancelled" @selected(($filters['status'] ?? null) === 'cancelled')>Cancelled</option>
 
                     </select>
                 </div>
@@ -88,12 +86,7 @@
             </div>
 
             {{-- ADVANCED FILTERS --}}
-            <div class="collapse mt-3 {{ request()->filled('therapist_assignment_status') ||
-            request()->filled('therapist') ||
-            request()->filled('service')
-                ? 'show'
-                : '' }}"
-                id="advancedFilters">
+            <div class="collapse mt-3 {{ $hasAdvancedFilters ? 'show' : '' }}" id="advancedFilters">
 
                 <div class="row g-3">
 
@@ -101,18 +94,23 @@
                     <div class="col-md-4">
                         <select name="therapist_assignment_status" class="form-select">
 
-                            <option value="">All Assignment</option>
+                            <option value="" @selected(empty($filters['therapist_assignment_status'] ?? null))>
+                                All Assignment
+                            </option>
 
-                            <option value="unassigned" @selected(request('therapist_assignment_status') == 'unassigned')>
+                            <option value="unassigned"
+                                @selected(($filters['therapist_assignment_status'] ?? null) === 'unassigned')>
                                 Unassigned
                             </option>
 
-                            <option value="partial" @selected(request('therapist_assignment_status') == 'partial')>
+                            <option value="partial"
+                                @selected(($filters['therapist_assignment_status'] ?? null) === 'partial')>
                                 Partially Assigned
                             </option>
 
-                            <option value="completed" @selected(request('therapist_assignment_status') == 'completed')>
-                                Completely Assigned
+                            <option value="fully_assigned"
+                                @selected(($filters['therapist_assignment_status'] ?? null) === 'fully_assigned')>
+                                Fully Assigned
                             </option>
 
                         </select>
@@ -121,28 +119,36 @@
                     {{-- SERVICE --}}
                     <div class="col-md-4">
                         <select name="service" class="form-select">
-                            <option value="">All Services</option>
+
+                            <option value="" @selected(empty($filters['service'] ?? null))>All Services</option>
+
                             @forelse($services as $service)
-                                <option value="{{ $service->id }}" @selected(request('service') == $service->id)>
+                                <option value="{{ $service->id }}"
+                                    @selected(($filters['service'] ?? null) == $service->id)>
                                     {{ $service->name }}
                                 </option>
                             @empty
                                 <option value="" disabled>No services yet</option>
                             @endforelse
+
                         </select>
                     </div>
 
                     {{-- THERAPIST --}}
                     <div class="col-md-4">
                         <select name="therapist" class="form-select">
-                            <option value="">All Therapists</option>
+
+                            <option value="" @selected(empty($filters['therapist'] ?? null))>All Therapists</option>
+
                             @forelse($therapists as $therapist)
-                                <option value="{{ $therapist->id }}" @selected(request('therapist') == $therapist->id)>
+                                <option value="{{ $therapist->id }}"
+                                    @selected(($filters['therapist'] ?? null) == $therapist->id)>
                                     {{ $therapist->name }}
                                 </option>
                             @empty
                                 <option value="" disabled>No therapists yet</option>
                             @endforelse
+
                         </select>
                     </div>
 
@@ -156,79 +162,73 @@
 
 @endsection
 
+
 @section('content')
 
-    @php
-        $hasFilters =
-            request()->filled('search') ||
-            request()->filled('date_from') ||
-            request()->filled('date_to') ||
-            request()->filled('status') ||
-            request()->filled('therapist_assignment_status') ||
-            request()->filled('service') ||
-            request()->filled('therapist');
-    @endphp
-
+    {{-- FILTERS APPLIED --}}
     @if ($hasFilters)
         <div class="alert alert-info d-flex justify-content-between align-items-center py-2 px-3 mb-3">
+
             <div class="d-flex flex-wrap gap-2 align-items-center">
 
                 <strong class="me-2">
                     <i class="bi bi-funnel-fill"></i> Filters applied:
                 </strong>
 
-                @if (request('search'))
+                {{-- SEARCH --}}
+                @if (!empty($filters['search']))
                     <span class="badge bg-dark">
-                        Search: {{ request('search') }}
+                        Search: {{ $filters['search'] }}
                     </span>
                 @endif
 
-                @if (request('date_from') || request('date_to'))
+                {{-- DATE RANGE --}}
+                @if (!empty($filters['date_from']) || !empty($filters['date_to']))
                     <span class="badge bg-secondary">
                         Date:
-                        {{ request('date_from') ?? '...' }}
+                        {{ $filters['date_from'] ?? '...' }}
                         →
-                        {{ request('date_to') ?? '...' }}
+                        {{ $filters['date_to'] ?? '...' }}
                     </span>
                 @endif
 
-                @if (request('status'))
+                {{-- STATUS --}}
+                @if (!empty($filters['status']))
                     <span @class([
                         'badge',
                         'text-capitalize',
-                        'bg-warning text-dark' => request('status') === 'pending',
-                        'bg-primary' => request('status') === 'confirmed',
-                        'bg-success' => request('status') === 'active',
-                        'bg-secondary' => request('status') === 'completed',
-                        'bg-danger' => request('status') === 'cancelled',
-                        'bg-dark' => !request('status'),
+                        'bg-warning text-dark' => ($filters['status'] ?? null) === 'pending',
+                        'bg-primary' => ($filters['status'] ?? null) === 'confirmed',
+                        'bg-success' => ($filters['status'] ?? null) === 'active',
+                        'bg-secondary' => ($filters['status'] ?? null) === 'completed',
+                        'bg-danger' => ($filters['status'] ?? null) === 'cancelled',
                     ])>
-                        Status: {{ ucfirst(request('status') ?? 'all') }}
+                        Status: {{ ucfirst($filters['status']) }}
                     </span>
                 @endif
 
-                @if (request('therapist_assignment_status'))
+                {{-- THERAPIST ASSIGNMENT --}}
+                @if (!empty($filters['therapist_assignment_status']))
                     <span @class([
                         'badge',
                         'text-capitalize',
-                        'bg-warning text-dark' =>
-                            request('therapist_assignment_status') === 'unassigned',
-                        'bg-white text-dark' =>
-                            request('therapist_assignment_status') === 'partial',
-                        'bg-success-subtle text-success' =>
-                            request('therapist_assignment_status') === 'completed',
+                        'bg-warning text-dark' => ($filters['therapist_assignment_status'] ?? null) === 'unassigned',
+                        'bg-white text-dark' => ($filters['therapist_assignment_status'] ?? null) === 'partial',
+                        'bg-success-subtle text-success' => ($filters['therapist_assignment_status'] ?? null) === 'fully_assigned',
                     ])>
-                        Therapist Assignment: {{ ucfirst(request('therapist_assignment_status')) }}
+                        Therapist Assignment:
+                        {{ ucfirst($filters['therapist_assignment_status']) }}
                     </span>
                 @endif
 
-
+                {{-- SERVICE --}}
                 @if ($selectedService)
                     <span class="badge bg-dark">
                         Service: {{ $selectedService->name }}
                     </span>
                 @endif
 
+                {{-- THERAPIST --}}
                 @if ($selectedTherapist)
                     <span class="badge bg-dark">
                         Therapist: {{ $selectedTherapist->name }}
@@ -240,7 +240,7 @@
         </div>
     @endif
 
-    <!-- Table -->
+
     <div id="bookings-table-wrapper" class="card shadow-sm border">
         <div class="table-responsive">
 
@@ -264,24 +264,22 @@
 
                         @php
                             $status = $booking->status;
-                            $assignedTherapists = $booking->items
+                            $items = $booking->items ?? collect();
+
+                            $assignedTherapists = $items
                                 ->whereNotNull('therapist_id')
                                 ->pluck('therapist')
                                 ->filter()
                                 ->unique('id');
 
-                            $totalItems = $booking->items->count();
-                            $assignedCount = $booking->items->whereNotNull('therapist_id')->count();
+                            $totalItems = $items->count();
+                            $assignedCount = $items->whereNotNull('therapist_id')->count();
                         @endphp
 
                         <tr>
 
-                            <!-- BOOKING ID -->
-                            <td class="fw-bold text-muted">
-                                #{{ $booking->id }}
-                            </td>
+                            <td class="fw-bold text-muted">#{{ $booking->id }}</td>
 
-                            <!-- CLIENT -->
                             <td class="d-none d-lg-table-cell">
                                 <div class="d-flex align-items-center">
 
@@ -299,7 +297,6 @@
                                         <div class="fw-bold">
                                             {{ optional($booking->client)->name ?? 'Unknown Client' }}
                                         </div>
-
                                         <small class="text-muted">
                                             {{ optional($booking->client)->email }}
                                         </small>
@@ -308,8 +305,7 @@
                                 </div>
                             </td>
 
-                            <!-- SCHEDULE -->
-                            <td class="">
+                            <td>
                                 <div class="fw-semibold">
                                     {{ \Carbon\Carbon::parse($booking->booking_date)->format('M d, Y') }}
                                 </div>
@@ -320,10 +316,9 @@
                                 </small>
                             </td>
 
-                            <!-- THERAPIST -->
                             <td class="d-none d-lg-table-cell">
 
-                                @if ($assignedTherapists->count())
+                                @if ($assignedTherapists->isNotEmpty())
                                     <div class="d-flex flex-wrap gap-1">
 
                                         @foreach ($assignedTherapists->take(2) as $therapist)
@@ -344,41 +339,35 @@
                                         {{ $assignedCount }}/{{ $totalItems }} assigned
                                     </small>
                                 @else
-                                    <span class="badge bg-warning text-dark">
-                                        Unassigned
-                                    </span>
+                                    <span class="badge bg-warning text-dark">Unassigned</span>
                                     <small class="text-muted d-block mt-1">
                                         0/{{ $totalItems }} assigned
                                     </small>
                                 @endif
+
                             </td>
 
-                            <!-- TOTAL -->
                             <td class="fw-bold d-none d-lg-table-cell">
                                 ₱{{ number_format($booking->total_amount, 2) }}
                             </td>
 
-                            <!-- STATUS -->
-                            <td class="d-none d-lg-table-cell">
-
-                                <span
-                                    class="badge
-                                    @if ($status == 'pending') bg-warning text-dark
-                                    @elseif($status == 'confirmed') bg-primary
-                                    @elseif($status == 'active') bg-success
-                                    @elseif($status == 'completed') bg-secondary
-                                    @elseif($status == 'cancelled' || $status === 'rejected') bg-danger @endif
-                                        text-uppercase small">
-                                    {{ $status }}
+                            <td class="text-center">
+                                <span @class([
+                                    'badge',
+                                    'text-capitalize',
+                                    'bg-warning text-dark' => $booking->status === 'pending',
+                                    'bg-primary' => $booking->status === 'confirmed',
+                                    'bg-success' => $booking->status === 'active',
+                                    'bg-secondary' => $booking->status === 'completed',
+                                    'bg-danger' => in_array($booking->status, ['rejected', 'cancelled']),
+                                ])>
+                                    {{ $booking->status }}
                                 </span>
-
                             </td>
 
-                            <!-- ACTIONS -->
                             <td class="text-end">
                                 <div class="d-flex justify-content-end gap-2">
 
-                                    {{-- DROPDOWN --}}
                                     <div class="dropdown">
                                         <button class="btn btn-sm btn-secondary" data-bs-toggle="dropdown">
                                             <i class="bi bi-three-dots-vertical"></i>
@@ -386,19 +375,17 @@
 
                                         <ul class="dropdown-menu dropdown-menu-end shadow-sm">
 
-                                            {{-- VIEW --}}
                                             <li>
                                                 <a href="{{ route('bookings.show', $booking->id) }}"
-                                                    class="dropdown-item btn btn-sm btn-outline-secondary" title="View">
+                                                    class="dropdown-item">
                                                     <i class="bi bi-eye me-2"></i> View
                                                 </a>
                                             </li>
 
-                                            {{-- PENDING --}}
                                             @if ($status === 'pending')
                                                 <li>
                                                     <form action="{{ route('bookings.confirm', $booking->id) }}"
-                                                        method="POST" onsubmit="return confirm('Confirm this booking?')">
+                                                        method="POST">
                                                         @csrf
                                                         <button class="dropdown-item text-success">
                                                             <i class="bi bi-check-lg me-2"></i> Confirm
@@ -408,7 +395,7 @@
 
                                                 <li>
                                                     <form action="{{ route('bookings.reject', $booking->id) }}"
-                                                        method="POST" onsubmit="return confirm('Reject this booking?')">
+                                                        method="POST">
                                                         @csrf
                                                         <button class="dropdown-item text-danger">
                                                             <i class="bi bi-x-circle me-2"></i> Reject
@@ -417,7 +404,6 @@
                                                 </li>
                                             @endif
 
-                                            {{-- CONFIRMED, etc --}}
                                             @if (in_array($status, ['confirmed', 'active', 'completed']))
                                                 <li>
                                                     <a href="{{ route('therapist-assignments.index', $booking->id) }}"
@@ -427,14 +413,6 @@
                                                 </li>
                                             @endif
 
-
-                                            <li>
-                                                <a href="{{ route('bookings.edit', $booking->id) }}"
-                                                    class="dropdown-item btn btn-sm btn-outline-secondary" title="Edit">
-                                                    <i class="bi bi-pencil-square me-2"></i> Edit
-                                                </a>
-                                            </li>
-
                                         </ul>
                                     </div>
 
@@ -442,30 +420,23 @@
                             </td>
 
                         </tr>
+
                     @empty
 
                         <tr>
                             <td colspan="7" class="text-center py-5">
 
                                 @if ($hasFilters)
-                                    {{-- EMPTY DUE TO FILTERS --}}
                                     <i class="bi bi-search fs-1 text-muted"></i>
                                     <h5 class="mt-3">No results found</h5>
-                                    <p class="text-muted mb-3">
-                                        No bookings match your filters.
-                                    </p>
-
+                                    <p class="text-muted mb-3">No bookings match your filters.</p>
                                     <a href="{{ route('bookings.index') }}" class="btn btn-outline-dark">
-                                        <i class="bi bi-x-circle me-1"></i>
                                         Clear Filters
                                     </a>
                                 @else
-                                    {{-- EMPTY DATABASE --}}
                                     <i class="bi bi-calendar-x fs-1 text-muted"></i>
                                     <h5 class="mt-3">No bookings yet</h5>
-                                    <p class="text-muted mb-0">
-                                        Once bookings are created, they will appear here.
-                                    </p>
+                                    <p class="text-muted mb-0">Once bookings are created, they will appear here.</p>
                                 @endif
 
                             </td>
@@ -479,7 +450,6 @@
 
         </div>
 
-        <!-- Pagination -->
         @if ($bookings->hasPages())
             <div class="card-footer bg-white">
                 <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
@@ -499,4 +469,3 @@
     </div>
 
 @endsection
-

@@ -7,6 +7,7 @@ use App\Actions\Service\StoreService;
 use App\Actions\Service\UpdateService;
 use App\Models\Service;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ServiceController extends Controller
 {
@@ -21,11 +22,24 @@ class ServiceController extends Controller
             'status',
         ]);
 
-        $services = $action->execute($filters);
+        // fetch filtered services
+        $services = $action->execute($filters, Auth::user());
+
+        // basic filters state
+        $hasBasicFilters =
+            !empty($filters['search']) ||
+            !empty($filters['price_from']) ||
+            !empty($filters['price_to']) ||
+            !empty($filters['duration_from']) ||
+            !empty($filters['duration_to']) ||
+            !empty($filters['status']);
+
+        // global filters state
+        $hasFilters = $hasBasicFilters;
 
         return view(
             $this->currentRoleView() . '.services.index',
-            compact('services')
+            compact('services', 'hasFilters', 'filters')
         );
     }
 
@@ -56,7 +70,6 @@ class ServiceController extends Controller
 
         return to_route('services.show', $service->id)
             ->with('success', 'Service created successfully.');
-       
     }
 
     public function edit(Service $service)
@@ -77,7 +90,7 @@ class ServiceController extends Controller
             'status' => 'required|in:active,inactive',
         ]);
 
-        $service = $action->execute($service, $validated, $request->file('image'));
+        $service = $action->execute($service, $validated);
 
         return to_route('services.show', $service->id)
             ->with('success', 'Service updated successfully.');

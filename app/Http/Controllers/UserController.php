@@ -7,14 +7,9 @@ use App\Actions\User\StoreUser;
 use App\Actions\User\UpdateUser;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
-
     public function index(Request $request, GetFilteredUsers $action)
     {
         $userRole = $this->currentUserRole();
@@ -24,7 +19,6 @@ class UserController extends Controller
 
         return view($this->currentRoleView() . '.users.index', compact('users'));
     }
-
 
     public function show(User $user)
     {
@@ -36,12 +30,10 @@ class UserController extends Controller
         );
     }
 
-
     public function create()
     {
         return view($this->currentRoleView() . '.users.create');
     }
-
 
     public function store(Request $request, StoreUser $action)
     {
@@ -105,17 +97,16 @@ class UserController extends Controller
         ]);
 
         $prevRole = $user->role;
-        
+
         $userUpdated = $action->execute($user, $validated);
         $newRole = $userUpdated->role;
 
         return to_route('users.show', $user->id)
-            ->with('info', $newRole !== $prevRole
-                ? "User updated successfully. Note: The role has been changed to {$newRole}, which will affect the user's access to the system."
-                : "User updated successfully."
-        );
-
+            ->with(
+                'info',
+                $newRole !== $prevRole
+                    ? "User updated successfully. Note: The role has been changed to {$newRole}, which will affect the user's access to the system."
+                    : "User updated successfully."
+            );
     }
-
-
 }

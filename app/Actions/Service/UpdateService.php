@@ -3,6 +3,7 @@
 namespace App\Actions\Service;
 
 use App\Models\Service;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
@@ -12,12 +13,13 @@ class UpdateService
     {
         return DB::transaction(function () use ($service, $data) {
 
-            /**
-             * Handle image replacement
-             */
+            // existing image
             $imagePath = $service->image;
 
-            if (isset($data['image'])) {
+            /**
+             * handle image replacement
+             */
+            if (($data['image'] ?? null) instanceof UploadedFile) {
 
                 // delete old image
                 if ($service->image) {
@@ -28,9 +30,7 @@ class UpdateService
                 $imagePath = $data['image']->store('services', 'public');
             }
 
-            /**
-             * Update service
-             */
+            // update service
             $service->update([
                 'name' => $data['name'],
                 'price' => $data['rate'],

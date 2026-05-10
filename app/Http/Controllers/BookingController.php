@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Actions\Booking\GetFilteredBookings;
-use App\Actions\Booking\StoreBooking;
 use App\Actions\Booking\SyncBookingStatuses;
+use App\Actions\Booking\StoreBooking;
 use App\Actions\Booking\UpdateBooking;
 use App\Actions\Booking\UpdateBookingStatus;
 use App\Models\Booking;
@@ -15,8 +15,15 @@ use App\Models\User;
 class BookingController extends Controller
 {
 
-    public function index(Request $request, GetFilteredBookings $action)
-    {
+    public function index(
+        Request $request,
+        GetFilteredBookings $action,
+        SyncBookingStatuses $syncStatuses
+    ) {
+        // sync booking statuses
+        $syncStatuses->execute();
+
+        // get filters from request
         $filters = $request->only([
             'search',
             'date_from',
@@ -24,34 +31,65 @@ class BookingController extends Controller
             'status',
             'therapist_assignment_status',
             'service',
-            'therapist'
+            'therapist',
         ]);
 
-        $bookings = $action->execute(
-            $this->currentUser(),
-            $filters
-        );
+        // fetch filtered bookings
+        $bookings = $action->execute($filters, $this->currentUser());
 
+        // load filter options
         $services = Service::get();
         $therapists = User::where('role', User::ROLE_THERAPIST)->get();
 
-        $selectedService = request('service')
-            ? Service::find(request('service'))
+        // basic filters state
+        $hasBasicFilters =
+            !empty($filters['search']) ||
+            !empty($filters['date_from']) ||
+            !empty($filters['date_to']) ||
+            !empty($filters['status']);
+
+        // advanced filters state
+        $hasAdvancedFilters =
+            !empty($filters['service']) ||
+            !empty($filters['therapist']) ||
+            !empty($filters['therapist_assignment_status']);
+
+        // global filters state
+        $hasFilters = $hasBasicFilters || $hasAdvancedFilters;
+
+        // selected values
+        $serviceId = $filters['service'] ?? null;
+        $therapistId = $filters['therapist'] ?? null;
+
+        // selected models
+        $selectedService = $serviceId
+            ? $services->firstWhere('id', $serviceId)
             : null;
 
-        $selectedTherapist = request('therapist')
-            ? User::find(request('therapist'))
+        $selectedTherapist = $therapistId
+            ? $therapists->firstWhere('id', $therapistId)
             : null;
 
+        // render view
         return view(
             $this->currentRoleView() . '.bookings.index',
-            compact('bookings', 'services', 'therapists', 'selectedService', 'selectedTherapist')
+            compact(
+                'bookings',
+                'services',
+                'therapists',
+                'filters',
+                'hasFilters',
+                'hasBasicFilters',
+                'hasAdvancedFilters',
+                'selectedService',
+                'selectedTherapist'
+            )
         );
     }
-    
-    public function show(Booking $booking, SyncBookingStatuses $action)
+
+    public function show(Booking $booking, SyncBookingStatuses $syncStatuses)
     {
-        $action->execute();
+        $syncStatuses->execute();
 
         $booking->load([
             'client.profile',
@@ -66,7 +104,6 @@ class BookingController extends Controller
         );
     }
 
-
     public function create()
     {
         $user = $this->currentUser();
@@ -79,7 +116,6 @@ class BookingController extends Controller
             default => abort(403, 'Unauthorized action.'),
         };
     }
-
 
     public function store(Request $request, StoreBooking $action)
     {
@@ -99,9 +135,9 @@ class BookingController extends Controller
             ->with('info', 'Your booking request has been sent. Please wait for confirmation.');
     }
 
-    public function edit(Booking $booking, SyncBookingStatuses $action)
+    public function edit(Booking $booking, SyncBookingStatuses $syncStatuses)
     {
-        $action->execute();
+        $syncStatuses->execute();
 
         $booking->load([
             'client',
@@ -156,15 +192,18 @@ class BookingController extends Controller
     public function reject(Booking $booking, UpdateBookingStatus $action)
     {
         $action->execute($booking, 'rejected');
-        return redirect()->back()->with('success', 'Booking rejected successfully.');
+        return to_route('bookings.show', $booking->id)
+            ->with('success', 'Booking rejected successfully.');
     }
 
     public function cancel(Booking $booking, UpdateBookingStatus $action)
     {
         $action->execute($booking, 'cancelled');
-        return redirect()->back()->with('success', 'Booking cancelled successfully.');
+        return to_route('bookings.show', $booking->id)
+            ->with('success', 'Booking cancelled successfully.');
     }
 
+    /*
     public function syncStatuses(SyncBookingStatuses $action)
     {
         $updated = $action->execute();
@@ -177,4 +216,5 @@ class BookingController extends Controller
             ],
         ]);
     }
+    */
 }

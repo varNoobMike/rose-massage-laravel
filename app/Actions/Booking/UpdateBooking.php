@@ -19,7 +19,7 @@ class UpdateBooking
             $totalAmount = 0;
             $totalDuration = 0;
 
-            // Update booking base info
+            // update booking base info
             $booking->update([
                 'booking_date' => $data['booking_date'],
                 'start_time' => $startTime->format('H:i:s'),
@@ -28,9 +28,7 @@ class UpdateBooking
 
             $keepItemIds = [];
 
-            /**
-             * Update existing items
-             */
+            // update existing items
             foreach ($data['existing_items'] ?? [] as $itemData) {
 
                 $item = BookingItem::findOrFail($itemData['id']);
@@ -50,9 +48,7 @@ class UpdateBooking
                 $keepItemIds[] = $item->id;
             }
 
-            /**
-             * Add new items
-             */
+            // add new items
             foreach ($data['new_items'] ?? [] as $newItem) {
 
                 $service = Service::findOrFail($newItem['service_id']);
@@ -72,21 +68,15 @@ class UpdateBooking
                 $keepItemIds[] = $created->id;
             }
 
-            /**
-             * Remove deleted items
-             */
+            // remove deleted items
             BookingItem::where('booking_id', $booking->id)
                 ->whereNotIn('id', $keepItemIds)
                 ->delete();
 
-            /**
-             * Recalculate end time
-             */
+            // recalculate end time
             $endTime = $startTime->copy()->addMinutes($totalDuration);
 
-            /**
-             * Update totals
-             */
+            // update totals
             $booking->update([
                 'end_time' => $endTime->format('H:i:s'),
                 'total_amount' => $totalAmount,

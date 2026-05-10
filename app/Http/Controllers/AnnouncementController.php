@@ -2,64 +2,54 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\Announcement\GetFilteredAnnouncements;
+use App\Actions\Announcement\StoreAnnouncement;
 use App\Models\Announcement;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
-
-/**
- * refactor later, put in action classes
- */
 class AnnouncementController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request, GetFilteredAnnouncements $action)
     {
-        $query = Announcement::query();
+        $filters = $request->only([
+            'search',
+            'type',
+            'status',
+            'date_from',
+            'date_to',
+        ]);
 
-        // 👤 Client sees only active
-        if (Auth::user()->role === 'client') {
-            $query->where('is_active', 1);
-        }
+        // fetch filtered announcements
+        $announcements = $action->execute($filters, Auth::user());
 
-        // 🔍 Search 
-        if ($request->search) {
-            $query->where(function ($q) use ($request) {
-                $q->where('title', 'like', "%{$request->search}%")
-                  ->orWhere('message', 'like', "%{$request->search}%");
-            });
-        }
+        // basic filters state
+        $hasBasicFilters =
+            !empty($filters['search']) ||
+            !empty($filters['type']) ||
+            !empty($filters['status']) ||
+            !empty($filters['date_from']) ||
+            !empty($filters['date_to']);
 
-        // 🏷 Type filter
-        if ($request->type) {
-            $query->where('type', $request->type);
-        }
-
-        // ✅ STATUS filter
-        if ($request->filled('status')) {
-            $query->where('is_active', $request->status);
-        }
-
-        // Date from
-        if ($request->from) {
-            $query->whereDate('created_at', '>=', $request->from);
-        }
-
-        // Date to
-        if ($request->to) {
-            $query->whereDate('created_at', '<=', $request->to);
-        }
-
-        $announcements = $query->latest()->paginate(10);
+        // global filters state
+        $hasFilters = $hasBasicFilters;
 
         return view(
             $this->currentRoleView() . '.announcements.index',
-            compact('announcements')
+            compact('announcements', 'hasFilters', 'filters')
         );
     }
 
     public function show(Announcement $announcement)
     {
+        abort_if(
+            Auth::user()->role === User::ROLE_CLIENT &&
+                $announcement->is_active == 0,
+            404
+        );
+
         return view(
             $this->currentRoleView() . '.announcements.show',
             compact('announcement')
@@ -71,7 +61,7 @@ class AnnouncementController extends Controller
         return view($this->currentRoleView() . '.announcements.create');
     }
 
-    public function store(Request $request)
+    public function store(Request $request, StoreAnnouncement $action)
     {
         $data = $request->validate([
             'title' => 'required|string|max:255',
@@ -84,30 +74,15 @@ class AnnouncementController extends Controller
             'cover_image' => 'nullable|image|max:2048',
         ]);
 
-        // handle image upload
-        $coverImagePath = null;
-
-        if ($request->hasFile('cover_image')) {
-            $coverImagePath = $request->file('cover_image')
-                ->store('announcements', 'public');
-        }
-
-        $announcement = Announcement::create([
-            'title' => $data['title'],
-            'message' => $data['message'],
-            'type' => $data['type'],
-            'link_page' => $data['link_page'] ?? null,
-            'is_active' => $data['is_active'] ?? true,
-            'starts_at' => $data['starts_at'] ?? null,
-            'ends_at' => $data['ends_at'] ?? null,
-            'cover_image' => $coverImagePath,
-        ]);
+        $announcement = $action->execute($data);
 
         return redirect()
             ->route('announcements.show', $announcement->id)
-            ->with('success', 'Announcement created successfully.');
+            ->with(
+                'success',
+                'Announcement created successfully.'
+            );
     }
-
 
     public function edit(Announcement $announcement)
     {
