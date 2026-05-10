@@ -36,20 +36,24 @@
                 {{-- SEARCH --}}
                 <div class="col-md-5">
                     <input type="text" name="search" class="form-control"
-                        placeholder="Search by booking ID, client name, email..."
-                        value="{{ $filters['search'] ?? '' }}">
+                        placeholder="Search by booking ID, client name, email..." value="{{ $filters['search'] ?? '' }}">
                 </div>
 
                 {{-- DATE FROM --}}
                 <div class="col-md-2">
-                    <input type="date" name="date_from" class="form-control"
-                        value="{{ $filters['date_from'] ?? '' }}">
+                    <div class="input-group">
+                        <span class="input-group-text">From</span>
+                        <input type="date" name="date_from" class="form-control"
+                            value="{{ $filters['date_from'] ?? '' }}">
+                    </div>
                 </div>
 
                 {{-- DATE TO --}}
                 <div class="col-md-2">
-                    <input type="date" name="date_to" class="form-control"
-                        value="{{ $filters['date_to'] ?? '' }}">
+                    <div class="input-group">
+                        <span class="input-group-text">To</span>
+                        <input type="date" name="date_to" class="form-control" value="{{ $filters['date_to'] ?? '' }}">
+                    </div>
                 </div>
 
                 {{-- ACTIONS --}}
@@ -71,15 +75,13 @@
                 {{-- STATUS --}}
                 <div class="col-md-4 mt-2">
                     <select name="status" class="form-select">
-
                         <option value="" @selected(empty($filters['status'] ?? null))>All Status</option>
-
                         <option value="pending" @selected(($filters['status'] ?? null) === 'pending')>Pending</option>
                         <option value="confirmed" @selected(($filters['status'] ?? null) === 'confirmed')>Confirmed</option>
+                        <option value="rejected" @selected(($filters['status'] ?? null) === 'rejected')>Rejected</option>
                         <option value="active" @selected(($filters['status'] ?? null) === 'active')>Active</option>
                         <option value="completed" @selected(($filters['status'] ?? null) === 'completed')>Completed</option>
                         <option value="cancelled" @selected(($filters['status'] ?? null) === 'cancelled')>Cancelled</option>
-
                     </select>
                 </div>
 
@@ -98,18 +100,15 @@
                                 All Assignment
                             </option>
 
-                            <option value="unassigned"
-                                @selected(($filters['therapist_assignment_status'] ?? null) === 'unassigned')>
+                            <option value="unassigned" @selected(($filters['therapist_assignment_status'] ?? null) === 'unassigned')>
                                 Unassigned
                             </option>
 
-                            <option value="partial"
-                                @selected(($filters['therapist_assignment_status'] ?? null) === 'partial')>
+                            <option value="partial" @selected(($filters['therapist_assignment_status'] ?? null) === 'partial')>
                                 Partially Assigned
                             </option>
 
-                            <option value="fully_assigned"
-                                @selected(($filters['therapist_assignment_status'] ?? null) === 'fully_assigned')>
+                            <option value="fully_assigned" @selected(($filters['therapist_assignment_status'] ?? null) === 'fully_assigned')>
                                 Fully Assigned
                             </option>
 
@@ -123,8 +122,7 @@
                             <option value="" @selected(empty($filters['service'] ?? null))>All Services</option>
 
                             @forelse($services as $service)
-                                <option value="{{ $service->id }}"
-                                    @selected(($filters['service'] ?? null) == $service->id)>
+                                <option value="{{ $service->id }}" @selected(($filters['service'] ?? null) == $service->id)>
                                     {{ $service->name }}
                                 </option>
                             @empty
@@ -141,8 +139,7 @@
                             <option value="" @selected(empty($filters['therapist'] ?? null))>All Therapists</option>
 
                             @forelse($therapists as $therapist)
-                                <option value="{{ $therapist->id }}"
-                                    @selected(($filters['therapist'] ?? null) == $therapist->id)>
+                                <option value="{{ $therapist->id }}" @selected(($filters['therapist'] ?? null) == $therapist->id)>
                                     {{ $therapist->name }}
                                 </option>
                             @empty
@@ -201,7 +198,10 @@
                         'bg-primary' => ($filters['status'] ?? null) === 'confirmed',
                         'bg-success' => ($filters['status'] ?? null) === 'active',
                         'bg-secondary' => ($filters['status'] ?? null) === 'completed',
-                        'bg-danger' => ($filters['status'] ?? null) === 'cancelled',
+                        'bg-danger' => in_array($filters['status'] ?? null, [
+                            'cancelled',
+                            'rejected',
+                        ]),
                     ])>
                         Status: {{ ucfirst($filters['status']) }}
                     </span>
@@ -212,9 +212,12 @@
                     <span @class([
                         'badge',
                         'text-capitalize',
-                        'bg-warning text-dark' => ($filters['therapist_assignment_status'] ?? null) === 'unassigned',
-                        'bg-white text-dark' => ($filters['therapist_assignment_status'] ?? null) === 'partial',
-                        'bg-success-subtle text-success' => ($filters['therapist_assignment_status'] ?? null) === 'fully_assigned',
+                        'bg-warning text-dark' =>
+                            ($filters['therapist_assignment_status'] ?? null) === 'unassigned',
+                        'bg-white text-dark' =>
+                            ($filters['therapist_assignment_status'] ?? null) === 'partial',
+                        'bg-success-subtle text-success' =>
+                            ($filters['therapist_assignment_status'] ?? null) === 'fully_assigned',
                     ])>
                         Therapist Assignment:
                         {{ ucfirst($filters['therapist_assignment_status']) }}

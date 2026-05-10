@@ -7,21 +7,37 @@ use App\Actions\User\StoreUser;
 use App\Actions\User\UpdateUser;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
 
 class ReceptionistController extends Controller
 {
     public function index(Request $request, GetFilteredUsers $action)
     {
-        $userRole = $this->currentUserRole();
-        $filters = $request->only(['search', 'role', 'status']);
+        $filters = $request->only([
+            'search',
+            'status',
+        ]);
 
-        $users = $action->execute($userRole, $filters, User::ROLE_RECEPTIONIST);
+        // fetch filtered users
+        $users = $action->execute(
+            $filters,
+            Auth::user(),
+            User::ROLE_RECEPTIONIST
+        );
 
-        return view($this->currentRoleView() . '.receptionists.index', compact('users'));
+        // basic filters state
+        $hasBasicFilters =
+            !empty($filters['search']) ||
+            !empty($filters['role']) ||
+            !empty($filters['status']);
+
+        // global filters state
+        $hasFilters = $hasBasicFilters;
+
+        return view(
+            $this->currentRoleView() . '.receptionists.index',
+            compact('users', 'filters', 'hasFilters')
+        );
     }
 
     public function show(User $user)
@@ -32,7 +48,7 @@ class ReceptionistController extends Controller
     }
 
     public function create()
-    {        
+    {
         return view($this->currentRoleView() . '.receptionists.create');
     }
 
@@ -42,9 +58,7 @@ class ReceptionistController extends Controller
             'email'        => 'required|email|max:255|unique:users,email',
             'name'         => 'required|string|max:255',
             'status'       => 'required|in:active,inactive',
-            /*
-                profile
-            */
+            // profile
             'phone_number' => 'nullable|string|max:20',
             'address'      => 'nullable|string|max:255',
             'gender'       => 'nullable|in:male,female,other',
@@ -60,7 +74,7 @@ class ReceptionistController extends Controller
         $password = $result['password'];
 
         return redirect()
-            ->route('users.show', $user->id)
+            ->route('receptionists.show', $user->id)
             ->with(
                 'success',
                 "Receptionist account created successfully. Temporary password: {$password}"
@@ -82,9 +96,7 @@ class ReceptionistController extends Controller
             'name'   => 'required|string|max:255',
             'password' => 'nullable|string|min:8|confirmed',
             'status' => 'required|in:active,inactive',
-            /*
-                profile
-            */
+            // profile
             'phone_number' => 'nullable|string|max:20',
             'address'      => 'nullable|string|max:255',
             'gender'       => 'nullable|in:male,female,other',
@@ -98,10 +110,5 @@ class ReceptionistController extends Controller
 
         return to_route('receptionists.show', $user->id)
             ->with('success', 'Receptionist account updated successfully.');
-
-        
     }
-
-
-    
 }

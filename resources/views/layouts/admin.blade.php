@@ -79,15 +79,15 @@
                             </li>
                         @endif
 
-                        @if ($role === 'owner')
-                            <li class="nav-item mb-1">
-                                <a href="{{ route('clients.index') }}"
-                                    class="nav-link {{ request()->routeIs('clients*') ? 'text-bg-primary fw-bold' : 'text-dark opacity-75' }} px-3 py-2 d-flex align-items-center">
-                                    <i class="bi bi-people me-3"></i>
-                                    <span>Clients</span>
-                                </a>
-                            </li>
+                        <li class="nav-item mb-1">
+                            <a href="{{ route('clients.index') }}"
+                                class="nav-link {{ request()->routeIs('clients*') ? 'text-bg-primary fw-bold' : 'text-dark opacity-75' }} px-3 py-2 d-flex align-items-center">
+                                <i class="bi bi-people me-3"></i>
+                                <span>Clients</span>
+                            </a>
+                        </li>
 
+                        @if ($role === 'owner')
                             <li class="nav-item mb-1">
                                 <a href="{{ route('receptionists.index') }}"
                                     class="nav-link {{ request()->routeIs('receptionists*') ? 'text-bg-primary fw-bold' : 'text-dark opacity-75' }} px-3 py-2 d-flex align-items-center">
@@ -107,23 +107,24 @@
                             </li>
                         @endif
 
-                        <li class="nav-item mb-1">
-                            <a href="{{ route('announcements.index') }}"
-                                class="nav-link {{ request()->routeIs('announcements*') ? 'text-bg-primary fw-bold' : 'text-dark opacity-75' }} px-3 py-2 d-flex align-items-center">
-                                <i class="bi bi-megaphone me-3"></i>
-                                <span>Announcements</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-item mb-1">
-                            <a href="{{ route('reviews.index') }}"
-                                class="nav-link {{ request()->routeIs('reviews*') ? 'text-bg-primary fw-bold' : 'text-dark opacity-75' }} px-3 py-2 d-flex align-items-center">
-                                <i class="bi bi-star me-3"></i>
-                                <span>Reviews</span>
-                            </a>
-                        </li>
-
                         @if ($role === 'admin' || $role === 'owner')
+                            <li class="nav-item mb-1">
+                                <a href="{{ route('announcements.index') }}"
+                                    class="nav-link {{ request()->routeIs('announcements*') ? 'text-bg-primary fw-bold' : 'text-dark opacity-75' }} px-3 py-2 d-flex align-items-center">
+                                    <i class="bi bi-megaphone me-3"></i>
+                                    <span>Announcements</span>
+                                </a>
+                            </li>
+
+                            <li class="nav-item mb-1">
+                                <a href="{{ route('reviews.index') }}"
+                                    class="nav-link {{ request()->routeIs('reviews*') ? 'text-bg-primary fw-bold' : 'text-dark opacity-75' }} px-3 py-2 d-flex align-items-center">
+                                    <i class="bi bi-star me-3"></i>
+                                    <span>Reviews</span>
+                                </a>
+                            </li>
+
+
                             <li class="nav-item mb-1">
                                 <a href="{{ route('reports.bookings') }}"
                                     class="nav-link {{ request()->routeIs('reports*') ? 'text-bg-primary fw-bold' : 'text-dark opacity-75' }} px-3 py-2 d-flex align-items-center">

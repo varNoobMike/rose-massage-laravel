@@ -3,64 +3,66 @@
 namespace App\Actions\Review;
 
 use App\Models\Review;
-use Illuminate\Http\UploadedFile;  // maybe remove this line or improve in the future
+use App\Models\User;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class UpdateReview
 {
     public function execute(
-        array $validated,
+        array $data,
         Review $review,
-        int $userId,
-        array $existingImageIds = [],
-        array $newImages = []
+        User $user
     ): Review {
 
-        return DB::transaction(function () use (
-            $validated,
-            $review,
-            $userId,
-            $existingImageIds,
-            $newImages
-        ) {
+        return DB::transaction(function () use ($data, $review, $user) {
 
-            // Ensure user owns the review
-            if ($review->user_id !== $userId) {
+            // ensure owner
+            if ($review->user_id !== $user->id) {
                 throw new \Exception('Unauthorized action.');
             }
 
-            // Update review data
+            // update review
             $review->update([
-                'rating'  => $validated['rating'],
-                'comment' => $validated['comment'],
+                'rating'  => $data['rating'],
+                'comment' => $data['comment'],
             ]);
 
-            // Get images to delete (not in existing list)
+            /**
+             * Handle existing images removal
+             */
+            $existingImageIds = $data['existing_images'] ?? [];
+
             $imagesToDelete = $review->images()
                 ->when($existingImageIds, function ($q) use ($existingImageIds) {
                     $q->whereNotIn('id', $existingImageIds);
                 })
                 ->get();
 
-            // Remove images from storage and DB
             foreach ($imagesToDelete as $img) {
                 Storage::disk('public')->delete($img->path);
                 $img->delete();
             }
 
-            // Store new uploaded images
-            foreach ($newImages as $image) {
-                if (!$image instanceof UploadedFile) continue;
+            /**
+             * Upload new images
+             */
+            if (!empty($data['images'])) {
 
-                $path = $image->store('reviews', 'public');
+                foreach ($data['images'] as $image) {
 
-                $review->images()->create([
-                    'path' => $path,
-                ]);
+                    if ($image instanceof UploadedFile) {
+
+                        $path = $image->store('reviews', 'public');
+
+                        $review->images()->create([
+                            'path' => $path,
+                        ]);
+                    }
+                }
             }
 
-            // Return updated review with images
             return $review->fresh(['images']);
         });
     }

@@ -3,8 +3,11 @@
 namespace App\Actions\Announcement;
 
 use App\Models\Announcement;
+use App\Models\User;
+use App\Notifications\NewAnnouncementNotification;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
 
 class StoreAnnouncement
 {
@@ -25,7 +28,7 @@ class StoreAnnouncement
             }
 
             // create announcement
-            return Announcement::create([
+            $announcement = Announcement::create([
                 'title' => $data['title'],
                 'message' => $data['message'],
                 'type' => $data['type'],
@@ -35,6 +38,17 @@ class StoreAnnouncement
                 'ends_at' => $data['ends_at'] ?? null,
                 'cover_image' => $coverImagePath,
             ]);
+
+            // get all clients
+            $recipients = User::where('role', User::ROLE_CLIENT)->get();
+
+            // send notification
+            Notification::send(
+                $recipients,
+                new NewAnnouncementNotification($announcement)
+            );
+
+            return $announcement;
         });
     }
 }

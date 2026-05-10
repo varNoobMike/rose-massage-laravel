@@ -2,31 +2,37 @@
 
 namespace App\Notifications;
 
+use App\Models\Announcement;
 use App\Models\User;
 use Illuminate\Notifications\Notification;
 
 class NewAnnouncementNotification extends Notification
 {
-    public array $announcement;
+    public Announcement $announcement;
 
-    public function __construct(array $announcement)
+    public function __construct(Announcement $announcement)
     {
         $this->announcement = $announcement;
     }
 
-    public function via($notifiable): array
+    public function via($notifiable)
     {
-        return ['database'];
+        return ['database']; // or ['database','broadcast','mail']
     }
 
-    public function toArray($notifiable): array
+    public function toArray($notifiable)
     {
-        return [
-            'announcement_id' => $this->announcement['id'] ?? null,
-            'title' => $this->announcement['title'] ?? null,
-            'type' => $this->announcement['type'] ?? null,
+        $isClient = $notifiable->role === User::ROLE_CLIENT;
 
-            'message' => 'New announcement: ' . ($this->announcement['title'] ?? 'Update available'),
+        return [
+            'announcement_id' => $this->announcement->id,
+            'title' => $this->announcement->title,
+            'type' => $this->announcement->type,
+            'link_page' => $this->announcement->link_page,
+
+            'message' => $isClient
+                ? 'New announcement has been posted. Check it now for updates.'
+                : 'A new announcement has been created. Please review it.',
         ];
     }
 }

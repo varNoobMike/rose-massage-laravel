@@ -14,25 +14,29 @@ class Review extends Model
         'status'
     ];
 
-    // 🔗 User who made the review
+    public const STATUS_PENDING= 'pending';
+    public const STATUS_APPROVED = 'approved';
+    public const STATUS_REJECTED = 'rejected';
+
+    // User who made the review
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    // 🔗 Booking being reviewed
+    // Booking being reviewed
     public function booking()
     {
         return $this->belongsTo(Booking::class);
     }
 
-    // 🖼️ review images
+    // review images
     public function images()
     {
         return $this->hasMany(ReviewImage::class);
     }
 
-    // 💬 replies
+    // replies
     public function replies()
     {
         return $this->hasMany(ReviewReply::class);

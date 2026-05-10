@@ -4,95 +4,113 @@
 
 @section('page-header', true)
 @section('page-header-title-indexpage', 'Receptionists')
-@section('page-header-subtitle', 'Manage receptionists accounts')
+@section('page-header-subtitle', 'manage receptionist accounts')
 
 @section('page-header-actions')
     <a href="{{ route('receptionists.index') }}" class="btn btn-outline-secondary px-4 shadow-sm">
         <i class="bi bi-arrow-repeat me-2"></i> Sync
     </a>
-    @if (auth()->user()?->role !== 'receptionist')
-        <a href="{{ route('receptionists.create') }}" class="btn btn-primary px-4 shadow-sm ">
-            <i class="bi bi-plus-lg me-2"></i> New
-        </a>
-    @endif
+    <a href="{{ route('receptionists.create') }}" class="btn btn-primary px-4 shadow-sm">
+        <i class="bi bi-plus-lg me-2"></i> New
+    </a>
 @endsection
 
 @section('filter-area', true)
 @section('filter-form')
 
-<form action="{{ route('receptionists.index') }}" method="GET">
-
-    {{-- TOGGLE (mobile only) --}}
-    <button class="btn btn-outline-dark d-md-none w-100 mb-3"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#receptionistFilter">
-        <i class="bi bi-funnel me-1"></i>
-        Show Filters
+    <button class="btn btn-outline-dark d-md-none w-100 mb-3" type="button" data-bs-toggle="collapse"
+        data-bs-target="#userFilterCollapse">
+        <i class="bi bi-funnel me-1"></i> Show Filters
     </button>
 
-    <div class="collapse d-md-block" id="receptionistFilter">
+    <div class="collapse d-md-block" id="userFilterCollapse">
 
-        <div class="row g-3 align-items-end">
+        <form action="{{ route('receptionists.index') }}" method="GET">
 
-            @php
-                $status = request('status', 'active');
-            @endphp
+            <div class="row g-2 align-items-end">
 
-            {{-- SEARCH --}}
-            <div class="col-12 col-md-5">
-                <input type="text"
-                       name="search"
-                       class="form-control"
-                       placeholder="Search name, email, ID..."
-                       value="{{ request('search') }}">
+                {{-- search --}}
+                <div class="col-12 col-md-5">
+                    <input type="text" name="search" class="form-control" placeholder="Search by name, email..."
+                        value="{{ $filters['search'] ?? '' }}">
+                </div>
+
+                {{-- status --}}
+                <div class="col-12 col-md-4">
+                    <select name="status" class="form-select">
+
+                        <option value="" @selected(empty($filters['status']))>
+                            All status
+                        </option>
+
+                        <option value="active" @selected(($filters['status'] ?? null) === 'active')>
+                            Active
+                        </option>
+
+                        <option value="inactive" @selected(($filters['status'] ?? null) === 'inactive')>
+                            Inactive
+                        </option>
+
+                    </select>
+                </div>
+
+                {{-- actions --}}
+                <div class="col-12 col-md-3 d-flex gap-2">
+
+                    <button class="btn btn-dark w-100">
+                        <i class="bi bi-funnel me-1"></i>
+                        Filter
+                    </button>
+
+                    <a href="{{ route('receptionists.index') }}" class="btn btn-outline-secondary w-100">
+                        <i class="bi bi-x-circle me-1"></i>
+                        Clear
+                    </a>
+
+                </div>
+
             </div>
 
-            {{-- STATUS --}}
-            <div class="col-12 col-md-4">
-                <select name="status" class="form-select">
+        </form>
 
-                    <option value="all" {{ $status == 'all' ? 'selected' : '' }}>
-                        All Status
-                    </option>
+    </div>
 
-                    <option value="active" {{ $status == 'active' ? 'selected' : '' }}>
-                        Active
-                    </option>
+@endsection
 
-                    <option value="inactive" {{ $status == 'inactive' ? 'selected' : '' }}>
-                        Inactive
-                    </option>
 
-                </select>
-            </div>
+@section('content')
 
-            {{-- ACTIONS --}}
-            <div class="col-12 col-md-3 d-flex gap-2">
+    @if ($hasFilters)
+        <div class="alert alert-info d-flex justify-content-between align-items-center py-2 px-3 mb-3">
 
-                <button class="btn btn-dark w-100">
-                    <i class="bi bi-funnel me-1"></i>
-                    Apply
-                </button>
+            <div class="d-flex flex-wrap gap-2 align-items-center">
 
-                <a href="{{ route('receptionists.index') }}"
-                   class="btn btn-outline-secondary w-100">
-                    <i class="bi bi-x-circle me-1"></i>
-                    Clear
-                </a>
+                <strong class="me-2">
+                    <i class="bi bi-funnel-fill"></i> Filters Applied:
+                </strong>
+
+                @if (!empty($filters['search']))
+                    <span class="badge bg-dark">
+                        Search: {{ $filters['search'] }}
+                    </span>
+                @endif
+
+                @if (!empty($filters['status']))
+                    <span @class([
+                        'badge',
+                        'bg-success' => $filters['status'] === 'active',
+                        'bg-secondary' => $filters['status'] === 'inactive',
+                    ])>
+                        Status: {{ ucfirst($filters['status']) }}
+                    </span>
+                @endif
 
             </div>
 
         </div>
+    @endif
 
-    </div>
 
-</form>
-
-@endsection
-
-@section('content')
-    <!-- Table -->
     <div class="card shadow-sm border">
 
         <div class="table-responsive">
@@ -100,10 +118,9 @@
 
                 <thead class="table-light">
                     <tr>
-                        <th>ID</th>
-                        <th>User Details</th>
-                        <th class="text-center">Role</th>
-                        <th class="text-center">Status</th>
+                        <th>User</th>
+                        <th class="text-center d-none d-lg-table-cell">Role</th>
+                        <th class="text-center d-none d-lg-table-cell">Status</th>
                         <th class="text-end">Actions</th>
                     </tr>
                 </thead>
@@ -112,17 +129,11 @@
                     @forelse($users as $user)
                         <tr>
 
-                            <!-- ID -->
-                            <td class="fw-bold text-muted">
-                                #{{ $user->id }}
-                            </td>
-
-                            <!-- USER DETAILS -->
                             <td>
                                 <div class="d-flex align-items-center">
 
                                     @if ($user->profile?->avatar)
-                                        <img src="{{ asset('storage/' . $user->profile?->avatar) }}"
+                                        <img src="{{ asset('storage/' . $user->profile->avatar) }}"
                                             class="rounded-circle me-3 object-fit-cover" width="45" height="45">
                                     @else
                                         <div class="bg-light text-muted rounded-circle d-flex align-items-center justify-content-center me-3"
@@ -132,39 +143,36 @@
                                     @endif
 
                                     <div>
-                                        <div class="fw-bold">
-                                            {{ $user->name }}
-                                        </div>
+                                        <div class="fw-bold">{{ $user->name }}</div>
 
                                         <small class="text-muted">
                                             {{ $user->email }}
                                         </small>
+
+                                        <div class="text-muted small">
+                                            ID: #{{ $user->id }}
+                                        </div>
                                     </div>
 
                                 </div>
                             </td>
 
-                            <!-- ROLE -->
-                            <td class="text-center">
+                            <td class="text-center d-none d-lg-table-cell">
                                 <span class="badge bg-light text-dark border text-capitalize">
                                     {{ $user->role }}
                                 </span>
                             </td>
 
-                            <!-- STATUS -->
-                            <td class="text-center">
-                                @if ($user->status === 'active')
-                                    <span class="badge bg-success">
-                                        Active
-                                    </span>
-                                @else
-                                    <span class="badge bg-secondary">
-                                        Inactive
-                                    </span>
-                                @endif
+                            <td class="text-center d-none d-lg-table-cell">
+                                <span @class([
+                                    'badge',
+                                    'bg-success' => $user->status === 'active',
+                                    'bg-secondary' => $user->status !== 'active',
+                                ])>
+                                    {{ ucfirst($user->status) }}
+                                </span>
                             </td>
 
-                            <!-- ACTIONS -->
                             <td class="text-end">
                                 <div class="btn-group gap-2">
 
@@ -173,8 +181,7 @@
                                         <i class="bi bi-eye"></i>
                                     </a>
 
-                                    <a href="{{ route('receptionists.edit', $user->id) }}"
-                                        class="btn btn-sm btn-primary">
+                                    <a href="{{ route('receptionists.edit', $user->id) }}" class="btn btn-sm btn-primary">
                                         <i class="bi bi-pencil"></i>
                                     </a>
 
@@ -184,15 +191,21 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="text-center py-5">
+                            <td colspan="4" class="text-center py-5">
 
-                                <i class="bi bi-people fs-1 text-muted"></i>
+                                @if ($hasFilters)
+                                    <i class="bi bi-search fs-1 text-muted"></i>
+                                    <h5 class="mt-3">No Receptionists Found</h5>
+                                    <p class="text-muted mb-3">No receptionists match your filters.</p>
 
-                                <h5 class="mt-3">No users found</h5>
-
-                                <p class="text-muted mb-0">
-                                    Try adjusting your filters.
-                                </p>
+                                    <a href="{{ route('receptionists.index') }}" class="btn btn-outline-dark">
+                                        Clear Filters
+                                    </a>
+                                @else
+                                    <i class="bi bi-people fs-1 text-muted"></i>
+                                    <h5 class="mt-3">No Receptionists Yet</h5>
+                                    <p class="text-muted mb-0">Receptionists will appear here once created.</p>
+                                @endif
 
                             </td>
                         </tr>
@@ -201,23 +214,6 @@
 
             </table>
         </div>
-
-        <!-- Pagination -->
-        @if ($users->hasPages())
-            <div class="card-footer bg-white">
-                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
-
-                    <small class="text-muted">
-                        Showing {{ $users->firstItem() }}
-                        to {{ $users->lastItem() }}
-                        of {{ $users->total() }} users
-                    </small>
-
-                    {{ $users->appends(request()->query())->links() }}
-
-                </div>
-            </div>
-        @endif
 
     </div>
 @endsection

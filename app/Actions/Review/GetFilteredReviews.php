@@ -7,59 +7,97 @@ use App\Models\User;
 
 class GetFilteredReviews
 {
-    public function execute(array $filters, ?string $userRole = null)
-    {
+    public function execute(
+        array $filters,
+        ?User $user = null
+    ) {
+
         $search = $filters['search'] ?? null;
-        $dateFrom = $filters['from'] ?? null;
-        $dateTo = $filters['to'] ?? null;
+        $dateFrom = $filters['date_from'] ?? null;
+        $dateTo = $filters['date_to'] ?? null;
         $rating = $filters['rating'] ?? null;
         $status = $filters['status'] ?? null;
 
         $query = Review::query()
-            ->with(['user.profile', 'booking']); // eager load to avoid N+1
+            ->with([
+                'user.profile',
+                'booking',
+            ]);
 
-        // fetch only approved reviews if current user is client
-        if($userRole === User::ROLE_CLIENT || !$userRole) {
-            $query->where('status', 'approved');
+        // role check
+        $isClient = !$user || $user->role === User::ROLE_CLIENT;
+
+        // clients can only see approved reviews
+        if ($isClient) {
+            $query->where('status', Review::STATUS_APPROVED);
         }
 
-        // Search comment, booking id, user name, email, id
-        $query->when($search, function ($q, $search) {
-            $q->where(function ($sub) use ($search) {
-                $sub->where('comment', 'like', "%{$search}%")
-                    ->orWhere('booking_id', $search)
-                    ->orWhereHas('user', function ($user) use ($search) {
-                        $user->where('name', 'like', "%{$search}%")
-                             ->orWhere('email', 'like', "%{$search}%")
-                             ->orWhere('id', $search);
-                    });
+        // search
+        $query->when($search, function ($q, $search) use ($isClient) {
+
+            $q->where(function ($sub) use ($search, $isClient) {
+
+                // client search
+                if ($isClient) {
+
+                    $sub->where('comment', 'like', "%{$search}%")
+                        ->orWhereHas('user', function ($user) use ($search) {
+                            $user->where(
+                                'name',
+                                'like',
+                                "%{$search}%"
+                            );
+                        });
+
+                    return;
+                }
+
+                // admin/staff search
+                $sub->where('comment', 'like', "%{$search}%");
+
+                if (is_numeric($search)) {
+                    $sub->orWhere('id', (int) $search)
+                        ->orWhere('booking_id', (int) $search);
+                }
+
+                $sub->orWhereHas('user', function ($user) use ($search) {
+
+                    $user->where('name', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%");
+
+                    if (is_numeric($search)) {
+                        $user->orWhere('id', (int) $search);
+                    }
+                });
             });
         });
 
-        // Date from
-        $query->when($dateFrom, function ($q, $date) {
-            $q->whereDate('created_at', '>=', $date);
+        // date from
+        $query->when($dateFrom, function ($q, $dateFrom) {
+            $q->whereDate('created_at', '>=', $dateFrom);
         });
 
-        // Date to
-        $query->when($dateTo, function ($q, $date) {
-            $q->whereDate('created_at', '<=', $date);
+        // date to
+        $query->when($dateTo, function ($q, $dateTo) {
+            $q->whereDate('created_at', '<=', $dateTo);
         });
 
-        // Rating
+        // rating
         $query->when($rating, function ($q, $rating) {
+
             if ($rating !== 'all') {
                 $q->where('rating', $rating);
             }
         });
 
-        // Status
-        $query->when(
-            $status,
-            fn ($q, $status) => $q->where('status', $status)
-        );
+        // status rules
+        if (!$isClient) {
+            $query->when($status, function ($q, $status) {
+                $q->where('status', $status);
+            });
+        }
 
-        // Final result
+        // final result
         return $query
             ->latest()
             ->paginate(10)

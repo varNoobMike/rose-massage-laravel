@@ -8,15 +8,9 @@
 @section('page-header', true)
 @section('page-header-title-showpage', 'Therapist #' . $user->id)
 @section('page-header-subtitle', 'Review and manage this therapist record')
-@section('page-header-actions')
-    <a href="{{ route('therapists.edit', $user->id) }}" class="btn btn-primary px-4 shadow-sm">
-        <i class="bi bi-pencil-square me-2"></i> Edit
-    </a>
-@endsection
 
 @section('content')
     <div class="row g-4">
-
 
         <!-- LEFT SIDE -->
         <div class="col-12 col-lg-8">
@@ -131,6 +125,29 @@
 
                                     </td>
                                 </tr>
+
+                                <!-- ACTIONS -->
+                                @if (in_array(auth()->user()?->role, ['admin', 'owner']))
+                                    <tr>
+                                        <td class="ps-4 py-4 text-muted small fw-bold text-uppercase">
+                                            Actions
+                                        </td>
+
+                                        <td class="py-4 pe-4">
+
+                                            <div class="d-flex flex-wrap gap-2">
+
+                                                <a href="{{ route('therapists.edit', $user->id) }}"
+                                                    class="btn btn-sm btn-primary">
+                                                    <i class="bi bi-pencil-square me-1"></i>
+                                                    Edit
+                                                </a>
+
+                                            </div>
+
+                                        </td>
+                                    </tr>
+                                @endif
 
                             </tbody>
                         </table>

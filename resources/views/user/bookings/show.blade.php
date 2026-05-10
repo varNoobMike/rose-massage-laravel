@@ -52,7 +52,8 @@
                                         @elseif($status == 'confirmed') bg-primary
                                         @elseif($status == 'active') bg-success
                                         @elseif($status == 'completed') bg-secondary
-                                        @elseif($status == 'cancelled') bg-danger @endif">
+                                        @elseif($status == 'cancelled') bg-danger
+                                        @elseif($status == 'rejected') bg-danger @endif">
                                         {{ ucfirst($status) }}
                                     </span>
                                 </div>
@@ -116,7 +117,8 @@
 
                                 @php $rStatus = $booking->review->status; @endphp
 
-                                <span class="badge
+                                <span
+                                    class="badge
                                     @if ($rStatus == 'approved') bg-success
                                     @elseif ($rStatus == 'rejected') bg-danger
                                     @else bg-warning text-dark @endif">
@@ -141,8 +143,7 @@
                             @if ($booking->review->images && $booking->review->images->count())
                                 <div class="d-flex flex-wrap gap-2 mt-2">
                                     @foreach ($booking->review->images as $img)
-                                        <img src="{{ asset('storage/' . $img->path) }}"
-                                            class="border"
+                                        <img src="{{ asset('storage/' . $img->path) }}" class="border"
                                             style="width:70px;height:70px;object-fit:cover;">
                                     @endforeach
                                 </div>

@@ -161,10 +161,6 @@
                                             <div class="fw-bold">
                                                 {{ $notification->data['message'] ?? 'Notification' }}
                                             </div>
-
-                                            <small class="text-muted">
-                                                Booking #{{ $notification->data['booking_id'] ?? '-' }}
-                                            </small>
                                         </div>
 
                                     </div>
@@ -172,17 +168,65 @@
 
                                 <!-- TYPE -->
                                 <td class="text-center">
+                                    @php
+                                        $resource = null;
+                                        $url = null;
+                                        $label = 'Unknown';
+
+                                        switch ($notification->type) {
+                                            case App\Notifications\NewBookingNotification::class:
+                                            case App\Notifications\BookingStatusNotification::class:
+                                                $label = 'Booking';
+
+                                                $resource = \App\Models\Booking::find(
+                                                    $notification->data['booking_id'] ?? null,
+                                                );
+
+                                                $url = $resource ? route('bookings.show', $resource) : null;
+                                                break;
+
+                                            case App\Notifications\NewBookingReviewNotification::class:
+                                                $label = 'Review';
+
+                                                $resource = \App\Models\Review::find(
+                                                    $notification->data['review_id'] ?? null,
+                                                );
+
+                                                $url = $resource ? route('reviews.show', $resource) : null;
+                                                break;
+
+                                            case App\Notifications\ReviewApprovedNotification::class:
+                                            case App\Notifications\ReviewRejectedNotification::class:
+                                                $label = 'Review';
+
+                                                $resource = \App\Models\Review::find(
+                                                    $notification->data['review_id'] ?? null,
+                                                );
+
+                                                $url = $resource ? route('reviews.show', $resource) : null;
+                                                break;
+
+                                            case App\Notifications\ReviewDeletedNotification::class:
+                                                $label = 'Review';
+
+                                                $resource = null;
+                                                $url = null;
+                                                break;
+
+                                            case App\Notifications\NewAnnouncementNotification::class:
+                                                $label = 'Announcement';
+
+                                                $resource = \App\Models\Announcement::find(
+                                                    $notification->data['announcement_id'] ?? null,
+                                                );
+
+                                                $url = $resource ? route('announcements.show', $resource) : null;
+                                                break;
+                                        }
+                                    @endphp
+
                                     <span class="badge bg-light text-dark">
-                                        @php $type = $notification->type @endphp
-                                        @if (
-                                            $type === App\Notifications\NewBookingNotification::class ||
-                                                $type === App\Notifications\BookingStatusNotification::class)
-                                            Booking
-                                        @elseif($type === App\Notifications\NewBookingReviewNotification::class)
-                                            Review
-                                        @elseif($type === App\Notifications\NewBAnnouncementNotification::class)
-                                            Announcement
-                                        @endif
+                                        {{ $label }}
                                     </span>
                                 </td>
 
@@ -215,20 +259,68 @@
                                             </form>
                                         @endif
 
-                                        @php $type = $notification->type; @endphp
+                                        @php
+                                            $resource = null;
+                                            $url = null;
 
-                                        @if (
-                                            $type === App\Notifications\NewBookingNotification::class ||
-                                                $type === App\Notifications\BookingStatusNotification::class)
-                                            <a href="{{ route('bookings.show', $notification->data['booking_id']) }}"
-                                                class="btn btn-sm btn-outline-secondary">
+                                            switch ($notification->type) {
+                                                case App\Notifications\NewBookingNotification::class:
+                                                case App\Notifications\BookingStatusNotification::class:
+                                                    $resource = \App\Models\Booking::find(
+                                                        $notification->data['booking_id'] ?? null,
+                                                    );
+
+                                                    $url = $resource ? route('bookings.show', $resource) : null;
+                                                    break;
+
+                                                case App\Notifications\NewBookingReviewNotification::class:
+                                                    $resource = \App\Models\Review::find(
+                                                        $notification->data['review_id'] ?? null,
+                                                    );
+
+                                                    $url = $resource ? route('reviews.show', $resource) : null;
+                                                    break;
+
+                                                case App\Notifications\ReviewApprovedNotification::class:
+                                                    $resource = \App\Models\Review::find(
+                                                        $notification->data['review_id'] ?? null,
+                                                    );
+
+                                                    $url = $resource ? route('reviews.show', $resource) : null;
+                                                    break;
+
+                                                case App\Notifications\ReviewRejectedNotification::class:
+                                                    $resource = \App\Models\Review::find(
+                                                        $notification->data['review_id'] ?? null,
+                                                    );
+
+                                                    $url = $resource ? route('reviews.show', $resource) : null;
+                                                    break;
+
+                                                case App\Notifications\ReviewDeletedNotification::class:
+                                                    $resource = null; // already deleted
+
+                                                    $url = null; // no safe access anymore
+                                                    break;
+
+                                                case App\Notifications\NewAnnouncementNotification::class:
+                                                    $resource = \App\Models\Announcement::find(
+                                                        $notification->data['announcement_id'] ?? null,
+                                                    );
+
+                                                    $url = $resource ? route('announcements.show', $resource) : null;
+                                                    break;
+                                            }
+                                        @endphp
+
+                                        @if ($url)
+                                            <a href="{{ $url }}" class="btn btn-sm btn-outline-secondary">
                                                 <i class="bi bi-eye"></i>
                                             </a>
-                                        @elseif ($type === App\Notifications\NewBookingReviewNotification::class)
-                                            <a href="{{ route('reviews.show', $notification->data['review_id']) }}"
-                                                class="btn btn-sm btn-outline-secondary">
-                                                <i class="bi bi-eye"></i>
-                                            </a>
+                                        @else
+                                            <span class="badge bg-danger d-flex align-items-center">
+                                                Deleted
+                                            </span>
                                         @endif
 
                                     </div>

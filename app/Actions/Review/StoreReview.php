@@ -5,55 +5,69 @@ namespace App\Actions\Review;
 use App\Models\Booking;
 use App\Models\Review;
 use App\Models\User;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
 use App\Notifications\NewBookingReviewNotification;
-use Illuminate\Support\Facades\DB;
 
 class StoreReview
 {
-    public function execute(array $validated, array $images, Booking $booking, $user): Review
-    {
-        return DB::transaction(function () use ($validated, $images, $booking, $user) {
+    public function execute(
+        array $data,
+        Booking $booking,
+        User $user
+    ): Review {
 
-            // Ensure only booking owner can review
+        return DB::transaction(function () use ($data, $booking, $user) {
+
+            // ensure owner
             if ($booking->client_id !== $user->id) {
                 throw new \Exception('Unauthorized action.');
             }
 
-            // Prevent duplicate review for same booking
-            if (
-                Review::where('booking_id', $booking->id)
+            // prevent duplicate review
+            $exists = Review::where('booking_id', $booking->id)
                 ->where('user_id', $user->id)
-                ->exists()
-            ) {
-                throw new \Exception('Already reviewed this booking.');
+                ->exists();
+
+            if ($exists) {
+                throw new \Exception('You already reviewed this booking.');
             }
 
-            // Create review record
+            // create review
             $review = Review::create([
-                'user_id' => $user->id,
+                'user_id'    => $user->id,
                 'booking_id' => $booking->id,
-                'rating' => $validated['rating'],
-                'comment' => $validated['comment'],
+                'rating'     => $data['rating'],
+                'comment'    => $data['comment'],
+                'status'     => Review::STATUS_PENDING
             ]);
 
-            // Upload and attach images
-            foreach ($images as $image) {
-                $path = $image->store('reviews', 'public');
+            // upload images (now inside $data like your pattern)
+            if (!empty($data['images'])) {
 
-                $review->images()->create([
-                    'path' => $path,
-                ]);
+                foreach ($data['images'] as $image) {
+
+                    if ($image instanceof UploadedFile) {
+
+                        $path = $image->store('reviews', 'public');
+
+                        $review->images()->create([
+                            'path' => $path,
+                        ]);
+                    }
+                }
             }
 
-            // Send notifications (still inside transaction, needs future improvement ex: put notification outside transaction or use queue)
+            /**
+             * Send notification to admin, staff and the client
+             */
             $recipients = User::whereIn('role', [
                 User::ROLE_ADMIN,
                 User::ROLE_OWNER,
                 User::ROLE_RECEPTIONIST,
             ])->get();
 
-            // include the owner only
             $recipients->push($booking->client);
 
             Notification::send(

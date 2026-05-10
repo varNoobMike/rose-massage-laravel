@@ -7,64 +7,81 @@ use App\Models\User;
 
 class GetFilteredLogs
 {
-    public function execute(array $filters, string $role, $userId)
-    {
-        return ActivityLog::query()
+    public function execute(
+        array $filters,
+        ?User $user = null
+    ) {
+        $search = $filters['search'] ?? null;
+        $action = $filters['action'] ?? null;
+        $subjectType = $filters['subject_type'] ?? null;
+        $subjectId = $filters['subject_id'] ?? null;
+        $from = $filters['date_from'] ?? null;
+        $to = $filters['date_to'] ?? null;
 
-            // 🔐 ROLE FILTER
-            ->when($role === User::ROLE_RECEPTIONIST, function ($q) use ($userId) {
-                $q->where('user_id', $userId);
-            })
+        $query = ActivityLog::query();
 
-            // 🔎 SEARCH
-            ->when($filters['search'] ?? null, function ($q, $search) {
+        // receptionist can only see own logs
+        if ($user?->role === User::ROLE_RECEPTIONIST) {
+            $query->where('user_id', $user->id);
+        }
 
-                $q->where(function ($inner) use ($search) {
+        // search
+        if (!empty($search)) {
 
-                    $inner->where('message', 'like', "%{$search}%")
-                          ->orWhere('subject_type', 'like', "%{$search}%")
-                          ->orWhere('subject_id', 'like', "%{$search}%")
-                          ->orWhereHas('user', function ($u) use ($search) {
-                              $u->where('name', 'like', "%{$search}%")
-                                ->orWhere('email', 'like', "%{$search}%")
-                                ->orWhere('role', 'like', "%{$search}%")
-                                ->orWhere('id', $search);
-                          });
+            $query->where(function ($q) use ($search) {
 
-                });
+                // search log message
+                $q->where('message', 'like', "%{$search}%")
 
-            })
+                    // search subject type
+                    ->orWhere('subject_type', 'like', "%{$search}%")
 
-            // 🎯 ACTION
-            ->when($filters['action'] ?? null, fn ($q, $action) =>
-                $q->where('action', $action)
-            )
+                    // search subject id
+                    ->orWhere('subject_id', 'like', "%{$search}%")
 
-            // 👤 USER FILTER
-            ->when($filters['user_id'] ?? null, fn ($q, $id) =>
-                $q->where('user_id', $id)
-            )
+                    // search related user
+                    ->orWhereHas('user', function ($u) use ($search) {
 
-            // 📦 SUBJECT TYPE
-            ->when($filters['subject_type'] ?? null, fn ($q, $type) =>
-                $q->where('subject_type', $type)
-            )
+                        // search user name
+                        $u->where('name', 'like', "%{$search}%")
 
-            // 🧾 SUBJECT ID
-            ->when($filters['subject_id'] ?? null, fn ($q, $id) =>
-                $q->where('subject_id', $id)
-            )
+                            // search user email
+                            ->orWhere('email', 'like', "%{$search}%")
 
-            // 📅 DATE FROM
-            ->when($filters['from'] ?? null, fn ($q, $from) =>
-                $q->whereDate('created_at', '>=', $from)
-            )
+                            // search user role
+                            ->orWhere('role', 'like', "%{$search}%");
 
-            // 📅 DATE TO
-            ->when($filters['to'] ?? null, fn ($q, $to) =>
-                $q->whereDate('created_at', '<=', $to)
-            )
+                    });
+            });
+        }
 
+        // action
+        if (!empty($action)) {
+            $query->where('action', $action);
+        }
+
+        // subject type
+        if (!empty($subjectType)) {
+            $query->where('subject_type', $subjectType);
+        }
+
+        // subject id
+        if (!empty($subjectId)) {
+            $query->where('subject_id', $subjectId);
+        }
+
+        // from date
+        if (!empty($from)) {
+            $query->whereDate('created_at', '>=', $from);
+        }
+
+        // to date
+        if (!empty($to)) {
+            $query->whereDate('created_at', '<=', $to);
+        }
+
+        // final result
+        return $query
             ->latest()
             ->paginate(20)
             ->withQueryString();

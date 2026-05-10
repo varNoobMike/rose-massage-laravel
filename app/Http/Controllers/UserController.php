@@ -7,17 +7,37 @@ use App\Actions\User\StoreUser;
 use App\Actions\User\UpdateUser;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
     public function index(Request $request, GetFilteredUsers $action)
     {
-        $userRole = $this->currentUserRole();
-        $filters = $request->only(['search', 'role', 'status']);
+        $filters = $request->only([
+            'search',
+            'role',
+            'status',
+        ]);
 
-        $users = $action->execute($userRole, $filters);
+        // fetch filtered users
+        $users = $action->execute(
+            $filters,
+            Auth::user()
+        );
 
-        return view($this->currentRoleView() . '.users.index', compact('users'));
+        // basic filters state
+        $hasBasicFilters =
+            !empty($filters['search']) ||
+            !empty($filters['role']) ||
+            !empty($filters['status']);
+
+        // global filters state
+        $hasFilters = $hasBasicFilters;
+
+        return view(
+            $this->currentRoleView() . '.users.index',
+            compact('users', 'filters', 'hasFilters')
+        );
     }
 
     public function show(User $user)
@@ -43,9 +63,7 @@ class UserController extends Controller
             'name'         => 'required|string|max:255',
             'role'         => 'required|string|in:owner,receptionist,therapist,client',
             'status'       => 'required|in:active,inactive',
-            /*
-                profiles
-            */
+            // profiles
             'phone_number' => 'nullable|string|max:20',
             'address'      => 'nullable|string|max:255',
             'gender'       => 'nullable|in:male,female,other',
@@ -86,9 +104,7 @@ class UserController extends Controller
             'role'   => 'required|string|in:owner,receptionist,therapist,client',
             'password' => 'nullable|string|min:8|confirmed',
             'status' => 'required|in:active,inactive',
-            /*
-                profiles
-            */
+            // profiles
             'phone_number' => 'nullable|string|max:20',
             'address'      => 'nullable|string|max:255',
             'gender'       => 'nullable|in:male,female,other',

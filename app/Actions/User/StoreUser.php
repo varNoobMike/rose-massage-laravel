@@ -5,7 +5,9 @@ namespace App\Actions\User;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Http\UploadedFile;
 
 class StoreUser
 {
@@ -15,6 +17,7 @@ class StoreUser
 
         $user = DB::transaction(function () use ($data, $generatedPassword) {
 
+            // create user
             $user = User::create([
                 'name'     => $data['name'],
                 'email'    => $data['email'],
@@ -23,18 +26,21 @@ class StoreUser
                 'status'   => $data['status'],
             ]);
 
-            $avatar = $data['image'] ?? null;
+            // default avatar
+            $avatarPath = null;
 
-            if ($avatar) {
-                $avatar = $avatar->store('user-profiles', 'public');
+            // upload avatar if exists
+            if (($data['image'] ?? null) instanceof UploadedFile) {
+                $avatarPath = $data['image']->store('user-profiles', 'public');
             }
 
+            // create profile
             $user->profile()->create([
                 'phone_number' => $data['phone_number'] ?? null,
                 'address'      => $data['address'] ?? null,
                 'gender'       => $data['gender'] ?? null,
                 'birthdate'    => $data['birthdate'] ?? null,
-                'avatar'       => $avatar,
+                'avatar'       => $avatarPath,
             ]);
 
             return $user;
@@ -44,6 +50,5 @@ class StoreUser
             'user' => $user,
             'password' => $generatedPassword,
         ];
-
     }
 }

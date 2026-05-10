@@ -3,8 +3,11 @@
 namespace App\Actions\Review;
 
 use App\Models\Review;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\ReviewDeletedNotification;
 
 class DestroyReview
 {
@@ -12,16 +15,29 @@ class DestroyReview
     {
         DB::transaction(function () use ($review, $userId) {
 
-            // Load related images
-            $review->load('images');
+            // load relations
+            $review->load('images', 'booking.client');
 
-            // Delete images from storage
+            
+            /**
+             * Send notification to the client first before delete
+             */
+            $recipient = User::where('id', $review->user_id)->get();
+
+            Notification::send(
+                $recipient,
+                new ReviewDeletedNotification($review)
+            );
+
+            // delete images from storage
             foreach ($review->images as $image) {
                 Storage::disk('public')->delete($image->path);
             }
 
-            // Delete image records and review
+            // delete image records
             $review->images()->delete();
+
+            // delete review
             $review->delete();
         });
     }

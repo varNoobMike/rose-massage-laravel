@@ -3,6 +3,7 @@
 namespace App\Actions\User;
 
 use App\Models\User;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
@@ -13,9 +14,28 @@ class UpdateUser
     {
         return DB::transaction(function () use ($user, $data) {
 
-            // password update (optional)
+            // existing avatar
+            $avatarPath = $user->profile?->avatar;
+
+            /**
+             * handle avatar replacement
+             */
+            if (($data['image'] ?? null) instanceof UploadedFile) {
+
+                // delete old avatar
+                if ($user->profile?->avatar) {
+                    Storage::disk('public')->delete($user->profile->avatar);
+                }
+
+                // store new avatar
+                $avatarPath = $data['image']->store('user-profiles', 'public');
+            }
+
+            // update password if provided
+            $password = $user->password;
+
             if (!empty($data['password'])) {
-                $data['password'] = Hash::make($data['password']);
+                $password = Hash::make($data['password']);
             }
 
             // update user
@@ -23,29 +43,20 @@ class UpdateUser
                 'email'    => $data['email'],
                 'name'     => $data['name'],
                 'role'     => $data['role'],
-                'password' => $data['password'] ?? $user->password,
+                'password' => $password,
                 'status'   => $data['status'],
             ]);
 
-            // profile
+            // ensure profile exists
             $profile = $user->profile ?: $user->profile()->create([]);
 
-            // image already normalized from controller
-            if (!empty($data['image'])) {
-
-                if ($profile->avatar) {
-                    Storage::disk('public')->delete($profile->avatar);
-                }
-
-                $data['image'] = $data['image']->store('user-profiles', 'public');
-            }
-
+            // update profile
             $profile->update([
                 'phone_number' => $data['phone_number'] ?? $profile->phone_number,
                 'address'      => $data['address'] ?? $profile->address,
                 'gender'       => $data['gender'] ?? $profile->gender,
                 'birthdate'    => $data['birthdate'] ?? $profile->birthdate,
-                'avatar'       => $data['image'] ?? $profile->avatar,
+                'avatar'       => $avatarPath,
             ]);
 
             return $user;

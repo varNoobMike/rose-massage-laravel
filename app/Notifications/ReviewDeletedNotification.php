@@ -6,7 +6,7 @@ use App\Models\Review;
 use App\Models\User;
 use Illuminate\Notifications\Notification;
 
-class NewBookingReviewNotification extends Notification
+class ReviewDeletedNotification extends Notification
 {
     public Review $review;
 
@@ -17,7 +17,7 @@ class NewBookingReviewNotification extends Notification
 
     public function via($notifiable)
     {
-        return ['database']; // or ['database','broadcast','mail']
+        return ['database'];
     }
 
     public function toArray($notifiable)
@@ -25,16 +25,16 @@ class NewBookingReviewNotification extends Notification
         $isClient = $notifiable->role === User::ROLE_CLIENT;
 
         return [
-            'review_id' => $this->review->id,
-            'booking_id' => $this->review->booking_id,
-            'rating' => $this->review->rating,
-            'comment' => $this->review->comment ?? null,
+            'review_id'   => $this->review->id,
+            'booking_id'  => $this->review->booking_id,
+            'rating'      => $this->review->rating,
+            'comment'     => $this->review->comment ?? null,
 
             'client_name' => $this->review->booking->client->name ?? null,
 
             'message' => $isClient
-                ? 'Thank you for submitting your review. Please wait for approval.'
-                : 'A new review has been submitted for a booking.',
+                ? 'Your review has been removed.'
+                : 'A review has been deleted.',
         ];
     }
 }

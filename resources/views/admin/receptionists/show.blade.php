@@ -8,11 +8,6 @@
 @section('page-header', true)
 @section('page-header-title-showpage', 'Receptionist #' . $user->id)
 @section('page-header-subtitle', 'Review and manage this receptionist account')
-@section('page-header-actions')
-    <a href="{{ route('receptionists.edit', $user->id) }}" class="btn btn-primary px-4 shadow-sm">
-        <i class="bi bi-pencil-square me-2"></i> Edit
-    </a>
-@endsection
 
 @section('content')
     <div class="row g-4">
@@ -126,6 +121,26 @@
                                             <strong>
                                                 {{ $user->updated_at->diffForHumans() }}
                                             </strong>
+                                        </div>
+
+                                    </td>
+                                </tr>
+
+                                <!-- ACTIONS -->
+                                <tr>
+                                    <td class="ps-4 py-4 text-muted small fw-bold text-uppercase">
+                                        Actions
+                                    </td>
+
+                                    <td class="py-4 pe-4">
+
+                                        <div class="d-flex flex-wrap gap-2">
+
+                                            <a href="{{ route('receptionists.edit', $user->id) }}" class="btn btn-sm btn-primary">
+                                                <i class="bi bi-pencil-square me-1"></i>
+                                                Edit
+                                            </a>
+
                                         </div>
 
                                     </td>

@@ -182,7 +182,7 @@
                                     <!-- DELETE -->
                                     <form action="{{ route('reviews.destroy', $review->id) }}"
                                           method="POST"
-                                          onsubmit="return confirm('Delete this review? This cannot be undone.')">
+                                          onsubmit="return confirm('Delete your review? This cannot be undone.')">
 
                                         @csrf
                                         @method('DELETE')

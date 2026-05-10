@@ -12,8 +12,8 @@ class ReportController extends Controller
     {
         $filters = $request->only([
             'search',
-            'from',
-            'to',
+            'date_from',
+            'date_to',
             'status',
             'min_amount',
             'max_amount',

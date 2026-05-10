@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\Announcement\DestroyAnnouncement;
 use App\Actions\Announcement\GetFilteredAnnouncements;
 use App\Actions\Announcement\StoreAnnouncement;
+use App\Actions\Announcement\UpdateAnnouncement;
 use App\Models\Announcement;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -92,9 +94,13 @@ class AnnouncementController extends Controller
         );
     }
 
-    public function update(Request $request, Announcement $announcement)
-    {
-        $data = $request->validate([
+    public function update(
+        Request $request,
+        Announcement $announcement,
+        UpdateAnnouncement $action
+    ) {
+
+        $validated = $request->validate([
             'title' => 'required|string|max:255',
             'message' => 'required|string',
             'type' => 'required|in:promo,update,alert,info',
@@ -105,41 +111,20 @@ class AnnouncementController extends Controller
             'ends_at' => 'nullable|date|after_or_equal:starts_at',
         ]);
 
-        // ✅ HANDLE IMAGE UPLOAD
-        if ($request->hasFile('cover_image')) {
+        $announcement = $action->execute(
+            $announcement,
+            $validated
+        );
 
-            // delete old image (optional but recommended)
-            if ($announcement->cover_image && Storage::disk('public')->exists($announcement->cover_image)) {
-                Storage::disk('public')->delete($announcement->cover_image);
-            }
-
-            // store new image
-            $path = $request->file('cover_image')->store('announcements', 'public');
-
-            $data['cover_image'] = $path;
-        }
-
-        $announcement->update([
-            'title' => $data['title'],
-            'message' => $data['message'],
-            'type' => $data['type'],
-            'link_type' => !empty($data['link_url']) ? 'external' : null,
-            'link_page' => $data['link_page'] ?? null,
-            'cover_image' => $data['cover_image'] ?? $announcement->cover_image,
-            'is_active' => $data['is_active'] ?? true,
-            'starts_at' => $data['starts_at'] ?? null,
-            'ends_at' => $data['ends_at'] ?? null,
-        ]);
-
-        return redirect()
-            ->route('announcements.show', $announcement->id)
+        return to_route('announcements.show', $announcement->id)
             ->with('success', 'Announcement updated successfully.');
     }
 
-    public function destroy(Announcement $announcement)
+    public function destroy(Announcement $announcement, DestroyAnnouncement $action)
     {
-        $announcement->delete();
+        $action->execute($announcement);
 
-        return to_route('announcements.index')->with('success', 'Announcement deleted successfully.');
+        return to_route('announcements.index')
+            ->with('success', 'Announcement deleted successfully.');
     }
 }

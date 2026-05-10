@@ -13,8 +13,8 @@
 @endsection
 
 @section('filter-area', true)
-@section('filter-form')
 
+@section('filter-form')
     <form action="{{ route('reviews.index') }}" method="GET">
 
         {{-- MOBILE TOGGLE --}}
@@ -31,14 +31,15 @@
                 {{-- SEARCH --}}
                 <div class="col-12 col-md-3">
                     <input type="text" name="search" class="form-control" placeholder="Search review, author name..."
-                        value="{{ request('search') }}">
+                        value="{{ $filters['search'] ?? '' }}">
                 </div>
 
                 {{-- DATE FROM --}}
                 <div class="col-md-2">
                     <div class="input-group">
                         <span class="input-group-text">From</span>
-                        <input type="date" name="from" class="form-control" value="{{ request('from') }}">
+                        <input type="date" name="date_from" class="form-control"
+                            value="{{ $filters['date_from'] ?? '' }}">
                     </div>
                 </div>
 
@@ -46,28 +47,26 @@
                 <div class="col-md-2">
                     <div class="input-group">
                         <span class="input-group-text">To</span>
-                        <input type="date" name="to" class="form-control" value="{{ request('to') }}">
+                        <input type="date" name="date_to" class="form-control" value="{{ $filters['date_to'] ?? '' }}">
                     </div>
                 </div>
 
                 {{-- RATING --}}
                 <div class="col-12 col-md-2">
                     @php
-                        $rating = request('rating', 'all');
+                        $rating = $filters['rating'] ?? '';
                     @endphp
 
                     <select name="rating" class="form-select">
-
-                        <option value="" {{ $rating == 'all' ? 'selected' : '' }}>
+                        <option value="" {{ $rating === '' ? 'selected' : '' }}>
                             All Ratings
                         </option>
 
-                        <option value="5" {{ $rating == '5' ? 'selected' : '' }}>5 Stars</option>
-                        <option value="4" {{ $rating == '4' ? 'selected' : '' }}>4 Stars</option>
-                        <option value="3" {{ $rating == '3' ? 'selected' : '' }}>3 Stars</option>
-                        <option value="2" {{ $rating == '2' ? 'selected' : '' }}>2 Stars</option>
-                        <option value="1" {{ $rating == '1' ? 'selected' : '' }}>1 Star</option>
-
+                        @for ($i = 5; $i >= 1; $i--)
+                            <option value="{{ $i }}" {{ (string) $rating === (string) $i ? 'selected' : '' }}>
+                                {{ $i }} Stars
+                            </option>
+                        @endfor
                     </select>
                 </div>
 
@@ -75,19 +74,19 @@
                 <div class="col-12 col-md-2">
                     <select name="status" class="form-select">
 
-                        <option value="" {{ request('status') == null ? 'selected' : '' }}>
+                        <option value="" {{ empty($filters['status']) ? 'selected' : '' }}>
                             All Status
                         </option>
 
-                        <option value="approved" {{ request('status') == 'approved' ? 'selected' : '' }}>
+                        <option value="approved" {{ ($filters['status'] ?? null) === 'approved' ? 'selected' : '' }}>
                             Approved
                         </option>
 
-                        <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>
+                        <option value="pending" {{ ($filters['status'] ?? null) === 'pending' ? 'selected' : '' }}>
                             Pending
                         </option>
 
-                        <option value="rejected" {{ request('status') == 'rejected' ? 'selected' : '' }}>
+                        <option value="rejected" {{ ($filters['status'] ?? null) === 'rejected' ? 'selected' : '' }}>
                             Rejected
                         </option>
 
@@ -110,23 +109,12 @@
                 </div>
 
             </div>
-
         </div>
-
     </form>
-
 @endsection
 
-@section('content')
 
-    @php
-        $hasFilters =
-            request()->filled('search') ||
-            request()->filled('rating') ||
-            request()->filled('status') ||
-            request()->filled('from') ||
-            request()->filled('to');
-    @endphp
+@section('content')
 
     @if ($hasFilters)
         <div class="alert alert-info d-flex justify-content-between align-items-center py-2 px-3 mb-3">
@@ -137,36 +125,35 @@
                     <i class="bi bi-funnel-fill"></i> Filters applied:
                 </strong>
 
-                @if (request('search'))
+                @if ($filters['search'] ?? null)
                     <span class="badge bg-dark">
-                        Search: {{ request('search') }}
+                        Search: {{ $filters['search'] }}
                     </span>
                 @endif
 
-                @if (request('rating'))
+                @if ($filters['rating'] ?? null)
                     <span class="badge bg-warning text-dark">
-                        Rating: {{ request('rating') . '★' }}
+                        Rating: {{ $filters['rating'] }}★
                     </span>
                 @endif
 
-                @if (request('status'))
+                @if ($filters['status'] ?? null)
                     <span @class([
                         'badge text-capitalize',
-                        'bg-success' => request('status') === 'approved',
-                        'bg-warning text-dark' => request('status') === 'pending',
-                        'bg-danger' => request('status') === 'rejected',
-                        'bg-secondary' => !request('status'),
+                        'bg-success' => $filters['status'] === 'approved',
+                        'bg-warning text-dark' => $filters['status'] === 'pending',
+                        'bg-danger' => $filters['status'] === 'rejected',
                     ])>
-                        Status: {{ ucfirst(request('status')) }}
+                        Status: {{ ucfirst($filters['status']) }}
                     </span>
                 @endif
 
-                @if (request('from') || request('to'))
+                @if (!empty($filters['date_from']) || !empty($filters['date_to']))
                     <span class="badge bg-secondary">
                         Date:
-                        {{ request('from') ?? '...' }}
+                        {{ $filters['date_from'] ?? '...' }}
                         →
-                        {{ request('to') ?? '...' }}
+                        {{ $filters['date_to'] ?? '...' }}
                     </span>
                 @endif
 
@@ -174,6 +161,7 @@
 
         </div>
     @endif
+
 
     <div class="card shadow-sm border">
 
@@ -195,40 +183,41 @@
                     @forelse($reviews as $review)
                         <tr>
 
-                            <!-- Review -->
+                            {{-- Review --}}
                             <td>
                                 <div class="d-flex align-items-center">
 
                                     <div class="bg-light rounded d-flex align-items-center justify-content-center me-3"
-                                        style="width:50px; height:50px;">
+                                        style="width:50px;height:50px;">
                                         <i class="bi bi-chat-square-text text-primary fs-5"></i>
                                     </div>
 
                                     <div>
+
                                         <div class="fw-bold">
-                                            {{ Str::limit($review->comment, 20) }}
+                                            #{{ $review->id }} — {{ Str::limit($review->comment, 20) }}
                                         </div>
 
-                                        <small class="text-muted">
+                                        <small class="text-muted d-block">
                                             Booking #{{ $review->booking_id }}
                                         </small>
+
                                     </div>
 
                                 </div>
                             </td>
 
-                            <!-- Rating -->
+                            {{-- Rating --}}
                             <td class="text-center">
                                 @for ($i = 1; $i <= 5; $i++)
                                     <i class="bi bi-star{{ $i <= $review->rating ? '-fill text-warning' : '' }}"></i>
                                 @endfor
                             </td>
 
-                            <!-- Client -->
+                            {{-- Client --}}
                             <td class="text-center">
                                 <div class="d-flex align-items-center justify-content-center">
 
-                                    <!-- Avatar -->
                                     @if ($review->user?->profile?->avatar)
                                         <img src="{{ asset('storage/' . $review->user->profile->avatar) }}"
                                             class="rounded-circle me-3 object-fit-cover" width="45" height="45">
@@ -239,7 +228,6 @@
                                         </div>
                                     @endif
 
-                                    <!-- Name + Email -->
                                     <div class="text-start">
                                         <div class="fw-semibold">
                                             {{ $review->user->name ?? 'N/A' }}
@@ -253,7 +241,7 @@
                                 </div>
                             </td>
 
-                            <!-- Status -->
+                            {{-- Status --}}
                             <td class="text-center">
                                 @if ($review->status === 'approved')
                                     <span class="badge bg-success">Approved</span>
@@ -264,7 +252,7 @@
                                 @endif
                             </td>
 
-                            <!-- Date -->
+                            {{-- Date --}}
                             <td class="text-center">
                                 <div class="fw-semibold">
                                     {{ $review->created_at->format('M d, Y') }}
@@ -274,50 +262,53 @@
                                 </small>
                             </td>
 
-                            <!-- Actions -->
+                            {{-- Actions --}}
+
                             <td class="text-end">
-                                <div class="btn-group gap-2">
+                                <div class="dropdown">
 
-                                    <!-- VIEW -->
-                                    <a href="{{ route('reviews.show', $review->id) }}" class="btn btn-sm btn-secondary">
-                                        <i class="bi bi-eye"></i>
-                                    </a>
+                                    <button class="btn btn-sm btn-light border" type="button" data-bs-toggle="dropdown">
+                                        <i class="bi bi-three-dots-vertical"></i>
+                                    </button>
 
-                                    <!-- APPROVE -->
-                                    @if ($review->status !== 'approved')
-                                        <form action="{{ route('reviews.approve', $review->id) }}" method="POST"
-                                            onsubmit="return confirm('Approve this review?')">
-                                            @csrf
-                                            <button class="btn btn-sm btn-success">
-                                                <i class="bi bi-check-lg"></i>
-                                            </button>
-                                        </form>
-                                    @endif
+                                    <ul class="dropdown-menu dropdown-menu-end">
 
-                                    <!-- REJECT -->
-                                    @if ($review->status !== 'rejected')
-                                        <form action="{{ route('reviews.reject', $review->id) }}" method="POST"
-                                            onsubmit="return confirm('Reject this review?')">
-                                            @csrf
-                                            <button class="btn btn-sm btn-warning">
-                                                <i class="bi bi-x-lg"></i>
-                                            </button>
-                                        </form>
-                                    @endif
+                                        {{-- VIEW --}}
+                                        <li>
+                                            <a class="dropdown-item" href="{{ route('reviews.show', $review->id) }}">
+                                                <i class="bi bi-eye me-2"></i> View
+                                            </a>
+                                        </li>
 
-                                    <!-- DELETE -->
-                                    <form action="{{ route('reviews.destroy', $review->id) }}" method="POST"
-                                        onsubmit="return confirm('Delete this review? This action cannot be undone.')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button class="btn btn-sm btn-danger">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    </form>
+                                        @if ($review->status === 'pending')
+                                            {{-- APPROVE --}}
+                                            <li>
+                                                <form action="{{ route('reviews.approve', $review->id) }}"
+                                                    method="POST">
+                                                    @csrf
+                                                    <button type="submit" class="dropdown-item text-success"
+                                                        onclick="return confirm('Approve this review?')">
+                                                        <i class="bi bi-check-lg me-2"></i> Approve
+                                                    </button>
+                                                </form>
+                                            </li>
+
+                                            {{-- REJECT --}}
+                                            <li>
+                                                <form action="{{ route('reviews.reject', $review->id) }}" method="POST">
+                                                    @csrf
+                                                    <button type="submit" class="dropdown-item text-danger"
+                                                        onclick="return confirm('Reject this review?')">
+                                                        <i class="bi bi-x-lg me-2"></i> Reject
+                                                    </button>
+                                                </form>
+                                            </li>
+                                        @endif
+
+                                    </ul>
 
                                 </div>
                             </td>
-
                         </tr>
                     @empty
                         <tr>
@@ -331,7 +322,6 @@
                                     </p>
 
                                     <a href="{{ route('reviews.index') }}" class="btn btn-outline-dark">
-                                        <i class="bi bi-x-circle me-1"></i>
                                         Clear Filters
                                     </a>
                                 @else
@@ -350,7 +340,6 @@
             </table>
         </div>
 
-        <!-- Pagination -->
         @if ($reviews->hasPages())
             <div class="card-footer bg-white">
                 <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
@@ -361,11 +350,12 @@
                         of {{ $reviews->total() }} reviews
                     </small>
 
-                    {{ $reviews->appends(request()->query())->links() }}
+                    {{ $reviews->links() }}
 
                 </div>
             </div>
         @endif
 
     </div>
+
 @endsection

@@ -7,18 +7,38 @@ use App\Actions\User\StoreUser;
 use App\Actions\User\UpdateUser;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class TherapistController extends Controller
 {
-    
+
     public function index(Request $request, GetFilteredUsers $action)
     {
-        $userRole = $this->currentUserRole();
-        $filters = $request->only(['search', 'role', 'status']);
+        $filters = $request->only([
+            'search',
+            'status',
+        ]);
 
-        $users = $action->execute($userRole, $filters, User::ROLE_THERAPIST);
+        // fetch filtered users
+        $users = $action->execute(
+            $filters,
+            Auth::user(),
+            User::ROLE_THERAPIST
+        );
 
-        return view($this->currentRoleView() . '.therapists.index', compact('users'));
+        // basic filters state
+        $hasBasicFilters =
+            !empty($filters['search']) ||
+            !empty($filters['role']) ||
+            !empty($filters['status']);
+
+        // global filters state
+        $hasFilters = $hasBasicFilters;
+
+        return view(
+            $this->currentRoleView() . '.therapists.index',
+            compact('users', 'filters', 'hasFilters')
+        );
     }
 
     public function show(User $user)
@@ -29,7 +49,7 @@ class TherapistController extends Controller
     }
 
     public function create()
-    {        
+    {
         return view($this->currentRoleView() . '.therapists.create');
     }
 
@@ -40,9 +60,7 @@ class TherapistController extends Controller
             'email'        => 'required|email|max:255|unique:users,email',
             'name'         => 'required|string|max:255',
             'status'       => 'required|in:active,inactive',
-            /*
-              profile
-            */
+            // profile
             'phone_number' => 'nullable|string|max:20',
             'address'      => 'nullable|string|max:255',
             'gender'       => 'nullable|in:male,female,other',
@@ -55,14 +73,13 @@ class TherapistController extends Controller
         $result = $action->execute($validated);
 
         $user = $result['user'];
-        $password = $result['password'];
 
         return redirect()
             ->route('therapists.show', $user->id)
             ->with(
                 'success',
                 'Therapist record created successfully'
-        );
+            );
     }
 
 
@@ -79,9 +96,7 @@ class TherapistController extends Controller
             'email'  => 'required|email|max:255|unique:users,email,' . $user->id,
             'name'   => 'required|string|max:255',
             'status' => 'required|in:active,inactive',
-            /*
-              profile
-            */
+            // profile
             'phone_number' => 'nullable|string|max:20',
             'address'      => 'nullable|string|max:255',
             'gender'       => 'nullable|in:male,female,other',
@@ -95,8 +110,5 @@ class TherapistController extends Controller
 
         return to_route('therapists.show', $user->id)
             ->with('success', 'Therapist record updated successfully.');
-        
     }
-
-
 }
