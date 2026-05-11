@@ -166,10 +166,6 @@
                             </a>
                         </li>
 
-                        @php
-                            $unreadNotificationsCount = auth()->user()->unreadNotifications()->count();
-                            $announcementsCount = \App\Models\Announcement::where('is_active', 1)->count();
-                        @endphp
 
                         <!-- Notifications -->
                         <li class="nav-item mb-1">
@@ -297,8 +293,8 @@
                                     class="d-flex align-items-center gap-3 text-decoration-none dropdown-toggle"
                                     data-bs-toggle="dropdown">
 
-                                    @if (auth()->user()->profile?->avatar)
-                                        <img src="{{ asset('storage/' . auth()->user()->profile?->avatar) }}"
+                                    @if (auth()->user()?->profile?->avatar)
+                                        <img src="{{ asset('storage/' . auth()->user()?->profile?->avatar) }}"
                                             class="rounded-circle" style="width:45px; height:45px; object-fit:cover;">
                                     @else
                                         <img src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name) }}&background=5f4be6&color=fff"
@@ -359,11 +355,7 @@
                             <ul class="navbar-nav ms-auto mb-2 mb-lg-0 d-flex align-items-center gap-3">
 
                                 @auth
-                                    @php
-                                        $unreadNotificationsCount = auth()->user()?->unreadNotifications()?->count();
-                                        $announcementsCount = \App\Models\Announcement::where('is_active', 1)->count();
-                                    @endphp
-
+                                    
                                     <!-- Notifications -->
                                     <li class="nav-item position-relative">
                                         <a class="nav-link fs-5 d-flex align-items-center p-1 position-relative"
@@ -402,7 +394,7 @@
                                                 <p class="text-primary mb-1">{{ ucfirst(auth()->user()?->role) }}</p>
                                             </li>
                                             <li>
-                                                <a href="" class="dropdown-item">
+                                                <a href="{{ route('profile.index') }}" class="dropdown-item">
                                                     <i class="bi bi-person-circle me-1"></i> Profile
                                                 </a>
                                             </li>

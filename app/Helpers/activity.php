@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\ActivityLog;
+use Illuminate\Support\Facades\Auth;
 
 function activity_log($action, $model = null, $message = null)
 {
@@ -28,7 +29,7 @@ function activity_log($action, $model = null, $message = null)
     }
 
     ActivityLog::create([
-        'user_id' => auth()->id(),
+        'user_id' => Auth::id(),
         'action' => $action,
         'message' => $message,
         'subject_type' => $model ? get_class($model) : null,

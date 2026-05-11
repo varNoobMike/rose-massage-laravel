@@ -13,6 +13,7 @@ class ReceptionistController extends Controller
 {
     public function index(Request $request, GetFilteredUsers $action)
     {
+
         $filters = $request->only([
             'search',
             'status',
@@ -73,8 +74,7 @@ class ReceptionistController extends Controller
         $user = $result['user'];
         $password = $result['password'];
 
-        return redirect()
-            ->route('receptionists.show', $user->id)
+        return to_route('receptionists.show', $user->id)
             ->with(
                 'success',
                 "Receptionist account created successfully. Temporary password: {$password}"
@@ -87,7 +87,6 @@ class ReceptionistController extends Controller
 
         return view($this->currentRoleView() . '.receptionists.edit', compact('user'));
     }
-
 
     public function update(Request $request, User $user, UpdateUser $action)
     {

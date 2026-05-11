@@ -10,7 +10,6 @@ use App\Models\Announcement;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 
 class AnnouncementController extends Controller
 {

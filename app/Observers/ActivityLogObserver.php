@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class ActivityLogObserver
 {
@@ -35,7 +36,7 @@ class ActivityLogObserver
 
     private function message($model, $action): string
     {
-        $user = auth()->user()->name ?? 'System';
+        $user = Auth::user()->name ?? 'System';
         $name = class_basename($model);
 
         $label = $model->title ?? $model->name ?? ('#' . $model->id);

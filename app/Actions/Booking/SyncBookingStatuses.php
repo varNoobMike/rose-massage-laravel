@@ -41,10 +41,11 @@ class SyncBookingStatuses
                 }
 
                 if ($newStatus && $newStatus !== $booking->status) {
-                    $booking->update(['status' => $newStatus]);
+                    $booking->status = $newStatus;
+                    // Prevent observer/event firing
+                    $booking->saveQuietly();
                     $updated++;
                 }
-                
             }
         });
 

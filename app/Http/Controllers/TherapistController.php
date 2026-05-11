@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Auth;
 
 class TherapistController extends Controller
 {
-
     public function index(Request $request, GetFilteredUsers $action)
     {
         $filters = $request->only([
