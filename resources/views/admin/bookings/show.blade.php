@@ -121,15 +121,15 @@
 
                                     @php $status = $booking->status; @endphp
 
-                                    <span
-                                        class="badge
-                                            @if ($status == 'pending') bg-warning text-dark
-                                            @elseif($status == 'confirmed') bg-primary
-                                            @elseif($status == 'active') bg-success
-                                            @elseif($status == 'completed') bg-secondary
-                                            @elseif($status == 'cancelled') bg-danger @endif
-                                            px-3 py-2 text-uppercase small">
-                                        {{ $status }}
+                                    <span @class([
+                                        'badge',
+                                        'bg-warning text-dark' => $status === 'pending',
+                                        'bg-primary' => $status === 'confirmed',
+                                        'bg-success' => $status === 'active',
+                                        'bg-secondary' => $status === 'completed',
+                                        'bg-danger' => in_array($status, ['cancelled', 'rejected']),
+                                    ])>
+                                        {{ ucfirst($status) }}
                                     </span>
 
                                 </td>

@@ -51,7 +51,7 @@
                     <select name="status" class="form-select">
                         <option value="">All Status</option>
 
-                        @foreach (['pending', 'completed', 'cancelled'] as $status)
+                        @foreach (['pending', 'confirmed', 'active', 'completed', 'cancelled', 'rejected'] as $status)
                             <option value="{{ $status }}" @selected(request('status') === $status)>
                                 {{ ucfirst($status) }}
                             </option>
@@ -190,16 +190,10 @@
     {{-- 📤 EXPORT --}}
     <div class="d-flex gap-2 mb-3">
 
-        <a href="" class="btn btn-outline-secondary btn-sm">
-            Export CSV
-        </a>
-
-        <a href="" class="btn btn-outline-success btn-sm">
+        <a href="{{ url('/reports/bookings/export') }}?{{ http_build_query(request()->all()) }}"
+            class="btn btn-sm btn-outline-primary">
+            <i class="bi bi-file-earmark-spreadsheet me-1"></i>
             Export Excel
-        </a>
-
-        <a href="" class="btn btn-outline-danger btn-sm">
-            Export PDF
         </a>
 
     </div>
@@ -314,13 +308,17 @@
                             </td>
 
                             <td>
+                                @php $status = $booking->status; @endphp
+
                                 <span @class([
                                     'badge',
-                                    'bg-success' => $booking->status === 'completed',
-                                    'bg-warning text-dark' => $booking->status === 'pending',
-                                    'bg-danger' => $booking->status === 'cancelled',
+                                    'bg-warning text-dark' => $status === 'pending',
+                                    'bg-primary' => $status === 'confirmed',
+                                    'bg-success' => $status === 'active',
+                                    'bg-secondary' => $status === 'completed',
+                                    'bg-danger' => in_array($status, ['cancelled', 'rejected']),
                                 ])>
-                                    {{ ucfirst($booking->status) }}
+                                    {{ ucfirst($status) }}
                                 </span>
                             </td>
 

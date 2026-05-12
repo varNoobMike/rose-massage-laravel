@@ -21,12 +21,12 @@ class GetBookingReport
             })
 
             // 📅 FROM
-            ->when($filters['from'] ?? null, function ($q, $from) {
+            ->when($filters['date_from'] ?? null, function ($q, $from) {
                 $q->whereDate('created_at', '>=', $from);
             })
 
             // 📅 TO
-            ->when($filters['to'] ?? null, function ($q, $to) {
+            ->when($filters['date_to'] ?? null, function ($q, $to) {
                 $q->whereDate('created_at', '<=', $to);
             })
 

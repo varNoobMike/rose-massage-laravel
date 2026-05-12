@@ -10,8 +10,7 @@
     @include('partials.styles')
 
     <!-- Font Plus Jakarta Sans -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
         body {
@@ -32,7 +31,8 @@
         <div class="row g-0">
 
             <!-- Sidebar - Desktop -->
-            <div id="sidebar-desktop" class="col-2 bg-white border-end d-none d-lg-block min-vh-100">
+            <div id="sidebar-desktop" class="col-2 bg-white border-end d-none d-lg-block min-vh-100"
+                style="position: sticky; top: 0; height: 100vh; overflow-y: auto;">
                 <div class="py-4 px-3">
                     <div class="mb-4 px-2">
                         <h5 class="fw-bold mb-0 text-dark" style="letter-spacing: -0.5px;">
@@ -459,7 +459,8 @@
 
                         <!-- Page Header Area -->
                         @hasSection('page-header')
-                            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+                            <div
+                                class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
                                 <div>
                                     <!-- Index page header -->
                                     @hasSection('page-header-title-indexpage')

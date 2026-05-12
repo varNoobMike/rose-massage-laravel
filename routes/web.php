@@ -436,6 +436,8 @@ Route::prefix('/reports')
         // bookings
         Route::get('/bookings', [ReportController::class, 'booking'])
             ->name('bookings');
+        Route::get('/bookings/export', [ReportController::class, 'exportBooking'])
+            ->name('bookings.export');
     });
 
 

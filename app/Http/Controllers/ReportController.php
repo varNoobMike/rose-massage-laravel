@@ -4,10 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Actions\Report\GetBookingReport;
 use Illuminate\Http\Request;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class ReportController extends Controller
 {
-
     public function booking(Request $request, GetBookingReport $action)
     {
         $filters = $request->only([
@@ -50,4 +51,45 @@ class ReportController extends Controller
         ));
     }
 
+    public function exportBooking(Request $request, GetBookingReport $action)
+    {
+        $filters = $request->only([
+            'search',
+            'date_from',
+            'date_to',
+            'status',
+            'min_amount',
+            'max_amount',
+            'sort_by',
+            'sort_dir',
+        ]);
+
+        // SAME query as report (important)
+        $bookings = $action->execute($filters)->get();
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // headers
+        $sheet->setCellValue('A1', 'Customer');
+        $sheet->setCellValue('B1', 'Date');
+        $sheet->setCellValue('C1', 'Status');
+        $sheet->setCellValue('D1', 'Total Amount');
+
+        $row = 2;
+
+        foreach ($bookings as $b) {
+            $sheet->setCellValue("A$row", $b->client->name ?? 'N/A');
+            $sheet->setCellValue("B$row", $b->created_at->format('Y-m-d'));
+            $sheet->setCellValue("C$row", $b->status);
+            $sheet->setCellValue("D$row", $b->total_amount);
+            $row++;
+        }
+
+        $writer = new Xlsx($spreadsheet);
+
+        return response()->streamDownload(function () use ($writer) {
+            $writer->save('php://output');
+        }, 'booking-report.xlsx');
+    }
 }
