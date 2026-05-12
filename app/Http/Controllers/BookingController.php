@@ -109,7 +109,7 @@ class BookingController extends Controller
         $user = $this->currentUser();
 
         return match ($user->role) {
-            'admin', 'receptionist' => view('admin.bookings.create'), // to be implemented the admin create booking
+            'admin', 'receptionist' => view('admin.bookings.create'), // future feature, not yet implemented
             'client' => view('user.bookings.create', [
                 'services' => Service::where('status', 'active')->latest()->get(),
             ]),

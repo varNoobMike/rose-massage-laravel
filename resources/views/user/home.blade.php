@@ -17,11 +17,36 @@
 @endsection
 
 @section('content')
+
     <!-- Hero -->
-    <section id="hero" class="d-flex align-items-center justify-content-center">
-        <div class="container text-center text-white">
-            <h1 class="display-2 fw-bold">Relax, Refresh, Rejuvenate</h1>
-            <p class="lead">Lorem ipsum dolor sit amet.</p>
+    <section id="hero" class="py-5 min-vh-100 d-flex align-items-center bg-primary text-white">
+        <div class="container text-center">
+
+            <span class="badge bg-light text-primary px-3 py-2 mb-3 shadow-sm">
+                Wellness & Relaxation
+            </span>
+
+            <h1 class="display-2 fw-bold mb-3">
+                Relax, Refresh,<br>Rejuvenate
+            </h1>
+
+            <p class="lead mb-4 col-lg-7 mx-auto">
+                Book your next massage therapy session today and experience total
+                comfort, healing, and relaxation.
+            </p>
+
+            <div class="d-flex flex-column flex-sm-row justify-content-center gap-3">
+                <a href="{{ route('services.index') }}" class="btn btn-light btn-lg px-5">
+                    <i class="bi bi-grid me-2"></i>
+                    View Services
+                </a>
+
+                <a href="{{ route('bookings.create') }}" class="btn btn-success btn-lg px-5">
+                    <i class="bi bi-calendar-check me-2"></i>
+                    Book Massage
+                </a>
+            </div>
+
         </div>
     </section>
 

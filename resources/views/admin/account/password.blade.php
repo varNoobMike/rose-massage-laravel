@@ -2,14 +2,17 @@
 
 @section('page-title', 'Change Password')
 
+@section('breadcrumb-parent', 'Security')
+@section('breadcrumb-parent-url', route('account.security'))
+
 @section('page-header', true)
 @section('page-header-title-showpage', 'Change Password')
-@section('page-header-subtitle', 'Update your account password securely')
+@section('page-header-subtitle', 'Update your account password.')
 
 @section('content')
     <div class="row">
 
-        <div class="col-12 col-lg-6">
+        <div class="col-12">
 
             <div class="card shadow-sm border">
 
@@ -39,6 +42,13 @@
                             @error('current_password')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
+
+                            <!-- Fogot Password Link -->
+                            <div class="mt-2">
+                                <a href="{{ route('logout.and.forgot') }}" class="small text-decoration-none">
+                                    Forgot your password?
+                                </a>
+                            </div>
 
                         </div>
 
@@ -78,7 +88,7 @@
                         </p>
 
                         <!-- BUTTON -->
-                        <div class="d-grid">
+                        <div class="d-flex justify-content-end">
 
                             <button type="submit" class="btn btn-primary">
                                 <i class="bi bi-shield-lock me-1"></i>

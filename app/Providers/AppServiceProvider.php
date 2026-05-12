@@ -5,7 +5,7 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\URL;
-
+use Illuminate\Auth\Notifications\ResetPassword;
 use App\Models\Announcement;
 use App\Models\Booking;
 use App\Models\Service;
@@ -58,6 +58,23 @@ class AppServiceProvider extends ServiceProvider
                 'unreadNotificationsCount',
                 $user->unreadNotifications()->count()
             );
+        });
+
+        /**
+         * Customizing the password reset email by defining a callback for the ResetPassword notification.
+         * This allows us to use a custom email template and include additional data in the email, 
+         * such as the user's name or a custom message, while still providing the necessary reset link with the token
+         */
+        ResetPassword::toMailUsing(function ($notifiable, string $token) {
+
+            $url = url("/reset-password/{$token}?email={$notifiable->email}");
+
+            return (new \Illuminate\Notifications\Messages\MailMessage)
+                ->subject('Reset Your Password')
+                ->view('emails.reset-password', [
+                    'url' => $url,
+                    'user' => $notifiable,
+                ]);
         });
 
         /**

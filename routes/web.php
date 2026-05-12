@@ -34,7 +34,7 @@ Route::get('/test-email', function () {
         'date' => '2026-10-15',
     ];
 
-    Mail::to('lindseybongcawel4@gmail.com')->send(new BookingNotification($data));
+    Mail::to('spheremike@gmail.com')->send(new BookingNotification($data));
     return 'This is a test email route.';
 });
 
@@ -103,20 +103,43 @@ Route::post('/email/verification-notification', function (Request $request) {
  */
 Route::controller(AuthController::class)->group(function () {
     // Guest Routes (Login & Register)
-    Route::middleware('guest')->group(function () {
-        // login
-        Route::get('/login', 'showLogin')->name('login');
-        Route::post('/login', 'login')->name('login.post');
-        // register
-        Route::get('/register', 'showRegister')->name('register');
-        Route::post('/register', 'register')->name('register.post');
-    });
+    Route::middleware('guest')
+        ->group(function () {
+            // login
+            Route::get('/login', 'showLogin')->name('login');
+            Route::post('/login', 'login')->name('login.post');
+            // register
+            Route::get('/register', 'showRegister')->name('register');
+            Route::post('/register', 'register')->name('register.post');
+        });
 
     // Authenticated Routes
-    Route::middleware('auth')->group(function () {
-        // logout
-        Route::post('/logout', 'logout')->name('logout');
-    });
+    Route::middleware('auth')
+        ->group(function () {
+            // logout
+            Route::post('/logout', 'logout')->name('logout');
+            // logout and redirect to forgot password page
+            Route::get('/logout-and-forgot', 'logoutAndForgot')->name('logout.and.forgot');
+        });
+});
+
+
+/***
+ * Forgot and reset password routes
+ */
+Route::middleware('guest')->group(function () {
+    // Show forgot password form
+    Route::get('/forgot-password', [AuthController::class, 'forgotPassword'])
+        ->name('password.request');
+    // Send reset link
+    Route::post('/forgot-password', [AuthController::class, 'sendResetLink'])
+        ->name('password.email');
+    // Show reset password form
+    Route::get('/reset-password/{token}', [AuthController::class, 'showResetForm'])
+        ->name('password.reset');
+    // Handle reset password
+    Route::post('/reset-password', [AuthController::class, 'resetPassword'])
+        ->name('password.update');
 });
 
 
@@ -171,7 +194,7 @@ Route::prefix('/activity-logs')
 
 
 /**
- * Announcement Routes 
+ * Announcement Routes
  */
 Route::prefix('/announcements')
     ->name('announcements.')
@@ -222,17 +245,17 @@ Route::prefix('/bookings')
          *  (admin, owner, receptionist, client) only
          */
         Route::middleware('role:admin,owner,receptionist,client')->group(function () {
-            // read
-            Route::get('/', [BookingController::class, 'index'])
-                ->name('index');
-            Route::get('/{booking}', [BookingController::class, 'show'])
-                ->name('show');
             // create
             Route::get('/create', [BookingController::class, 'create'])
                 ->name('create');
             Route::post('/', [BookingController::class, 'store'])
                 ->name('store');
-            // cancel 
+            // read
+            Route::get('/', [BookingController::class, 'index'])
+                ->name('index');
+            Route::get('/{booking}', [BookingController::class, 'show'])
+                ->name('show');
+            // cancel
             Route::post('/{booking}/cancel', [BookingController::class, 'cancel'])
                 ->name('cancel');
         });
@@ -258,7 +281,7 @@ Route::prefix('/bookings')
 
 /**
  * Therapist Assignment
- * 
+ *
  */
 Route::prefix('/therapist-assignments')
     ->middleware(['auth', 'role:admin,owner,receptionist'])
@@ -283,7 +306,7 @@ Route::prefix('/clients')
 
         /**
          * read access (admin, owner, receptionist) only
-         * 
+         *
          */
         Route::middleware('role:admin,owner,receptionist')->group(function () {
 
@@ -296,7 +319,7 @@ Route::prefix('/clients')
 
         /**
          * write access (admin and owner) only
-         * 
+         *
          */
         Route::middleware('role:admin,owner')->group(function () {
 
@@ -324,7 +347,7 @@ Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'inde
 
 
 /**
- * Notification Routes 
+ * Notification Routes
  */
 Route::prefix('/notifications')
     ->middleware('auth')
@@ -377,7 +400,6 @@ Route::prefix('/account')
         Route::put('/password', [AccountSecurityController::class, 'updatePassword'])
             ->name('password.update');
     });
-
 
 /**
  * Receptionist Routes (admin, owner) only
@@ -465,7 +487,7 @@ Route::prefix('/reviews')
 
 
 /**
- * Services Routes 
+ * Services Routes
  */
 Route::prefix('/services')
     ->name('services.')
@@ -536,7 +558,7 @@ Route::prefix('/therapists')
 
 
 /**
- * Users Routes 
+ * Users Routes
  */
 Route::prefix('/users')
     ->middleware(['auth', 'role:admin'])

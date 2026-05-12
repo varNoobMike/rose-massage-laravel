@@ -10,12 +10,12 @@
     @include('partials.styles')
 
     <!-- Font Plus Jakarta Sans -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
         rel="stylesheet">
 
     <style>
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-family: 'Inter', sans-serif;
         }
     </style>
 
@@ -263,6 +263,7 @@
                         </li>
 
 
+                        <!-- Reports -->
                         @if ($role === 'admin' || $role === 'owner')
                             <li class="nav-item mb-1">
                                 <a href="{{ route('reports.bookings') }}"
@@ -311,8 +312,14 @@
                                 <ul class="dropdown-menu w-100 mt-2 shadow border-0 rounded">
 
                                     <li>
-                                        <a href="/profile" class="dropdown-item">
+                                        <a href="{{ route('profile.index') }}" class="dropdown-item">
                                             <i class="bi bi-person-circle me-2"></i> Profile
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <a href="{{ route('account.security') }}" class="dropdown-item">
+                                            <i class="bi bi-shield-lock me-2"></i> Account Security
                                         </a>
                                     </li>
 
@@ -355,7 +362,7 @@
                             <ul class="navbar-nav ms-auto mb-2 mb-lg-0 d-flex align-items-center gap-3">
 
                                 @auth
-                                    
+
                                     <!-- Notifications -->
                                     <li class="nav-item position-relative">
                                         <a class="nav-link fs-5 d-flex align-items-center p-1 position-relative"
@@ -389,16 +396,26 @@
                                         </a>
 
                                         <ul class="dropdown-menu dropdown-menu-end border-0 shadow rounded mt-lg-3">
+
                                             <li class="dropdown-header text-dark">
                                                 <h6>{{ auth()->user()->name }}</h6>
                                                 <p class="text-primary mb-1">{{ ucfirst(auth()->user()?->role) }}</p>
                                             </li>
+
                                             <li>
                                                 <a href="{{ route('profile.index') }}" class="dropdown-item">
                                                     <i class="bi bi-person-circle me-1"></i> Profile
                                                 </a>
                                             </li>
+
+                                            <li>
+                                                <a href="{{ route('account.security') }}" class="dropdown-item">
+                                                    <i class="bi bi-shield-lock me-1"></i> Account Security
+                                                </a>
+                                            </li>
+
                                             <hr class="dropdown-divider">
+
                                             <li>
                                                 <a href="#" class="dropdown-item text-danger"
                                                     onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
@@ -410,6 +427,7 @@
                                                     @csrf
                                                 </form>
                                             </li>
+
                                         </ul>
 
                                     </li>
@@ -441,8 +459,7 @@
 
                         <!-- Page Header Area -->
                         @hasSection('page-header')
-                            <div
-                                class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+                            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
                                 <div>
                                     <!-- Index page header -->
                                     @hasSection('page-header-title-indexpage')

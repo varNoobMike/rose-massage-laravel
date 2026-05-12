@@ -1,0 +1,214 @@
+@extends('layouts.user')
+
+@section('page-title', 'Profile')
+
+@section('breadcrumb', true)
+
+@section('page-header', true)
+@section('page-header-title', 'Profile')
+@section('page-header-subtitle', 'Manage your profile information and account details')
+
+@section('content')
+    <div class="container px-lg-5">
+
+        <div class="row g-4">
+
+        <!-- LEFT SIDE -->
+        <div class="col-12 col-lg-8">
+
+            <div class="card shadow-sm border">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <h6 class="mb-0 fw-bold text-uppercase small text-muted">
+                            Profile Information
+                        </h6>
+
+                    </div>
+                </div>
+
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+
+                        <table class="table table-borderless mb-0 align-middle">
+                            <tbody>
+
+                                <tr class="border-bottom border-light">
+                                    <td class="ps-4 py-4 text-muted small fw-bold text-uppercase" style="width:30%;">
+                                        Full Name
+                                    </td>
+                                    <td class="py-4 pe-4 fw-bold text-dark">
+                                        {{ $user->name }}
+                                    </td>
+                                </tr>
+
+                                <tr class="border-bottom border-light">
+                                    <td class="ps-4 py-4 text-muted small fw-bold text-uppercase">
+                                        Email Address
+                                    </td>
+                                    <td class="py-4 pe-4">
+                                        {{ $user->email }}
+                                    </td>
+                                </tr>
+
+                                <tr class="border-bottom border-light">
+                                    <td class="ps-4 py-4 text-muted small fw-bold text-uppercase">
+                                        Phone Number
+                                    </td>
+                                    <td class="py-4 pe-4">
+                                        {{ $user->profile?->phone_number ?? 'N/A' }}
+                                    </td>
+                                </tr>
+
+                                <tr class="border-bottom border-light">
+                                    <td class="ps-4 py-4 text-muted small fw-bold text-uppercase">
+                                        Address
+                                    </td>
+                                    <td class="py-4 pe-4">
+                                        {{ $user->profile?->address ?? 'N/A' }}
+                                    </td>
+                                </tr>
+
+                                <tr class="border-bottom border-light">
+                                    <td class="ps-4 py-4 text-muted small fw-bold text-uppercase">
+                                        Gender
+                                    </td>
+                                    <td class="py-4 pe-4">
+                                        {{ ucfirst($user->profile?->gender ?? 'N/A') }}
+                                    </td>
+                                </tr>
+
+                                <tr class="border-bottom border-light">
+                                    <td class="ps-4 py-4 text-muted small fw-bold text-uppercase">
+                                        Birthdate
+                                    </td>
+                                    <td class="py-4 pe-4">
+                                        {{ $user->profile?->birthdate ? \Carbon\Carbon::parse($user->profile?->birthdate)->format('M d, Y') : 'N/A' }}
+                                    </td>
+                                </tr>
+
+                                <tr class="border-bottom border-light">
+                                    <td class="ps-4 py-4 text-muted small fw-bold text-uppercase">
+                                        Role
+                                    </td>
+                                    <td class="py-4 pe-4">
+                                        <span class="badge bg-light text-dark border text-capitalize">
+                                            {{ $user->role }}
+                                        </span>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td class="ps-4 py-4 text-muted small fw-bold text-uppercase">
+                                        System Logs
+                                    </td>
+                                    <td class="py-4 pe-4 text-muted small">
+
+                                        <div class="mb-1">
+                                            <i class="bi bi-calendar-check me-2 opacity-50"></i>
+                                            Created:
+                                            <strong>
+                                                {{ $user->created_at->format('M d, Y') }}
+                                            </strong>
+                                        </div>
+
+                                        <div>
+                                            <i class="bi bi-arrow-repeat me-2 opacity-50"></i>
+                                            Last Update:
+                                            <strong>
+                                                {{ $user->updated_at->diffForHumans() }}
+                                            </strong>
+                                        </div>
+
+                                    </td>
+                                </tr>
+
+                                <!-- ACTIONS -->
+                                <tr>
+                                    <td class="ps-4 py-4 text-muted small fw-bold text-uppercase">
+                                        Actions
+                                    </td>
+
+                                    <td class="py-4 pe-4">
+
+                                        <div class="d-flex flex-wrap gap-2">
+
+                                            <a href="{{ route('profile.edit') }}" class="btn btn-sm btn-primary">
+                                                <i class="bi bi-pencil-square me-1"></i>
+                                                Edit Your Profile
+                                            </a>
+
+                                        </div>
+
+                                    </td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- RIGHT SIDE -->
+        <div class="col-12 col-lg-4">
+
+            <!-- STATUS CARD -->
+            <div class="card shadow-sm border mb-4 text-center">
+                <div class="card-body p-4">
+
+                    <small class="text-uppercase text-muted fw-bold mb-3 d-block">
+                        Account Status
+                    </small>
+
+                    <div
+                        class="bg-{{ $user->status === 'active' ? 'success' : 'secondary' }} bg-opacity-10 
+                                text-{{ $user->status === 'active' ? 'success' : 'secondary' }} 
+                                rounded-pill py-2 px-4 d-inline-flex align-items-center mb-2">
+
+                        <i
+                            class="bi bi-{{ $user->status === 'active' ? 'check-circle-fill' : 'slash-circle-fill' }} me-2"></i>
+
+                        <span class="fw-bold text-uppercase">
+                            {{ $user->status }}
+                        </span>
+                    </div>
+
+                    <p class="text-muted small mb-0">
+                        {{ $user->status === 'active' ? 'You can access the system' : 'Your access is restricted' }}
+                    </p>
+
+                </div>
+            </div>
+
+
+            <!-- PROFILE IMAGE -->
+            <div class="card shadow-sm border overflow-hidden">
+                <div class="card-header bg-white py-3 border-bottom text-center">
+                    <h6 class="mb-0 fw-bold small text-muted text-uppercase">
+                        Profile Image
+                    </h6>
+                </div>
+
+                <div class="card-body p-3">
+
+                    @if ($user->profile?->avatar)
+                        <img src="{{ asset('storage/' . $user->profile?->avatar) }}"
+                            class="img-fluid shadow-sm w-100 object-fit-cover" style="height: 250px;">
+                    @else
+                        <div class="bg-light text-center py-5 border border-dashed">
+                            <i class="bi bi-person text-muted fs-1 opacity-25"></i>
+                        </div>
+                    @endif
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    </div>
+@endsection

@@ -186,12 +186,19 @@
 
                                     <!-- VIEW PROFILE -->
                                     <li>
-                                        <a class="dropdown-item" href="">
-                                            <i class="bi bi-person me-2"></i> View Profile
+                                        <a class="dropdown-item" href="{{ route('profile.index') }}">
+                                            <i class="bi bi-person me-2"></i> Profile
                                         </a>
                                     </li>
 
-                                    <!-- BOOKINGS (optional if you want inside dropdown too) -->
+                                    <!-- ACOOUNT SECURITY -->
+                                    <li>
+                                        <a class="dropdown-item" href="{{ route('account.security') }}">
+                                            <i class="bi bi-shield-lock me-2"></i> Account Security
+                                        </a>
+                                    </li>
+
+                                    <!-- BOOKINGS -->
                                     <li>
                                         <a class="dropdown-item" href="{{ route('bookings.index') }}">
                                             <i class="bi bi-calendar-event me-2"></i> My Bookings
@@ -302,8 +309,6 @@
                             </a>
                         </li>
 
-
-
                         <!-- ANNOUNCEMENTS -->
                         <li class="nav-item">
                             <a href="{{ route('announcements.index') }}"
@@ -360,8 +365,14 @@
                             <ul class="dropdown-menu shadow-sm border-0 w-100">
 
                                 <li>
-                                    <a class="dropdown-item" href="">
-                                        <i class="bi bi-person me-2"></i> View Profile
+                                    <a class="dropdown-item" href="{{ route('profile.index') }}">
+                                        <i class="bi bi-person me-2"></i> Profile
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a class="dropdown-item" href="{{ route('account.security') }}">
+                                        <i class="bi bi-shield-lock me-2"></i> Account Security
                                     </a>
                                 </li>
 

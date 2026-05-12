@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\AccountSecurity\UpdatePassword;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 
 class AccountSecurityController extends Controller
 {
@@ -28,27 +28,18 @@ class AccountSecurityController extends Controller
     /**
      * Update password
      */
-    public function updatePassword(Request $request)
+    public function updatePassword(Request $request, UpdatePassword $action)
     {
-        $request->validate([
-            'current_password' => ['required'],
+        $validated = $request->validate([
+            'current_password' => ['required', 'current_password'],
             'password' => ['required', 'confirmed', 'min:8'],
         ]);
 
-        $user = Auth::user();
+        $action->execute(Auth::user(), $validated);
 
-        // validate current password
-        if (!Hash::check($request->current_password, $user->password)) {
-            return back()->withErrors([
-                'current_password' => 'Current password is incorrect.',
-            ]);
-        }
+        Auth::logoutOtherDevices($validated['password']);
 
-        // update password
-        $user->update([
-            'password' => Hash::make($request->password),
-        ]);
-
-        return back()->with('success', 'Password updated successfully.');
+        return to_route('account.security')
+            ->with('success', 'Password updated successfully.');
     }
 }

@@ -62,9 +62,11 @@
                     </div>
                 @enderror
             </div>
+            <p class="small mt-2"><a href="{{ route('password.request') }}">Forgot password?</a></p>
+
         </div>
 
-        <button type="submit" class="btn btn-success w-100 shadow-sm">
+        <button type="submit" class="btn btn-success w-100 shadow-sm mt-2">
             <i class="bi bi-box-arrow-in-right me-2"></i> Login
         </button>
 
