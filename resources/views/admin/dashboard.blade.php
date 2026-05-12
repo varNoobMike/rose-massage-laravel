@@ -130,60 +130,68 @@
         @if (auth()->user()->role !== 'receptionist')
             <!-- Total Revenue -->
             <div class="col-md-3">
-                <div class="card shadow-sm border p-3 h-100 d-flex flex-row align-items-center gap-3"
-                    style="min-height: 120px;">
-                    <i class="bi bi-cash-stack fs-2 text-success"></i>
-                    <div>
-                        <small class="text-muted">Total Revenue</small>
-                        <h3 class="fw-bold mb-0">
-                            ₱{{ number_format($totalRevenue, 2) }}
-                        </h3>
+                <a href="{{ route('reports.bookings') }}" class="text-decoration-none text-dark">
+                    <div class="card shadow-sm border p-3 h-100 d-flex flex-row align-items-center gap-3"
+                        style="min-height: 120px;">
+                        <i class="bi bi-cash-stack fs-2 text-success"></i>
+                        <div>
+                            <small class="text-muted">Total Revenue</small>
+                            <h3 class="fw-bold mb-0">
+                                ₱{{ number_format($totalRevenue, 2) }}
+                            </h3>
+                        </div>
                     </div>
-                </div>
+                </a>
             </div>
         @endif
 
         <!-- Today's Revenue -->
         <div class="col-md-3">
-            <div class="card shadow-sm border p-3 h-100 d-flex flex-row align-items-center gap-3"
-                style="min-height: 120px;">
-                <i class="bi bi-graph-up-arrow fs-2 text-primary"></i>
-                <div>
-                    <small class="text-muted">Today's Revenue</small>
-                    <h3 class="fw-bold mb-0">
-                        ₱{{ number_format($todayRevenue, 2) }}
-                    </h3>
+            <a href="{{ route('reports.bookings') }}" class="text-decoration-none text-dark">
+                <div class="card shadow-sm border p-3 h-100 d-flex flex-row align-items-center gap-3"
+                    style="min-height: 120px;">
+                    <i class="bi bi-graph-up-arrow fs-2 text-primary"></i>
+                    <div>
+                        <small class="text-muted">Today's Revenue</small>
+                        <h3 class="fw-bold mb-0">
+                            ₱{{ number_format($todayRevenue, 2) }}
+                        </h3>
+                    </div>
                 </div>
-            </div>
+            </a>
         </div>
 
         @if (auth()->user()->role !== 'receptionist')
             <!-- Weekly Revenue -->
             <div class="col-md-3">
-                <div class="card shadow-sm border p-3 h-100 d-flex flex-row align-items-center gap-3"
-                    style="min-height: 120px;">
-                    <i class="bi bi-calendar-week fs-2 text-info"></i>
-                    <div>
-                        <small class="text-muted">Weekly Revenue</small>
-                        <h3 class="fw-bold mb-0">
-                            ₱{{ number_format($weeklyRevenue, 2) }}
-                        </h3>
+                <a href="{{ route('reports.bookings') }}" class="text-decoration-none text-dark">
+                    <div class="card shadow-sm border p-3 h-100 d-flex flex-row align-items-center gap-3"
+                        style="min-height: 120px;">
+                        <i class="bi bi-calendar-week fs-2 text-info"></i>
+                        <div>
+                            <small class="text-muted">Weekly Revenue</small>
+                            <h3 class="fw-bold mb-0">
+                                ₱{{ number_format($weeklyRevenue, 2) }}
+                            </h3>
+                        </div>
                     </div>
-                </div>
+                </a>
             </div>
 
             <!-- Monthly Revenue -->
             <div class="col-md-3">
-                <div class="card shadow-sm border p-3 h-100 d-flex flex-row align-items-center gap-3"
-                    style="min-height: 120px;">
-                    <i class="bi bi-calendar-month fs-2 text-warning"></i>
-                    <div>
-                        <small class="text-muted">Monthly Revenue</small>
-                        <h3 class="fw-bold mb-0">
-                            ₱{{ number_format($monthlyRevenue, 2) }}
-                        </h3>
+                <a href="{{ route('reports.bookings') }}" class="text-decoration-none text-dark">
+                    <div class="card shadow-sm border p-3 h-100 d-flex flex-row align-items-center gap-3"
+                        style="min-height: 120px;">
+                        <i class="bi bi-calendar-month fs-2 text-warning"></i>
+                        <div>
+                            <small class="text-muted">Monthly Revenue</small>
+                            <h3 class="fw-bold mb-0">
+                                ₱{{ number_format($monthlyRevenue, 2) }}
+                            </h3>
+                        </div>
                     </div>
-                </div>
+                </a>
             </div>
         @endif
 

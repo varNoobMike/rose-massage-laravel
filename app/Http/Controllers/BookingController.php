@@ -11,6 +11,7 @@ use App\Actions\Booking\UpdateBookingStatus;
 use App\Models\Booking;
 use App\Models\Service;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class BookingController extends Controller
 {
@@ -89,6 +90,7 @@ class BookingController extends Controller
 
     public function show(Booking $booking, SyncBookingStatuses $syncStatuses)
     {
+
         $syncStatuses->execute();
 
         $booking->load([
@@ -97,6 +99,12 @@ class BookingController extends Controller
             'items.therapist',
             'review.images',
         ]);
+
+        // mark related notifications as read
+        Auth::user()
+            ->unreadNotifications
+            ->where('data.booking_id', $booking->id)
+            ->markAsRead();
 
         return view(
             $this->currentRoleView() . '.bookings.show',

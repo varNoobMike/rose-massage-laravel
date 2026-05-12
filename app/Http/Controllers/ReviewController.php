@@ -56,6 +56,12 @@ class ReviewController extends Controller
     {
         $review->load(['images', 'booking']);
 
+        // mark related notifications as read
+        Auth::user()
+            ->unreadNotifications
+            ->where('data.review_id', $review->id)
+            ->markAsRead();
+
         return view(
             $this->currentRoleView() . '.reviews.show',
             compact('review')

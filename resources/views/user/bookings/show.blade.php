@@ -249,10 +249,14 @@
                             @endif
                         @endif
 
-                        @if ($status == 'pending')
-                            <button class="btn btn-danger w-100 d-none"> <!-- future feature -->
-                                Cancel Booking
-                            </button>
+                        @if (in_array($status, ['pending', 'confirmed', 'rejected', 'active', 'completed']))
+                            <form action="{{ route('bookings.cancel', $booking->id) }}" method="POST"
+                                onsubmit="return confirm('Confirm booking cancellation? This action cannot be undone.')">
+                                @csrf
+                                <button class="btn btn-danger w-100">
+                                    Cancel Booking
+                                </button>
+                            </form>
                         @endif
 
                     </div>

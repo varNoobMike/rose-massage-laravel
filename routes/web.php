@@ -305,36 +305,16 @@ Route::prefix('/clients')
     ->group(function () {
 
         /**
-         * read access (admin, owner, receptionist) only
+         * read access (owner, receptionist) only
          *
          */
-        Route::middleware('role:admin,owner,receptionist')->group(function () {
+        Route::middleware('role:owner,receptionist')->group(function () {
 
             Route::get('/', [ClientController::class, 'index'])
                 ->name('index');
 
             Route::get('/{user}', [ClientController::class, 'show'])
                 ->name('show');
-        });
-
-        /**
-         * write access (admin and owner) only
-         *
-         */
-        Route::middleware('role:admin,owner')->group(function () {
-
-            Route::get('/create', [ClientController::class, 'create'])
-                ->name('create');
-
-            Route::post('/', [ClientController::class, 'store'])
-                ->name('store');
-
-            /*
-            Route::get('/{user}/edit', [ClientController::class, 'edit'])
-                ->name('edit');
-            Route::put('/{user}', [ClientController::class, 'update'])
-                ->name('update');
-            */
         });
     });
 

@@ -79,15 +79,15 @@
                             </li>
                         @endif
 
-                        <li class="nav-item mb-1">
-                            <a href="{{ route('clients.index') }}"
-                                class="nav-link {{ request()->routeIs('clients*') ? 'text-bg-primary fw-bold' : 'text-dark opacity-75' }} px-3 py-2 d-flex align-items-center">
-                                <i class="bi bi-people me-3"></i>
-                                <span>Clients</span>
-                            </a>
-                        </li>
-
                         @if ($role === 'owner')
+                            <li class="nav-item mb-1">
+                                <a href="{{ route('clients.index') }}"
+                                    class="nav-link {{ request()->routeIs('clients*') ? 'text-bg-primary fw-bold' : 'text-dark opacity-75' }} px-3 py-2 d-flex align-items-center">
+                                    <i class="bi bi-people me-3"></i>
+                                    <span>Clients</span>
+                                </a>
+                            </li>
+
                             <li class="nav-item mb-1">
                                 <a href="{{ route('receptionists.index') }}"
                                     class="nav-link {{ request()->routeIs('receptionists*') ? 'text-bg-primary fw-bold' : 'text-dark opacity-75' }} px-3 py-2 d-flex align-items-center">

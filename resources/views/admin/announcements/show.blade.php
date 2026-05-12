@@ -111,41 +111,6 @@
                                     </td>
                                 </tr>
 
-                                <!-- ACTIONS -->
-                                @if (in_array(auth()->user()?->role, ['admin', 'owner']))
-                                    <tr>
-                                        <td class="ps-4 py-4 text-muted small fw-bold text-uppercase">
-                                            Actions
-                                        </td>
-
-                                        <td class="py-4 pe-4">
-
-                                            <div class="d-flex flex-wrap gap-2">
-
-                                                <a href="{{ route('announcements.edit', $announcement->id) }}"
-                                                    class="btn btn-sm btn-primary">
-                                                    <i class="bi bi-pencil-square me-1"></i>
-                                                    Edit
-                                                </a>
-
-                                                <form action="{{ route('announcements.destroy', $announcement->id) }}"
-                                                    method="POST"
-                                                    onsubmit="return confirm('Confirm delete? This action cannot be undone.')">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-sm btn-danger">
-                                                        <i class="bi bi-trash me-1"></i>
-                                                        Delete
-                                                    </button>
-                                                </form>
-
-                                            </div>
-
-                                        </td>
-                                    </tr>
-                                @endif
-
-
                             </tbody>
                         </table>
                     </div>
@@ -237,6 +202,33 @@
                     </div>
 
                 </div>
+            </div>
+
+            <!-- ACTIONS -->
+            <div class="card shadow-sm border">
+
+                <div class="card-header bg-white py-3 border-bottom text-center">
+                    <h6 class="mb-0 fw-bold text-uppercase small text-muted">
+                        Actions
+                    </h6>
+                </div>
+
+                <div class="card-body">
+                    <a href="{{ route('announcements.edit', $announcement->id) }}" class="btn btn-primary w-100 mb-2">
+                        <i class="bi bi-pencil-square me-1"></i>
+                        Edit
+                    </a>
+                    <form action="{{ route('announcements.destroy', $announcement->id) }}" method="POST" class="d-inline"
+                        onsubmit="return confirm('Confirm delete? This action cannot be undone.')">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger w-100">
+                            <i class="bi bi-trash me-1"></i>
+                            Delete
+                        </button>
+                    </form>
+                </div>
+
             </div>
 
         </div>

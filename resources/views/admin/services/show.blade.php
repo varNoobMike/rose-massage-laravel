@@ -58,28 +58,6 @@
                                         </div>
                                     </td>
                                 </tr>
-                                <!-- ACTIONS -->
-                                @if (in_array(auth()->user()?->role, ['admin', 'owner']))
-                                    <tr>
-                                        <td class="ps-4 py-4 text-muted small fw-bold text-uppercase">
-                                            Actions
-                                        </td>
-
-                                        <td class="py-4 pe-4">
-
-                                            <div class="d-flex flex-wrap gap-2">
-
-                                                <a href="{{ route('services.edit', $service->id) }}"
-                                                    class="btn btn-sm btn-primary">
-                                                    <i class="bi bi-pencil-square me-1"></i>
-                                                    Edit
-                                                </a>
-
-                                            </div>
-
-                                        </td>
-                                    </tr>
-                                @endif
                             </tbody>
                         </table>
                     </div>
@@ -102,7 +80,7 @@
                 </div>
             </div>
 
-            <div class="card shadow-sm border overflow-hidden">
+            <div class="card shadow-sm border overflow-hidden mb-4">
                 <div class="card-header bg-white py-3 border-bottom text-center">
                     <h6 class="mb-0 fw-bold small text-muted text-uppercase tracking-wider">Marketing Image</h6>
                 </div>
@@ -117,6 +95,26 @@
                     @endif
                 </div>
             </div>
+
+            <!-- ACTIONS -->
+            @if (in_array(auth()->user()?->role, ['admin', 'owner']))
+                <div class="card shadow-sm border">
+
+                    <div class="card-header bg-white py-3 border-bottom text-center">
+                        <h6 class="mb-0 fw-bold text-uppercase small text-muted">
+                            Actions
+                        </h6>
+                    </div>
+
+                    <div class="card-body">
+                        <a href="{{ route('services.edit', $service->id) }}" class="btn btn-primary w-100">
+                            <i class="bi bi-pencil-square me-1"></i>
+                            Edit
+                        </a>
+                    </div>
+
+                </div>
+            @endif
         </div>
     </div>
 @endsection

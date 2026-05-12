@@ -161,80 +161,6 @@
                                 </td>
                             </tr>
 
-                            <!-- ACTIONS -->
-                            <tr>
-                                <td class="ps-4 py-4 text-muted small fw-bold text-uppercase">
-                                    Actions
-                                </td>
-
-                                <td class="py-4 pe-4">
-
-                                    <div class="d-flex flex-wrap gap-2">
-
-                                        {{-- pending: confirm / reject --}}
-                                        @if ($booking->status === 'pending')
-                                            <form method="POST" action="{{ route('bookings.confirm', $booking->id) }}">
-                                                @csrf
-                                                <button type="submit" class="btn btn-sm btn-success">
-                                                    <i class="bi bi-check-circle me-1"></i>
-                                                    Confirm
-                                                </button>
-                                            </form>
-
-                                            <form method="POST" action="{{ route('bookings.reject', $booking->id) }}">
-                                                @csrf
-                                                <button type="submit" class="btn btn-sm btn-danger">
-                                                    <i class="bi bi-x-circle me-1"></i>
-                                                    Reject
-                                                </button>
-                                            </form>
-                                        @endif
-
-
-                                        {{-- confirmed / active / completed --}}
-                                        @if (in_array($booking->status, ['confirmed', 'active', 'completed']))
-
-                                            {{-- edit --}}
-                                            @if ($booking->status === 'confirmed')
-                                                <a href="{{ route('bookings.edit', $booking->id) }}"
-                                                    class="btn btn-sm btn-primary">
-                                                    <i class="bi bi-pencil-square me-1"></i>
-                                                    Edit
-                                                </a>
-                                            @endif
-
-                                            {{-- assign --}}
-                                            <a href="{{ route('therapist-assignments.index', $booking->id) }}"
-                                                class="btn btn-sm btn-info text-white">
-                                                <i class="bi bi-person-plus me-1"></i>
-                                                Assign
-                                            </a>
-
-                                            {{-- cancel --}}
-                                            <form method="POST" action="{{ route('bookings.cancel', $booking->id) }}">
-                                                @csrf
-                                                <button type="submit" class="btn btn-sm btn-outline-danger">
-                                                    <i class="bi bi-x-octagon me-1"></i>
-                                                    Cancel
-                                                </button>
-                                            </form>
-
-                                        @endif
-
-
-                                        {{-- fallback --}}
-                                        @if (!in_array($booking->status, ['pending', 'confirmed', 'active', 'completed']))
-                                            <span class="badge bg-light text-muted border">
-                                                <i class="bi bi-lock me-1"></i>
-                                                No actions available
-                                            </span>
-                                        @endif
-
-                                    </div>
-
-                                </td>
-                            </tr>
-
                         </tbody>
 
                     </table>
@@ -246,7 +172,7 @@
         <!-- RIGHT: BOOKING ITEMS -->
         <div class="col-12 col-lg-4">
 
-            <div class="card shadow-sm border">
+            <div class="card shadow-sm border mb-3">
 
                 <div class="card-header bg-white py-3 border-bottom text-center">
                     <h6 class="mb-0 fw-bold text-uppercase small text-muted">
@@ -312,6 +238,80 @@
                         </small>
                     </div>
                 @endif
+
+            </div>
+
+            <!-- ACTIONS -->
+            <div class="card shadow-sm border">
+
+                <div class="card-header bg-white py-3 border-bottom text-center">
+                    <h6 class="mb-0 fw-bold text-uppercase small text-muted">
+                        Actions
+                    </h6>
+                </div>
+
+                <div class="card-body">
+
+                    {{-- pending: confirm / reject --}}
+                    @if ($booking->status === 'pending')
+                        <form method="POST" action="{{ route('bookings.confirm', $booking->id) }}"
+                            onsubmit="return confirm('Confirm this booking? This action cannot be undone.')">
+                            @csrf
+                            <button type="submit" class="btn btn-success w-100 mb-2">
+                                <i class="bi bi-check-circle me-1"></i>
+                                Confirm
+                            </button>
+                        </form>
+
+                        <form method="POST" action="{{ route('bookings.reject', $booking->id) }}"
+                            onsubmit="return confirm('Reject this booking? This action cannot be undone.')">
+                            @csrf
+                            <button type="submit" class="btn btn-danger w-100">
+                                <i class="bi bi-x-circle me-1"></i>
+                                Reject
+                            </button>
+                        </form>
+                    @endif
+
+                    {{-- confirmed / active / completed --}}
+                    @if (in_array($booking->status, ['confirmed', 'active', 'completed']))
+
+                        {{-- edit --}}
+                        @if ($booking->status === 'confirmed')
+                            <a href="{{ route('bookings.edit', $booking->id) }}" class="btn btn-primary w-100 mb-2">
+                                <i class="bi bi-pencil-square me-1"></i>
+                                Edit
+                            </a>
+                        @endif
+
+                        {{-- assign --}}
+                        <a href="{{ route('therapist-assignments.index', $booking->id) }}"
+                            class="btn btn-info text-white w-100 mb-2">
+                            <i class="bi bi-person-plus me-1"></i>
+                            Assign
+                        </a>
+
+                        {{-- cancel --}}
+                        <form method="POST" action="{{ route('bookings.cancel', $booking->id) }}"
+                            onsubmit="return confirm('Cancel this booking? This action cannot be undone.')">
+                            @csrf
+                            <button type="submit" class="btn btn-outline-danger w-100">
+                                <i class="bi bi-x-octagon me-1"></i>
+                                Cancel
+                            </button>
+                        </form>
+
+                    @endif
+
+                    {{-- fallback --}}
+                    @if (!in_array($booking->status, ['pending', 'confirmed', 'rejected', 'active', 'completed']))
+                        <span class="badge bg-light text-muted border">
+                            <i class="bi bi-lock me-1"></i>
+                            No actions available
+                        </span>
+                    @endif
+
+                </div>
 
             </div>
 

@@ -161,51 +161,6 @@
                                     </td>
                                 </tr>
 
-                                <!-- Actions -->
-                                <tr>
-                                    <td class="ps-4 py-4 text-muted small fw-bold text-uppercase">
-                                        Actions
-                                    </td>
-
-                                    <td class="py-4 pe-4">
-                                        <div class="d-flex flex-wrap gap-2">
-
-                                            @if ($review->status === 'pending')
-                                                {{-- APPROVE --}}
-                                                <form action="{{ route('reviews.approve', $review->id) }}" method="POST"
-                                                    onsubmit="return confirm('Approve this review?')">
-                                                    @csrf
-                                                    <button type="submit" class="btn btn-sm btn-success">
-                                                        <i class="bi bi-check-lg me-1"></i>
-                                                        Approve
-                                                    </button>
-                                                </form>
-
-                                                {{-- REJECT --}}
-                                                <form action="{{ route('reviews.reject', $review->id) }}" method="POST"
-                                                    onsubmit="return confirm('Reject this review?')">
-                                                    @csrf
-                                                    <button type="submit" class="btn btn-sm btn-warning">
-                                                        <i class="bi bi-x-lg me-1"></i>
-                                                        Reject
-                                                    </button>
-                                                </form>
-                                            @endif
-
-                                            {{-- DELETE --}}
-                                            <form action="{{ route('reviews.destroy', $review->id) }}" method="POST"
-                                                onsubmit="return confirm('Remove this review? This cannot be undone.')">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-danger">
-                                                    <i class="bi bi-trash me-1"></i>
-                                                    Delete
-                                                </button>
-                                            </form>
-
-                                        </div>
-                                    </td>
-                                </tr>
 
                             </tbody>
                         </table>
@@ -259,9 +214,19 @@
                         Related Booking
                     </small>
 
-                    <a href="{{ route('bookings.show', $review->booking_id) }}" class="btn btn-outline-primary w-100">
+                    <a href="{{ route('bookings.show', $review->booking_id) }}" class="btn btn-outline-primary w-100 mb-2">
                         <i class="bi bi-eye me-2"></i> View Booking
                     </a>
+
+                    <form action="{{ route('reviews.destroy', $review->booking_id) }}" method="POST" class="d-inline"
+                        onsubmit="return confirm('Confirm delete? This action cannot be undone.')">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger w-100">
+                            <i class="bi bi-trash me-1"></i>
+                            Delete
+                        </button>
+                    </form>
 
                 </div>
             </div>
