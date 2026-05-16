@@ -15,7 +15,8 @@ class Payment extends Model
         'transaction_id',
         'gateway_response',
         'reference_number',
-        'receipt_path'
+        'receipt_path',
+        'refund_reference'
     ];
 
     protected $casts = [

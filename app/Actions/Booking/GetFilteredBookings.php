@@ -99,8 +99,18 @@ class GetFilteredBookings
                 $q->whereHas('payments', fn($p) => $p->where('status', 'successful'));
             }
 
+            if ($paymentStatus === 'refund_pending') {
+                $q->whereHas('payments', fn($p) => $p->where('status', 'refund_pending'));
+            }
+
+            if ($paymentStatus === 'refunded') {
+                $q->whereHas('payments', fn($p) => $p->where('status', 'refunded'));
+            }
+
             if ($paymentStatus === 'unpaid') {
-                $q->whereDoesntHave('payments', fn($p) => $p->where('status', 'successful'));
+                $q->whereDoesntHave('payments', fn($p) => $p->where('status', 'successful'))
+                 ->whereDoesntHave('payments', fn($p) => $p->where('status', 'refund_pending'))
+                 ->whereDoesntHave('payments', fn($p) => $p->where('status', 'refunded'));;
             }
         });
 
@@ -162,8 +172,18 @@ class GetFilteredBookings
                 $q->whereHas('payments', fn($p) => $p->where('status', 'successful'));
             }
 
+            if ($paymentStatus === 'refund_pending') {
+                $q->whereHas('payments', fn($p) => $p->where('status', 'refund_pending'));
+            }
+
+            if ($paymentStatus === 'refunded') {
+                $q->whereHas('payments', fn($p) => $p->where('status', 'refunded'));
+            }
+
             if ($paymentStatus === 'unpaid') {
-                $q->whereDoesntHave('payments', fn($p) => $p->where('status', 'successful'));
+                $q->whereDoesntHave('payments', fn($p) => $p->where('status', 'successful'))
+                ->whereDoesntHave('payments', fn($p) => $p->where('status', 'refund_pending'))
+                ->whereDoesntHave('payments', fn($p) => $p->where('status', 'refunded'));
             }
         });
 

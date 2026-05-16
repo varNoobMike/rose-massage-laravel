@@ -436,6 +436,12 @@ Route::prefix('/payments')
             Route::post('/{payment}/verify/{action}', [PaymentController::class, 'verify'])
                 ->name('verify')
                 ->where('action', 'approve|reject');
+
+            Route::post('/{booking}/request-refund', [PaymentController::class, 'requestRefund'])
+                ->name('request-refund');
+
+            Route::post('/{payment}/approve-refund', [PaymentController::class, 'approveRefund'])
+                ->name('approve-refund');
         });
     });
 

@@ -176,6 +176,11 @@
                                         switch ($notification->type) {
                                             case App\Notifications\NewBookingNotification::class:
                                             case App\Notifications\BookingStatusNotification::class:
+                                            case App\Notifications\PaymentSubmittedNotification::class:
+                                            case App\Notifications\PaymentVerifiedNotification::class:
+                                            case App\Notifications\PaymentRejectedNotification::class:
+                                            case App\Notifications\RefundRequestedNotification::class:
+                                            case App\Notifications\RefundProcessedNotification::class:
                                                 $label = 'Booking';
 
                                                 $resource = \App\Models\Booking::find(
@@ -267,6 +272,10 @@
                                                 case App\Notifications\NewBookingNotification::class:
                                                 case App\Notifications\BookingStatusNotification::class:
                                                 case App\Notifications\PaymentSubmittedNotification::class:
+                                                case App\Notifications\PaymentVerifiedNotification::class:
+                                                case App\Notifications\PaymentRejectedNotification::class:
+                                                case App\Notifications\RefundRequestedNotification::class:
+                                                case App\Notifications\RefundProcessedNotification::class:
                                                     $resource = \App\Models\Booking::find(
                                                         $notification->data['booking_id'] ?? null,
                                                     );

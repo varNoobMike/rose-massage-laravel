@@ -196,8 +196,70 @@
 
                             <!-- Type -->
                             <td class="text-center">
+                                @php
+                                    $resource = null;
+                                    $url = null;
+                                    $label = 'Unknown';
+
+                                    switch ($notification->type) {
+                                        case App\Notifications\NewBookingNotification::class:
+                                        case App\Notifications\BookingStatusNotification::class:
+                                        case App\Notifications\PaymentSubmittedNotification::class:
+                                        case App\Notifications\PaymentVerifiedNotification::class:
+                                        case App\Notifications\PaymentRejectedNotification::class:
+                                        case App\Notifications\RefundRequestedNotification::class:
+                                        case App\Notifications\RefundProcessedNotification::class:
+                                            $label = 'Booking';
+
+                                            $resource = \App\Models\Booking::find(
+                                                $notification->data['booking_id'] ?? null,
+                                            );
+
+                                            $url = $resource ? route('bookings.show', $resource) : null;
+                                            break;
+
+                                        case App\Notifications\NewBookingReviewNotification::class:
+                                            $label = 'Review';
+
+                                            $resource = \App\Models\Review::find(
+                                                $notification->data['review_id'] ?? null,
+                                            );
+
+                                            $url = $resource ? route('reviews.show', $resource) : null;
+                                            break;
+
+                                        case App\Notifications\ReviewApprovedNotification::class:
+                                        case App\Notifications\ReviewRejectedNotification::class:
+                                            $label = 'Review';
+
+                                            $resource = \App\Models\Review::find(
+                                                $notification->data['review_id'] ?? null,
+                                            );
+
+                                            $url = $resource ? route('reviews.show', $resource) : null;
+                                            break;
+
+                                        case App\Notifications\ReviewDeletedNotification::class:
+                                            $label = 'Review';
+
+                                            $resource = null;
+                                            $url = null;
+                                            break;
+
+                                        case App\Notifications\NewAnnouncementNotification::class:
+                                            $label = 'Announcement';
+
+                                            $resource = \App\Models\Announcement::find(
+                                                $notification->data['announcement_id'] ?? null,
+                                            );
+
+                                            $url = $resource ? route('announcements.show', $resource) : null;
+                                            break;
+                                    }
+                                @endphp
+
                                 <span class="badge bg-light text-dark">
-                                    Booking
+                                    {{ $label }}
                                 </span>
                             </td>
 
@@ -238,7 +300,11 @@
                                     @if (
                                         $type === 'App\Notifications\NewBookingNotification' ||
                                             $type === 'App\Notifications\BookingStatusNotification' ||
-                                            $type === 'App\Notifications\PaymentSubmittedNotification')
+                                            $type === 'App\Notifications\PaymentSubmittedNotification' ||
+                                            $type === 'App\Notifications\PaymentVerifiedNotification' ||
+                                            $type === 'App\Notifications\PaymentRejectedNotification' ||
+                                            $type === 'App\Notifications\RefundRequestedNotification' ||
+                                            $type === 'App\Notifications\RefundProcessedNotification')
                                         <a href="{{ route('notifications.open', $notification->id) }}"
                                             class="btn btn-sm btn-secondary">
                                             <i class="bi bi-eye"></i>

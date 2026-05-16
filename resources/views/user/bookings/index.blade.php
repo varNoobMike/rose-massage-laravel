@@ -106,6 +106,7 @@
                             <option value="" @selected(empty($filters['payment_status'] ?? null))>All Payment Status</option>
                             <option value="paid" @selected(($filters['payment_status'] ?? null) === 'paid')>Paid</option>
                             <option value="unpaid" @selected(($filters['payment_status'] ?? null) === 'unpaid')>Unpaid</option>
+                            <option value="refund_pending" @selected(($filters['payment_status'] ?? null) === 'refund_pending')>Refund Pending</option>
                         </select>
                     </div>
 
@@ -174,6 +175,7 @@
                             'text-capitalize',
                             'bg-success' => ($filters['payment_status'] ?? null) === 'paid',
                             'bg-danger' => ($filters['payment_status'] ?? null) === 'unpaid',
+                            'bg-info' => ($filters['payment_status'] ?? null) === 'refund_pending',
                         ])>
                             Payment Status: {{ ucfirst($filters['payment_status']) }}
                         </span>
@@ -264,6 +266,10 @@
 
                                     @if ($latestPayment && $latestPayment->status === 'successful')
                                         <span class="badge bg-success">Paid</span>
+                                    @elseif ($latestPayment && $latestPayment->status === 'refund_pending')
+                                        <span class="badge bg-info text-dark">Refund Pending</span>
+                                    @elseif ($latestPayment && $latestPayment->status === 'refunded')
+                                        <span class="badge bg-success text-white">Refunded</span>
                                     @else
                                         <span class="badge bg-danger">Unpaid</span>
                                     @endif

@@ -6,8 +6,13 @@ use App\Actions\Payment\StorePayment;
 use App\Models\Booking;
 use App\Models\Payment;
 use App\Models\User;
+use App\Notifications\PaymentRejectedNotification;
 use App\Notifications\PaymentSubmittedNotification;
+use App\Notifications\PaymentVerifiedNotification;
+use App\Notifications\RefundProcessedNotification;
+use App\Notifications\RefundRequestedNotification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Notification;
@@ -93,7 +98,18 @@ class PaymentController extends Controller
             $payment->update(['status' => 'failed']);
 
             // Optional: Update booking status back to 'pending_payment' or 'cancelled'
-            $booking->update(['status' => 'pending_payment']);
+            $booking->update(['status' => 'pending']);
+
+            // 1. Notify the Client who owns the booking
+            if ($booking->client) {
+                $booking->client->notify(new PaymentRejectedNotification($booking, $payment));
+            }
+
+            // 2. Audit/Notify other management staff (Excluding the user executing the rejection)
+            $adminUsers = User::whereIn('role', [User::ROLE_ADMIN, User::ROLE_OWNER])
+                ->get();
+
+            Notification::send($adminUsers, new PaymentRejectedNotification($booking, $payment));
 
             return redirect()->back()->with('warning', 'Payment reference has been rejected.');
         }
@@ -119,6 +135,23 @@ class PaymentController extends Controller
                 ]);
             });
 
+            // ----------------------------------------------------
+            // NOTIFICATIONS SYSTEM
+            // ----------------------------------------------------
+
+            // 1. Notify the Client who owns the booking
+            if ($booking->client) {
+                $booking->client->notify(new PaymentVerifiedNotification($booking, $payment));
+            }
+
+            // 2. Audit/Notify other management staff (Excluding the user executing the verification)
+            $adminUsers = User::whereIn('role', [User::ROLE_ADMIN, User::ROLE_OWNER])
+                ->get();
+
+            Notification::send($adminUsers, new PaymentVerifiedNotification($booking, $payment));
+
+            // ----------------------------------------------------
+
             $message = $payment->payment_method === 'cash'
                 ? 'Cash payment recorded. Booking is now confirmed!'
                 : 'GCash payment verified successfully!';
@@ -127,5 +160,77 @@ class PaymentController extends Controller
         }
 
         return redirect()->back()->with('error', 'Invalid action execution.');
+    }
+
+    public function requestRefund(Booking $booking)
+    {
+        // 1. Safety Check: Ensure the booking is actually cancelled
+        if ($booking->status !== 'cancelled') {
+            return redirect()->back()->with('error', 'Only cancelled bookings are eligible for a refund.');
+        }
+
+        $latestPayment = $booking->payments->last();
+
+        // 2. Safety Check: Verify a valid successful payment exists to refund
+        if (!$latestPayment || !in_array($latestPayment->status, ['successful'])) {
+            return redirect()->back()->with('error', 'No valid or completed payment found to refund.');
+        }
+
+        // 3. Transition payment state
+        $latestPayment->update([
+            'status' => 'refund_pending'
+        ]);
+
+        // 4. Send confirmation notification to the booking owner (Client)
+        if ($booking->client) {
+            $booking->client->notify(new RefundRequestedNotification($booking, $latestPayment));
+        }
+
+        // 5. Send system alert notifications to Admin & Owners
+        $adminUsers = User::whereIn('role', [User::ROLE_ADMIN, User::ROLE_OWNER])->get();
+        Notification::send($adminUsers, new RefundRequestedNotification($booking, $latestPayment));
+
+        return redirect()->back()->with('success', 'Your refund request has been submitted for review.');
+    }
+
+    public function approveRefund(Request $request, Payment $payment)
+    {
+        // 1. Ensure the payment is actually in a state waiting for a refund
+        if ($payment->status !== 'refund_pending') {
+            return redirect()->back()->with('error', 'This payment is not awaiting a refund.');
+        }
+
+        // 2. Validate input if the payment method used was GCash
+        if ($payment->payment_method === 'gcash') {
+            $request->validate([
+                'refund_reference' => 'required|string|max:255|unique:payments,refund_reference',
+            ], [
+                'refund_reference.required' => 'The GCash transaction reference number is required.',
+                'refund_reference.unique' => 'This reference number has already been used for another refund.',
+            ]);
+        }
+
+        // 3. Update the transaction parameters
+        $payment->update([
+            'status' => 'refunded',
+            'refund_reference' => $payment->payment_method === 'gcash' ? $request->input('refund_reference') : null,
+        ]);
+
+        // 4. Update the parent booking status if needed (Optional but recommended)
+        // $payment->booking->update(['status' => 'refunded']);
+
+        // 5. Fire off the confirmation notification to the client
+        $booking = $payment->booking;
+        if ($booking && $booking->client) {
+            $booking->client->notify(new RefundProcessedNotification($booking, $payment));
+        }
+
+        // 6. Notify the Admin & Owners that the refund has been completed
+        $adminUsers = User::whereIn('role', [User::ROLE_ADMIN, User::ROLE_OWNER])->get();
+        if ($adminUsers->isNotEmpty()) {
+            Notification::send($adminUsers, new RefundProcessedNotification($booking, $payment));
+        }
+
+        return redirect()->back()->with('success', 'Refund has been successfully processed and recorded.');
     }
 }

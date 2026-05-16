@@ -70,7 +70,11 @@ class NotificationController extends Controller
 
             \App\Notifications\NewBookingNotification::class,
             \App\Notifications\BookingStatusNotification::class,
-            \App\Notifications\PaymentSubmittedNotification::class
+            \App\Notifications\PaymentSubmittedNotification::class,
+            \App\Notifications\PaymentVerifiedNotification::class,
+            \App\Notifications\PaymentRejectedNotification::class,
+            \App\Notifications\RefundRequestedNotification::class,
+            \App\Notifications\RefundProcessedNotification::class
             => $this->openBooking($notification),
 
             \App\Notifications\NewBookingReviewNotification::class,

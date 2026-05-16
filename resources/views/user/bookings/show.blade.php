@@ -61,16 +61,42 @@
 
                             <div class="col-md-6">
                                 <small class="text-muted">Payment Status</small>
+                                @php $payment = $booking->payments->last(); @endphp
+
+                                <!-- Status Badge -->
                                 <div>
-                                    @if ($booking->isPaid())
-                                        <span
-                                            class="badge bg-success-subtle text-success border border-success fw-bold px-2 py-1">
-                                            Paid
-                                        </span>
+                                    @if ($payment)
+                                        {{-- A payment record exists, show its status --}}
+                                        @if ($payment->status === 'successful')
+                                            <span
+                                                class="badge bg-success-subtle text-success border border-success px-2.5 py-1.5 fw-bold">
+                                                <i class="bi bi-check-circle-fill me-1"></i> Paid
+                                            </span>
+                                        @elseif ($payment->status === 'pending')
+                                            <span
+                                                class="badge bg-warning-subtle text-warning-dominant border border-warning px-2.5 py-1.5 fw-bold text-dark">
+                                                <i class="bi bi-hourglass-split me-1"></i> Pending Verification
+                                            </span>
+                                        @elseif ($payment->status === 'refund_pending')
+                                            <span
+                                                class="badge bg-info-subtle text-info border border-info px-2.5 py-1.5 fw-bold text-dark">
+                                                <i class="bi bi-arrow-counterclockwise me-1"></i> Refund Pending
+                                            </span>
+                                        @elseif ($payment->status === 'refunded')
+                                             <span
+                                                class="badge bg-success-subtle text-success border border-success px-2.5 py-1.5 fw-bold">
+                                                <i class="bi bi-check-circle-fill me-1"></i> Refunded
+                                        @else
+                                            <span
+                                                class="badge bg-danger-subtle text-danger border border-danger px-2.5 py-1.5 fw-bold">
+                                                <i class="bi bi-x-circle-fill me-1"></i> {{ ucfirst($payment->status) }}
+                                            </span>
+                                        @endif
                                     @else
+                                        {{-- NO payment record exists yet: Changed styling to red (danger) --}}
                                         <span
-                                            class="badge bg-danger-subtle text-danger border border-danger fw-bold px-2 py-1">
-                                            Unpaid
+                                            class="badge bg-danger-subtle text-danger border border-danger px-2.5 py-1.5 fw-bold">
+                                            <i class="bi bi-cash me-1"></i> Unpaid / Pay at Counter
                                         </span>
                                     @endif
                                 </div>
@@ -232,16 +258,45 @@
 
                         <div class="d-flex justify-content-between mb-2 align-items-center">
                             <span class="text-muted">Payment Status</span>
-                            @if ($booking->isPaid())
-                                <span
-                                    class="badge bg-success-subtle text-success border border-success fw-bold px-2.5 py-1">
-                                    <i class="bi bi-check-circle-fill me-1"></i> Paid
-                                </span>
-                            @else
-                                <span class="badge bg-danger-subtle text-danger border border-danger fw-bold px-2.5 py-1">
-                                    <i class="bi bi-exclamation-circle-fill me-1"></i> Unpaid
-                                </span>
-                            @endif
+                            <div>
+                                @php $payment = $booking->payments->last(); @endphp
+                                <!-- Status Badge -->
+                                @if ($payment)
+                                    {{-- A payment record exists, show its status --}}
+                                    @if ($payment->status === 'successful')
+                                        <span
+                                            class="badge bg-success-subtle text-success border border-success px-2.5 py-1.5 fw-bold">
+                                            <i class="bi bi-check-circle-fill me-1"></i> Paid
+                                        </span>
+                                    @elseif ($payment->status === 'pending')
+                                        <span
+                                            class="badge bg-warning-subtle text-warning-dominant border border-warning px-2.5 py-1.5 fw-bold text-dark">
+                                            <i class="bi bi-hourglass-split me-1"></i> Pending Verification
+                                        </span>
+                                    @elseif ($payment->status === 'refund_pending')
+                                        <span
+                                            class="badge bg-info-subtle text-info border border-info px-2.5 py-1.5 fw-bold text-dark">
+                                            <i class="bi bi-arrow-counterclockwise me-1"></i> Refund Pending
+                                        </span>
+                                    @elseif ($payment->status === 'refunded')
+                                        <span
+                                            class="badge bg-success-subtle text-success border border-success px-2.5 py-1.5 fw-bold">
+                                            <i class="bi bi-check-circle-fill me-1"></i> Refunded
+                                        </span>
+                                    @else
+                                        <span
+                                            class="badge bg-danger-subtle text-danger border border-danger px-2.5 py-1.5 fw-bold">
+                                            <i class="bi bi-x-circle-fill me-1"></i> {{ ucfirst($payment->status) }}
+                                        </span>
+                                    @endif
+                                @else
+                                    {{-- NO payment record exists yet: Already red here, kept for consistency --}}
+                                    <span
+                                        class="badge bg-danger-subtle text-danger border border-danger px-2.5 py-1.5 fw-bold">
+                                        <i class="bi bi-cash me-1"></i> Unpaid
+                                    </span>
+                                @endif
+                            </div>
                         </div>
 
                         <!-- RIGHT CARD: Payment Method row to mirror left card layout structure -->
@@ -335,6 +390,32 @@
                             </form>
                         @endif
 
+                        {{-- NEW: Request Refund Button --}}
+                        @if ($status === 'cancelled' && $booking->payments()->exists())
+                            @php
+                                $latestPayment = $booking->payments->last();
+                            @endphp
+
+                            @if ($latestPayment->status === 'successful' || $latestPayment->status === 'paid')
+                                <form action="{{ route('payments.request-refund', $booking->id) }}" method="POST"
+                                    class="mt-2"
+                                    onsubmit="return confirm('Are you sure you want to request a refund for this transaction?')">
+                                    @csrf
+                                    <button type="submit" class="btn btn-outline-warning w-100 fw-bold">
+                                        <i class="bi bi-arrow-counterclockwise me-2"></i> Request Refund
+                                    </button>
+                                </form>
+                            @elseif ($latestPayment->status === 'refund_pending')
+                                <div class="alert alert-warning border text-center small fw-bold mt-2 mb-0">
+                                    <i class="bi bi-hourglass-split me-1"></i> Refund Request Under Review
+                                </div>
+                            @elseif ($latestPayment->status === 'refunded')
+                                <div class="alert alert-success border text-center small fw-bold mt-2 mb-0">
+                                    <i class="bi bi-check-circle-fill me-1"></i> This booking has been refunded
+                                </div>
+                            @endif
+                        @endif
+
                     </div>
                 </div>
 
@@ -355,7 +436,8 @@
                 </div>
                 <div class="modal-body">
                     <p class="text-muted small">Select how you want to settle your bill of
-                        <strong>₱{{ number_format($booking->total_amount, 2) }}</strong>.</p>
+                        <strong>₱{{ number_format($booking->total_amount, 2) }}</strong>.
+                    </p>
 
                     <div class="d-grid gap-2">
                         <!-- Pay At Front Desk Option -->
@@ -387,9 +469,6 @@
                                     <span class="text-uppercase small fw-bold text-secondary">Account Name: J***
                                         D**.</span>
                                 </p>
-
-                                <!-- Optional QR Code Placement -->
-                                <!-- <div class="text-center mb-3"><img src="{{ asset('images/gcash-qr.jpg') }}" class="img-fluid border" style="max-width: 150px;"></div> -->
 
                                 <hr>
 

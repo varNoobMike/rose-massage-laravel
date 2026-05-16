@@ -206,7 +206,7 @@
                 </div>
             </div>
 
-            <!-- VIEW BOOKING -->
+            <!-- ACTIONS -->
             <div class="card shadow-sm border mb-4">
                 <div class="card-body p-3 text-center">
 
@@ -217,6 +217,26 @@
                     <a href="{{ route('bookings.show', $review->booking_id) }}" class="btn btn-outline-primary w-100 mb-2">
                         <i class="bi bi-eye me-2"></i> View Booking
                     </a>
+
+                    @if ($review->status === 'pending')
+                        {{-- APPROVE --}}
+                        <form action="{{ route('reviews.approve', $review->id) }}" method="POST">
+                            @csrf
+                            <button type="submit" class="btn btn-outline-success w-100 mb-2"
+                                onclick="return confirm('Approve this review?')">
+                                <i class="bi bi-check-lg me-2"></i> Approve
+                            </button>
+                        </form>
+
+                        {{-- REJECT --}}
+                        <form action="{{ route('reviews.reject', $review->id) }}" method="POST">
+                            @csrf
+                            <button type="submit" class="btn btn-outline-danger w-100 mb-2"
+                                onclick="return confirm('Reject this review?')">
+                                <i class="bi bi-x-lg me-2"></i> Reject
+                            </button>
+                        </form>
+                    @endif
 
                     <form action="{{ route('reviews.destroy', $review->booking_id) }}" method="POST" class="d-inline"
                         onsubmit="return confirm('Confirm delete? This action cannot be undone.')">

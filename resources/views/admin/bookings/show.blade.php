@@ -100,7 +100,7 @@
 
                             <!-- PAYMENT STATUS & METHOD -->
                             <tr class="border-bottom border-light">
-                                <td class="ps-4 py-4 text-muted small fw-bold text-uppercase">
+                                <td class="ps-4 py-4 text-muted small fw-bold text-uppercase" style="width: 30%;">
                                     Payment Tracking
                                 </td>
                                 <td class="py-4 pe-4">
@@ -116,13 +116,18 @@
                                                 </span>
                                             @elseif ($payment->status === 'pending')
                                                 <span
-                                                    class="badge bg-warning-subtle text-warning-dominant border border-warning px-2.5 py-1.5 fw-bold text-dark">
+                                                    class="badge bg-warning-subtle text-warning border border-warning px-2.5 py-1.5 fw-bold text-dark">
                                                     <i class="bi bi-hourglass-split me-1"></i> Pending Verification
                                                 </span>
-                                            @else
+                                            @elseif ($payment->status === 'refund_pending')
                                                 <span
-                                                    class="badge bg-danger-subtle text-danger border border-danger px-2.5 py-1.5 fw-bold">
-                                                    <i class="bi bi-x-circle-fill me-1"></i> {{ ucfirst($payment->status) }}
+                                                    class="badge bg-info-subtle text-info border border-info px-2.5 py-1.5 fw-bold">
+                                                    <i class="bi bi-arrow-left-right me-1"></i> Refund Pending Review
+                                                </span>
+                                            @elseif ($payment->status === 'refunded')
+                                                <span
+                                                    class="badge bg-success-subtle text-success border border-success px-2.5 py-1.5 fw-bold">
+                                                    <i class="bi bi-patch-check me-1"></i> Refunded
                                                 </span>
                                             @endif
 
@@ -135,8 +140,8 @@
                                             </span>
                                         </div>
 
-                                        <!-- CASE 1: GCash Details & Verification Controls -->
-                                        @if ($payment->payment_method === 'gcash')
+                                        <!-- CASE 1: Standard Payment Verification (Only shows if status is 'pending') -->
+                                        @if ($payment->status === 'pending' && $payment->payment_method === 'gcash')
                                             <div class="mt-3 p-3 bg-light rounded border border-dashed fs-7">
                                                 <div class="mb-1 text-secondary">
                                                     Reference Number: <strong
@@ -156,40 +161,40 @@
                                                     </div>
                                                 @endif
 
-                                                @if ($payment->status === 'pending')
-                                                    <div class="d-flex gap-2 mt-2 pt-2 border-top border-2 border-white">
-                                                        <form
-                                                            action="{{ route('payments.verify', ['payment' => $payment->id, 'action' => 'approve']) }}"
-                                                            method="POST"
-                                                            onsubmit="return confirm('Confirm payment received matches reference validation?')">
-                                                            @csrf
-                                                            <button type="submit"
-                                                                class="btn btn-success btn-xs fw-bold px-3">
-                                                                <i class="bi bi-patch-check-fill me-1"></i> Approve
-                                                            </button>
-                                                        </form>
-                                                        <form action="{{ route('payments.verify', ['payment' => $payment->id, 'action' => 'reject']) }}" method="POST"
-                                                            onsubmit="return confirm('Reject this reference log? User will need to submit proof again.')">
-                                                            @csrf
-                                                            <button type="submit"
-                                                                class="btn btn-outline-danger btn-xs fw-bold px-3">
-                                                                <i class="bi bi-trash3-fill me-1"></i> Reject
-                                                            </button>
-                                                        </form>
-                                                    </div>
-                                                @endif
+                                                <div class="d-flex gap-2 mt-2 pt-2 border-top border-2 border-white">
+                                                    <form
+                                                        action="{{ route('payments.verify', ['payment' => $payment->id, 'action' => 'approve']) }}"
+                                                        method="POST"
+                                                        onsubmit="return confirm('Confirm payment received matches reference validation?')">
+                                                        @csrf
+                                                        <button type="submit" class="btn btn-success btn-xs fw-bold px-3">
+                                                            <i class="bi bi-patch-check-fill me-1"></i> Approve
+                                                        </button>
+                                                    </form>
+                                                    <form
+                                                        action="{{ route('payments.verify', ['payment' => $payment->id, 'action' => 'reject']) }}"
+                                                        method="POST"
+                                                        onsubmit="return confirm('Reject this reference log? User will need to submit proof again.')">
+                                                        @csrf
+                                                        <button type="submit"
+                                                            class="btn btn-outline-danger btn-xs fw-bold px-3">
+                                                            <i class="bi bi-trash3-fill me-1"></i> Reject
+                                                        </button>
+                                                    </form>
+                                                </div>
                                             </div>
                                         @endif
 
-                                        <!-- CASE 2: Cash Counter Payment Controls -->
-                                        @if ($payment->payment_method === 'cash' && $payment->status !== 'successful')
+                                        <!-- CASE 2: Unpaid Cash Counter Payment Controls (Only shows if cash & still pending) -->
+                                        @if ($payment->payment_method === 'cash' && $payment->status === 'pending')
                                             <div class="mt-3 p-3 bg-light rounded border border-dashed fs-7">
                                                 <div class="text-secondary mb-2">
                                                     <i class="bi bi-info-circle me-1"></i> Customer selected Cash payment.
                                                     Collect payment at the counter.
                                                 </div>
-
-                                                <form action="{{ route('payments.verify', ['payment' => $payment->id, 'action' => 'approve']) }}" method="POST"
+                                                <form
+                                                    action="{{ route('payments.verify', ['payment' => $payment->id, 'action' => 'approve']) }}"
+                                                    method="POST"
                                                     onsubmit="return confirm('Confirm that you have received ₱{{ number_format($booking->total_amount, 2) }} at the counter?')">
                                                     @csrf
                                                     <button type="submit" class="btn btn-success btn-sm fw-bold">
@@ -198,8 +203,74 @@
                                                 </form>
                                             </div>
                                         @endif
+
+                                        <!-- CASE 3: ADMIN REFUND CONTROLS (Only shows if status is 'refund_pending') -->
+                                        @if ($payment->status === 'refund_pending')
+                                            <div class="mt-3 p-3 bg-light rounded border border-info border-dashed fs-7">
+                                                <div class="text-dark fw-bold mb-2">
+                                                    <i class="bi bi-exclamation-triangle-fill text-info me-1"></i> Action
+                                                    Required: Process Refund
+                                                </div>
+
+                                                <!-- Change route name here to match your setup -->
+                                                <form action="{{ route('payments.approve-refund', $payment->id) }}"
+                                                    method="POST">
+                                                    @csrf
+
+                                                    @if ($payment->payment_method === 'gcash')
+                                                        <div class="text-secondary mb-2">
+                                                            Please physically open your business GCash account, refund the
+                                                            customer, and paste the <strong>Real Transaction Reference
+                                                                Number</strong> below.
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label for="refund_reference"
+                                                                class="form-label small fw-bold text-muted text-uppercase">GCash
+                                                                Refund Ref No.</label>
+                                                            <input type="text" name="refund_reference"
+                                                                id="refund_reference"
+                                                                class="form-control font-monospace @error('refund_reference') is-invalid @enderror"
+                                                                placeholder="e.g. 902123456" required>
+                                                            @error('refund_reference')
+                                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                            @enderror
+                                                        </div>
+                                                        <button type="submit"
+                                                            class="btn btn-info text-white btn-sm fw-bold w-100"
+                                                            onclick="return confirm('Verify that the money has been digitally wired back before confirming.')">
+                                                            <i class="bi bi-check2-circle me-1"></i> Confirm & Process GCash
+                                                            Refund
+                                                        </button>
+                                                    @else
+                                                        <!-- Cash Refund Flow -->
+                                                        <div class="text-secondary mb-3">
+                                                            This customer paid via <strong>Cash</strong>. Please hand over
+                                                            <strong>₱{{ number_format($booking->total_amount, 2) }}</strong>
+                                                            at the physical store counter and log it using the button below.
+                                                        </div>
+                                                        <button type="submit"
+                                                            class="btn btn-secondary btn-sm fw-bold w-100"
+                                                            onclick="return confirm('Confirm that cash has been physically handed back to the customer?')">
+                                                            <i class="bi bi-hand-thumbs-up me-1"></i> Confirm Cash Handed
+                                                            Over
+                                                        </button>
+                                                    @endif
+                                                </form>
+                                            </div>
+                                        @endif
+
+                                        <!-- CASE 4: Refund Successfully Complete Archive Details -->
+                                        @if ($payment->status === 'refunded' && $payment->refund_reference)
+                                            <div class="mt-3 p-3 bg-light rounded border fs-7">
+                                                <span class="text-secondary d-block">Processed Refund Receipt:</span>
+                                                <div class="text-muted mt-1">
+                                                    GCash Reference Log: <strong
+                                                        class="text-dark font-monospace">{{ $payment->refund_reference }}</strong>
+                                                </div>
+                                            </div>
+                                        @endif
                                     @else
-                                        <!-- No payment entry exists in DB yet -->
+                                        <!-- Unpaid (No option selected) -->
                                         <div class="d-flex flex-wrap align-items-center gap-2">
                                             <span
                                                 class="badge bg-danger-subtle text-danger border border-danger px-2.5 py-1.5 fw-bold">
