@@ -84,10 +84,10 @@
             {{-- advanced filters --}}
             <div class="collapse mt-3 {{ $hasAdvancedFilters ? 'show' : '' }}" id="advancedFilters">
 
-                <div class="row g-3">
+                <div class="row g-2">
 
                     {{-- service --}}
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <select name="service" class="form-select">
                             <option value="">All Services</option>
                             @forelse($services as $service)
@@ -97,6 +97,15 @@
                             @empty
                                 <option value="" disabled>No services yet</option>
                             @endforelse
+                        </select>
+                    </div>
+
+                    {{-- PAYMENT STATUS --}}
+                    <div class="col-md-2">
+                        <select name="payment_status" class="form-select">
+                            <option value="" @selected(empty($filters['payment_status'] ?? null))>All Payment Status</option>
+                            <option value="paid" @selected(($filters['payment_status'] ?? null) === 'paid')>Paid</option>
+                            <option value="unpaid" @selected(($filters['payment_status'] ?? null) === 'unpaid')>Unpaid</option>
                         </select>
                     </div>
 
@@ -158,6 +167,18 @@
                         </span>
                     @endif
 
+                    {{-- PAYMENT STATUS --}}
+                    @if (!empty($filters['payment_status']))
+                        <span @class([
+                            'badge',
+                            'text-capitalize',
+                            'bg-success' => ($filters['payment_status'] ?? null) === 'paid',
+                            'bg-danger' => ($filters['payment_status'] ?? null) === 'unpaid',
+                        ])>
+                            Payment Status: {{ ucfirst($filters['payment_status']) }}
+                        </span>
+                    @endif
+
                 </div>
             </div>
         @endif
@@ -174,6 +195,7 @@
                             <th class="d-none d-lg-table-cell">Services</th>
                             <th class="text-end d-none d-lg-table-cell">Total Services</th>
                             <th class="text-end d-none d-lg-table-cell">Total Amount</th>
+                            <th class="text-center d-none d-lg-table-cell">Payment Status</th>
                             <th class="text-center">Status</th>
                             <th class="text-end">Option</th>
                         </tr>
@@ -234,6 +256,19 @@
                                     ₱{{ number_format($booking->total_amount, 2) }}
                                 </td>
 
+                                {{-- payment status --}}
+                                <td class="text-center d-none d-lg-table-cell">
+                                    @php
+                                        $latestPayment = $booking->payments->last();
+                                    @endphp
+
+                                    @if ($latestPayment && $latestPayment->status === 'successful')
+                                        <span class="badge bg-success">Paid</span>
+                                    @else
+                                        <span class="badge bg-danger">Unpaid</span>
+                                    @endif
+                                </td>
+
                                 {{-- status --}}
                                 <td class="text-center">
                                     <span @class([
@@ -251,7 +286,8 @@
 
                                 {{-- actions --}}
                                 <td class="text-end">
-                                    <a href="{{ route('bookings.show', $booking->id) }}" class="btn btn-sm btn-secondary">
+                                    <a href="{{ route('bookings.show', $booking->id) }}"
+                                        class="btn btn-sm btn-secondary">
                                         <i class="bi bi-eye"></i>
                                     </a>
 
@@ -268,7 +304,7 @@
                         @empty
 
                             <tr>
-                                <td colspan="7" class="text-center py-5">
+                                <td colspan="8" class="text-center py-5">
                                     @if ($hasFilters)
                                         <i class="bi bi-search fs-1 text-muted"></i>
                                         <h5 class="mt-3">No results found</h5>

@@ -69,13 +69,14 @@ class NotificationController extends Controller
         return match ($notification->type) {
 
             \App\Notifications\NewBookingNotification::class,
-            \App\Notifications\BookingStatusNotification::class
+            \App\Notifications\BookingStatusNotification::class,
+            \App\Notifications\PaymentSubmittedNotification::class
             => $this->openBooking($notification),
 
             \App\Notifications\NewBookingReviewNotification::class,
             \App\Notifications\ReviewApprovedNotification::class,
             \App\Notifications\ReviewRejectedNotification::class,
-            \App\Notifications\ReviewDeletedNotification::class
+            \App\Notifications\ReviewDeletedNotification::class,
             => $this->openReview($notification),
 
             \App\Notifications\NewAnnouncementNotification::class

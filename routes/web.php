@@ -8,6 +8,7 @@ use App\Http\Controllers\BookingController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OperatingHourController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReceptionistController;
 use App\Http\Controllers\ReportController;
@@ -174,6 +175,24 @@ Route::prefix('')
             ->name('contact.index');
     });
 
+/**
+ * Account Security Routes
+ */
+Route::prefix('/account-security')
+    ->middleware('auth')
+    ->name('account-security.')
+    ->group(function () {
+        // security dashboard
+        Route::get('/', [AccountSecurityController::class, 'index'])
+            ->name('index');
+        // password edit form
+        Route::get('/password', [AccountSecurityController::class, 'editPassword'])
+            ->name('password.edit');
+        // password update
+        Route::put('/password', [AccountSecurityController::class, 'updatePassword'])
+            ->name('password.update');
+    });
+
 
 /**
  * Activity Log Routes (admin, owner, receptionist) only
@@ -282,21 +301,9 @@ Route::prefix('/bookings')
     });
 
 
-/**
- * Therapist Assignment
- *
- */
-Route::prefix('/therapist-assignments')
-    ->middleware(['auth', 'role:admin,owner,receptionist'])
-    ->name('therapist-assignments.')
-    ->group(function () {
-        //read
-        Route::get('/{booking}', [TherapistAssignmentController::class, 'index'])
-            ->name('index');
-        // update
-        Route::put('/{booking}', [TherapistAssignmentController::class, 'update'])
-            ->name('update');
-    });
+
+
+
 
 
 /**
@@ -406,22 +413,32 @@ Route::prefix('/profile')
 
 
 /**
- * Account Security Routes
+ * Payment Routes
  */
-Route::prefix('/account-security')
+Route::prefix('/payments')
+    ->name('payments.')
     ->middleware('auth')
-    ->name('account-security.')
     ->group(function () {
-        // security dashboard
-        Route::get('/', [AccountSecurityController::class, 'index'])
-            ->name('index');
-        // password edit form
-        Route::get('/password', [AccountSecurityController::class, 'editPassword'])
-            ->name('password.edit');
-        // password update
-        Route::put('/password', [AccountSecurityController::class, 'updatePassword'])
-            ->name('password.update');
+
+        /**
+         * Accessible by Clients, Receptionists, Admins, and Owners
+         */
+        Route::middleware('role:admin,owner,receptionist,client')->group(function () {
+
+            // Handle Cash / Over-the-Counter payment confirmation
+            Route::post('/bookings/{booking}/pay-at-counter', [PaymentController::class, 'payAtCounter'])
+                ->name('pay-at-counter');
+
+            // Route for submitting the manual GCash reference number and receipt
+            Route::post('/{booking}/submit-gcash', [PaymentController::class, 'submitGcash'])
+                ->name('submit-gcash');
+
+            Route::post('/{payment}/verify/{action}', [PaymentController::class, 'verify'])
+                ->name('verify')
+                ->where('action', 'approve|reject');
+        });
     });
+
 
 /**
  * Receptionist Routes (admin, owner) only
@@ -594,7 +611,21 @@ Route::prefix('/therapists')
     });
 
 
-
+/**
+ * Therapist Assignment
+ *
+ */
+Route::prefix('/therapist-assignments')
+    ->middleware(['auth', 'role:admin,owner,receptionist'])
+    ->name('therapist-assignments.')
+    ->group(function () {
+        //read
+        Route::get('/{booking}', [TherapistAssignmentController::class, 'index'])
+            ->name('index');
+        // update
+        Route::put('/{booking}', [TherapistAssignmentController::class, 'update'])
+            ->name('update');
+    });
 
 /**
  * Users Routes

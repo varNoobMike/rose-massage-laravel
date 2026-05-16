@@ -235,7 +235,10 @@
 
                                     @php $type = $notification->type; @endphp
 
-                                    @if ($type === 'App\Notifications\NewBookingNotification' || $type === 'App\Notifications\BookingStatusNotification')
+                                    @if (
+                                        $type === 'App\Notifications\NewBookingNotification' ||
+                                            $type === 'App\Notifications\BookingStatusNotification' ||
+                                            $type === 'App\Notifications\PaymentSubmittedNotification')
                                         <a href="{{ route('notifications.open', $notification->id) }}"
                                             class="btn btn-sm btn-secondary">
                                             <i class="bi bi-eye"></i>

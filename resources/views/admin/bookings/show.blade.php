@@ -98,6 +98,119 @@
                                 </td>
                             </tr>
 
+                            <!-- PAYMENT STATUS & METHOD -->
+                            <tr class="border-bottom border-light">
+                                <td class="ps-4 py-4 text-muted small fw-bold text-uppercase">
+                                    Payment Tracking
+                                </td>
+                                <td class="py-4 pe-4">
+                                    @if ($booking->payments()->exists())
+                                        @php $payment = $booking->payments->last(); @endphp
+
+                                        <div class="d-flex flex-wrap align-items-center gap-2">
+                                            <!-- Status Badge -->
+                                            @if ($payment->status === 'successful')
+                                                <span
+                                                    class="badge bg-success-subtle text-success border border-success px-2.5 py-1.5 fw-bold">
+                                                    <i class="bi bi-check-circle-fill me-1"></i> Paid
+                                                </span>
+                                            @elseif ($payment->status === 'pending')
+                                                <span
+                                                    class="badge bg-warning-subtle text-warning-dominant border border-warning px-2.5 py-1.5 fw-bold text-dark">
+                                                    <i class="bi bi-hourglass-split me-1"></i> Pending Verification
+                                                </span>
+                                            @else
+                                                <span
+                                                    class="badge bg-danger-subtle text-danger border border-danger px-2.5 py-1.5 fw-bold">
+                                                    <i class="bi bi-x-circle-fill me-1"></i> {{ ucfirst($payment->status) }}
+                                                </span>
+                                            @endif
+
+                                            <!-- Method Badge -->
+                                            <span
+                                                class="badge bg-secondary-subtle text-secondary border border-secondary px-2.5 py-1.5 fw-bold text-capitalize">
+                                                <i
+                                                    class="bi {{ $payment->payment_method === 'cash' ? 'bi-shop' : 'bi-wallet2' }} me-1"></i>
+                                                {{ $payment->payment_method }}
+                                            </span>
+                                        </div>
+
+                                        <!-- CASE 1: GCash Details & Verification Controls -->
+                                        @if ($payment->payment_method === 'gcash')
+                                            <div class="mt-3 p-3 bg-light rounded border border-dashed fs-7">
+                                                <div class="mb-1 text-secondary">
+                                                    Reference Number: <strong
+                                                        class="text-dark font-monospace fs-6">{{ $payment->reference_number ?? 'N/A' }}</strong>
+                                                </div>
+
+                                                @if ($payment->receipt_path)
+                                                    <div class="mb-2">
+                                                        <span class="text-secondary d-block mb-1">Receipt Screenshot:</span>
+                                                        <a href="{{ asset('storage/' . $payment->receipt_path) }}"
+                                                            target="_blank"
+                                                            class="d-inline-block border p-1 bg-white rounded shadow-sm">
+                                                            <img src="{{ asset('storage/' . $payment->receipt_path) }}"
+                                                                alt="Receipt"
+                                                                style="max-height: 90px; width: auto; object-fit: contain;">
+                                                        </a>
+                                                    </div>
+                                                @endif
+
+                                                @if ($payment->status === 'pending')
+                                                    <div class="d-flex gap-2 mt-2 pt-2 border-top border-2 border-white">
+                                                        <form
+                                                            action="{{ route('payments.verify', ['payment' => $payment->id, 'action' => 'approve']) }}"
+                                                            method="POST"
+                                                            onsubmit="return confirm('Confirm payment received matches reference validation?')">
+                                                            @csrf
+                                                            <button type="submit"
+                                                                class="btn btn-success btn-xs fw-bold px-3">
+                                                                <i class="bi bi-patch-check-fill me-1"></i> Approve
+                                                            </button>
+                                                        </form>
+                                                        <form action="{{ route('payments.verify', ['payment' => $payment->id, 'action' => 'reject']) }}" method="POST"
+                                                            onsubmit="return confirm('Reject this reference log? User will need to submit proof again.')">
+                                                            @csrf
+                                                            <button type="submit"
+                                                                class="btn btn-outline-danger btn-xs fw-bold px-3">
+                                                                <i class="bi bi-trash3-fill me-1"></i> Reject
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        @endif
+
+                                        <!-- CASE 2: Cash Counter Payment Controls -->
+                                        @if ($payment->payment_method === 'cash' && $payment->status !== 'successful')
+                                            <div class="mt-3 p-3 bg-light rounded border border-dashed fs-7">
+                                                <div class="text-secondary mb-2">
+                                                    <i class="bi bi-info-circle me-1"></i> Customer selected Cash payment.
+                                                    Collect payment at the counter.
+                                                </div>
+
+                                                <form action="{{ route('payments.verify', ['payment' => $payment->id, 'action' => 'approve']) }}" method="POST"
+                                                    onsubmit="return confirm('Confirm that you have received ₱{{ number_format($booking->total_amount, 2) }} at the counter?')">
+                                                    @csrf
+                                                    <button type="submit" class="btn btn-success btn-sm fw-bold">
+                                                        <i class="bi bi-cash-coin me-1"></i> Mark as Paid at Counter
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        @endif
+                                    @else
+                                        <!-- No payment entry exists in DB yet -->
+                                        <div class="d-flex flex-wrap align-items-center gap-2">
+                                            <span
+                                                class="badge bg-danger-subtle text-danger border border-danger px-2.5 py-1.5 fw-bold">
+                                                <i class="bi bi-exclamation-triangle me-1"></i> Unpaid (No option selected)
+                                            </span>
+                                        </div>
+                                    @endif
+                                </td>
+                            </tr>
+
+
                             <!-- NOTES -->
                             <tr class="border-bottom border-light">
                                 <td class="ps-4 py-4 text-muted small fw-bold text-uppercase">
@@ -112,7 +225,7 @@
                             </tr>
 
                             <!-- STATUS -->
-                            <tr>
+                            <tr class="border-bottom border-light">
                                 <td class="ps-4 py-4 text-muted small fw-bold text-uppercase">
                                     Status
                                 </td>

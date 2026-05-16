@@ -107,7 +107,7 @@
                     </div>
 
                     {{-- SERVICE --}}
-                    <div class="col-md-4">
+                    <div class="col-md-2">
                         <select name="service" class="form-select">
 
                             <option value="" @selected(empty($filters['service'] ?? null))>All Services</option>
@@ -124,7 +124,7 @@
                     </div>
 
                     {{-- THERAPIST --}}
-                    <div class="col-md-4">
+                    <div class="col-md-2">
                         <select name="therapist" class="form-select">
 
                             <option value="" @selected(empty($filters['therapist'] ?? null))>All Therapists</option>
@@ -137,6 +137,15 @@
                                 <option value="" disabled>No therapists yet</option>
                             @endforelse
 
+                        </select>
+                    </div>
+
+                    {{-- PAYMENT STATUS --}}
+                    <div class="col-md-4">
+                        <select name="payment_status" class="form-select">
+                            <option value="" @selected(empty($filters['payment_status'] ?? null))>All Payment Status</option>
+                            <option value="paid" @selected(($filters['payment_status'] ?? null) === 'paid')>Paid</option>
+                            <option value="unpaid" @selected(($filters['payment_status'] ?? null) === 'unpaid')>Unpaid</option>
                         </select>
                     </div>
 
@@ -239,6 +248,18 @@
                     </span>
                 @endif
 
+                {{-- PAYMENT STATUS --}}
+                @if (!empty($filters['payment_status']))
+                    <span @class([
+                        'badge',
+                        'text-capitalize',
+                        'bg-success' => ($filters['payment_status'] ?? null) === 'paid',
+                        'bg-danger' => ($filters['payment_status'] ?? null) === 'unpaid',
+                    ])>
+                        Payment Status: {{ ucfirst($filters['payment_status']) }}
+                    </span>
+                @endif
+
             </div>
 
         </div>
@@ -257,6 +278,7 @@
                         <th>Schedule</th>
                         <th class="d-none d-lg-table-cell">Therapist</th>
                         <th class="d-none d-lg-table-cell">Total</th>
+                        <th class="text-center d-none d-lg-table-cell">Payment Status</th>
                         <th>Status</th>
                         <th class="text-end">Actions</th>
                     </tr>
@@ -353,6 +375,18 @@
 
                             <td class="fw-bold d-none d-lg-table-cell">
                                 ₱{{ number_format($booking->total_amount, 2) }}
+                            </td>
+
+                            <td class="text-center d-none d-lg-table-cell">
+                                @php
+                                    $latestPayment = $booking->payments->last();
+                                @endphp
+
+                                @if ($latestPayment && $latestPayment->status === 'successful')
+                                    <span class="badge bg-success">Paid</span>
+                                @else
+                                    <span class="badge bg-danger">Unpaid</span>
+                                @endif
                             </td>
 
                             <td class="text-center">

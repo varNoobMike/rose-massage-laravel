@@ -30,10 +30,12 @@ class GetFilteredBookings
         $assignment = $filters['therapist_assignment_status'] ?? null;
         $service = $filters['service'] ?? null;
         $therapist = $filters['therapist'] ?? null;
+        $paymentStatus = $filters['payment_status'] ?? null;
 
         $query = Booking::with([
             'client.profile',
             'items.therapist',
+            'payments',
         ]);
 
         // search
@@ -91,6 +93,17 @@ class GetFilteredBookings
             }
         });
 
+        // payment status
+        $query->when($paymentStatus, function ($q, $paymentStatus) {
+            if ($paymentStatus === 'paid') {
+                $q->whereHas('payments', fn($p) => $p->where('status', 'successful'));
+            }
+
+            if ($paymentStatus === 'unpaid') {
+                $q->whereDoesntHave('payments', fn($p) => $p->where('status', 'successful'));
+            }
+        });
+
         // final result
         return $query->latest()
             ->paginate(10)
@@ -104,10 +117,12 @@ class GetFilteredBookings
         $dateTo = $filters['date_to'] ?? null;
         $status = $filters['status'] ?? null;
         $service = $filters['service'] ?? null;
+        $paymentStatus = $filters['payment_status'] ?? null;
 
         $query = Booking::with([
             'client.profile',
             'items.service',
+            'payments',
         ])->where('client_id', $user->id);
 
         // search
@@ -139,6 +154,17 @@ class GetFilteredBookings
         // service filter
         $query->when($service, function ($q, $service) {
             $q->whereHas('items', fn($i) => $i->where('service_id', $service));
+        });
+
+        // payment status
+        $query->when($paymentStatus, function ($q, $paymentStatus) {
+            if ($paymentStatus === 'paid') {
+                $q->whereHas('payments', fn($p) => $p->where('status', 'successful'));
+            }
+
+            if ($paymentStatus === 'unpaid') {
+                $q->whereDoesntHave('payments', fn($p) => $p->where('status', 'successful'));
+            }
         });
 
         // final result

@@ -32,6 +32,7 @@ class BookingController extends Controller
             'search',
             'date_from',
             'date_to',
+            'payment_status',
             'status',
             'therapist_assignment_status',
             'service',
@@ -56,7 +57,8 @@ class BookingController extends Controller
         $hasAdvancedFilters =
             !empty($filters['service']) ||
             !empty($filters['therapist']) ||
-            !empty($filters['therapist_assignment_status']);
+            !empty($filters['therapist_assignment_status']) ||
+            !empty($filters['payment_status']);
 
         // global filters state
         $hasFilters = $hasBasicFilters || $hasAdvancedFilters;

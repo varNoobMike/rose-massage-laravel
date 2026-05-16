@@ -66,7 +66,7 @@
 
         </div>
 
-        <button type="submit" class="btn btn-success w-100 shadow-sm mt-2">
+        <button type="submit" class="btn btn-primary w-100 shadow-sm mt-2">
             <i class="bi bi-box-arrow-in-right me-2"></i> Login
         </button>
 

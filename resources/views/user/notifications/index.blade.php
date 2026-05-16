@@ -266,6 +266,7 @@
                                             switch ($notification->type) {
                                                 case App\Notifications\NewBookingNotification::class:
                                                 case App\Notifications\BookingStatusNotification::class:
+                                                case App\Notifications\PaymentSubmittedNotification::class:
                                                     $resource = \App\Models\Booking::find(
                                                         $notification->data['booking_id'] ?? null,
                                                     );

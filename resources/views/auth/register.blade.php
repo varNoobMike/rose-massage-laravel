@@ -4,15 +4,15 @@
 @section('content')
     <div class="w-100">
 
-        <div class="role-badge mb-3">
+        <div class="role-badge text-center mb-3">
             New Customer Registration
         </div>
 
-        <h2 class="fw-bold mb-1">
+        <h2 class="fw-bold text-center  mb-1">
             Join Rose Massage
         </h2>
 
-        <p class="text-muted small mb-4">
+        <p class="text-muted text-center small mb-4">
             Experience tranquility. Create your account today.
         </p>
 
