@@ -8,9 +8,6 @@
 
     @include('partials.styles')
 
-    <!-- Font Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
     <!-- Font Cormorant Garamond -->
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
@@ -26,6 +23,14 @@
         h3,
         h4 {
             font-family: 'Cormorant Garamond';
+        }
+
+        .table-responsive {
+            min-height: 300px;
+        }
+
+        .dropdown {
+            z-index: 3000 !important;
         }
     </style>
 
@@ -193,7 +198,7 @@
 
                                     <!-- ACOOUNT SECURITY -->
                                     <li>
-                                        <a class="dropdown-item" href="{{ route('account.security') }}">
+                                        <a class="dropdown-item" href="{{ route('account-security.index') }}">
                                             <i class="bi bi-shield-lock me-2"></i> Account Security
                                         </a>
                                     </li>
@@ -371,7 +376,7 @@
                                 </li>
 
                                 <li>
-                                    <a class="dropdown-item" href="{{ route('account.security') }}">
+                                    <a class="dropdown-item" href="{{ route('account-security.index') }}">
                                         <i class="bi bi-shield-lock me-2"></i> Account Security
                                     </a>
                                 </li>
@@ -503,6 +508,7 @@
 
     </div>
 
+    @include('partials.scripts')
     @yield('page-scripts')
 
 </body>

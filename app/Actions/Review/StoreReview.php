@@ -64,8 +64,7 @@ class StoreReview
              */
             $recipients = User::whereIn('role', [
                 User::ROLE_ADMIN,
-                User::ROLE_OWNER,
-                User::ROLE_RECEPTIONIST,
+                User::ROLE_OWNER
             ])->get();
 
             $recipients->push($booking->client);

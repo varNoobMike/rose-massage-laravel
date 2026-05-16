@@ -31,7 +31,7 @@ class NewBookingNotification extends Notification
 
             'message' => $isClient
                 ? 'Your booking has been successfully created. Please check your notification for confirmation.'
-                : 'A new booking has been created by a client. Please review.',
+                : 'A new booking has been created. Please review.',
         ];
     }
 }

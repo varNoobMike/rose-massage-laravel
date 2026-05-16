@@ -7,11 +7,13 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\OperatingHourController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReceptionistController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\SettingController;
 use App\Http\Controllers\TherapistAssignmentController;
 use App\Http\Controllers\TherapistController;
 use App\Http\Controllers\UserController;
@@ -201,16 +203,6 @@ Route::prefix('/announcements')
     ->middleware('auth')
     ->group(function () {
 
-        /**
-         * read access (admin, owner, client) only
-         */
-        Route::middleware('role:admin,owner,client')->group(function () {
-            // read
-            Route::get('/', [AnnouncementController::class, 'index'])
-                ->name('index');
-            Route::get('/{announcement}', [AnnouncementController::class, 'show'])
-                ->name('show');
-        });
 
         /**
          * write access (admin, owner) only
@@ -229,6 +221,17 @@ Route::prefix('/announcements')
             // delete
             Route::delete('/{announcement}', [AnnouncementController::class, 'destroy'])
                 ->name('destroy');
+        });
+
+        /**
+         * read access (admin, owner, client) only
+         */
+        Route::middleware('role:admin,owner,client')->group(function () {
+            // read
+            Route::get('/', [AnnouncementController::class, 'index'])
+                ->name('index');
+            Route::get('/{announcement}', [AnnouncementController::class, 'show'])
+                ->name('show');
         });
     });
 
@@ -336,12 +339,51 @@ Route::prefix('/notifications')
         // read
         Route::get('/', [NotificationController::class, 'index'])
             ->name('index');
+        Route::get('/{notification}/open', [NotificationController::class, 'open'])
+            ->name('open');
         // mark as read
         Route::post('/{notification}/read', [NotificationController::class, 'markAsRead'])
             ->name('read');
         // mark as read all
         Route::post('/read-all', [NotificationController::class, 'markAllAsRead'])
             ->name('readAll');
+    });
+
+
+/**
+ * Operating Hours Routes
+ */
+Route::prefix('settings/operating-hours')
+    ->name('settings.operating-hours.')
+    ->middleware('auth')
+    ->group(function () {
+
+        /**
+         * read access (admin, owner, receptionist) only
+         */
+        Route::middleware('role:admin,owner,receptionist')->group(function () {
+            // read
+            Route::get('/', [OperatingHourController::class, 'index'])
+                ->name('index');
+            Route::get('/{operatingHour}', [OperatingHourController::class, 'show'])
+                ->name('show');
+        });
+
+        /**
+         * write access (admin, owner) only
+         */
+        Route::middleware('role:admin,owner')->group(function () {
+            // create
+            Route::get('/create', [OperatingHourController::class, 'create'])
+                ->name('create');
+            Route::post('/', [OperatingHourController::class, 'store'])
+                ->name('store');
+            // update
+            Route::get('/{operatingHour}/edit', [OperatingHourController::class, 'edit'])
+                ->name('edit');
+            Route::put('/{operatingHour}', [OperatingHourController::class, 'update'])
+                ->name('update');
+        });
     });
 
 
@@ -366,13 +408,13 @@ Route::prefix('/profile')
 /**
  * Account Security Routes
  */
-Route::prefix('/account')
+Route::prefix('/account-security')
     ->middleware('auth')
-    ->name('account.')
+    ->name('account-security.')
     ->group(function () {
         // security dashboard
-        Route::get('/security', [AccountSecurityController::class, 'index'])
-            ->name('security');
+        Route::get('/', [AccountSecurityController::class, 'index'])
+            ->name('index');
         // password edit form
         Route::get('/password', [AccountSecurityController::class, 'editPassword'])
             ->name('password.edit');
@@ -428,8 +470,14 @@ Route::prefix('/reviews')
     ->name('reviews.')
     ->group(function () {
 
+        // read (public)
+        Route::get('/', [ReviewController::class, 'index'])
+            ->name('index');
+        Route::get('/{review}', [ReviewController::class, 'show'])
+            ->name('show');
+
         /**
-         * (admin, owner, client)
+         *  create, update, delete (admin, owner, client)
          */
         Route::middleware(['role:admin,owner,client'])
             ->group(function () {
@@ -438,11 +486,6 @@ Route::prefix('/reviews')
                     ->name('create');
                 Route::post('/{booking}', [ReviewController::class, 'store'])
                     ->name('store');
-                // read
-                Route::get('/', [ReviewController::class, 'index'])
-                    ->name('index');
-                Route::get('/{review}', [ReviewController::class, 'show'])
-                    ->name('show');
                 // update
                 Route::get('/{review}/edit', [ReviewController::class, 'edit'])
                     ->name('edit');
@@ -454,7 +497,7 @@ Route::prefix('/reviews')
             });
 
         /**
-         *  (admin, owner) only
+         * approve, reject (admin, owner) only
          */
         Route::middleware(['role:admin,owner'])
             ->group(function () {
@@ -503,6 +546,18 @@ Route::prefix('/services')
 
 
 /**
+ * Settings (admin, owner) only
+ */
+Route::prefix('/settings')
+    ->middleware(['auth', 'role:admin,owner'])
+    ->name('settings.')
+    ->group(function () {
+        Route::get('/', [SettingController::class, 'index'])
+            ->name('index');
+    });
+
+
+/**
  * Therapists
  */
 Route::prefix('/therapists')
@@ -537,6 +592,8 @@ Route::prefix('/therapists')
                 ->name('update');
         });
     });
+
+
 
 
 /**

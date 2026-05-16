@@ -36,20 +36,24 @@ class BookingStatusNotification extends Notification
         return match ($this->status) {
 
             'confirmed' => $isClient
-                ? 'Your booking request has been confirmed.'
-                : 'You confirmed a booking.',
+                ? 'Your booking request has been confirmed. Please choose payment method.'
+                : 'Booking has been confirmed.',
 
             'rejected' => $isClient
                 ? 'Your booking request has been rejected.'
-                : 'You rejected a booking.',
+                : 'Booking has been rejected.',
 
             'cancelled' => $isClient
                 ? 'Your booking request has been cancelled.'
-                : 'A booking was cancelled.',
+                : 'Booking has been cancelled.',
 
             'completed' => $isClient
                 ? 'Your booking session at spa has been completed.'
-                : 'A booking has been completed.',
+                : 'Booking has been marked as completed.',
+
+            'updated' => $isClient
+                ? 'Your booking details have been updated.'
+                : 'Booking has been updated.',
 
             default => 'Booking status updated.',
         };

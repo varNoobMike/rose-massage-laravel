@@ -61,6 +61,23 @@
                             </div>
 
                             <div class="col-md-6">
+                                <small class="text-muted">Payment Status</small>
+                                <div>
+                                    @if ($booking->isPaid())
+                                        <span
+                                            class="badge bg-success-subtle text-success border border-success fw-bold px-2 py-1">
+                                            Paid
+                                        </span>
+                                    @else
+                                        <span
+                                            class="badge bg-danger-subtle text-danger border border-danger fw-bold px-2 py-1">
+                                            Unpaid
+                                        </span>
+                                    @endif
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
                                 <small class="text-muted">Total Amount</small>
                                 <div class="fw-bold text-primary">
                                     ₱{{ number_format($booking->total_amount, 2) }}
@@ -212,6 +229,20 @@
                             <span class="fw-bold text-capitalize">{{ $booking->status }}</span>
                         </div>
 
+                        <div class="d-flex justify-content-between mb-2 align-items-center">
+                            <span class="text-muted">Payment Status</span>
+                            @if ($booking->isPaid())
+                                <span
+                                    class="badge bg-success-subtle text-success border border-success fw-bold px-2.5 py-1">
+                                    <i class="bi bi-check-circle-fill me-1"></i> Paid
+                                </span>
+                            @else
+                                <span class="badge bg-danger-subtle text-danger border border-danger fw-bold px-2.5 py-1">
+                                    <i class="bi bi-exclamation-circle-fill me-1"></i> Unpaid
+                                </span>
+                            @endif
+                        </div>
+
                         <hr>
 
                         <div class="d-flex justify-content-between">
@@ -224,7 +255,7 @@
                     </div>
                 </div>
 
-                <!-- Optional Actions -->
+                <!-- Actions -->
                 <div class="card shadow-sm border">
                     <div class="card-body">
 
@@ -235,6 +266,12 @@
                         </a>
 
                         @php $status = $booking->status @endphp
+
+                        @if ($status === 'confirmed')
+                            <a href="#" class="btn btn-success w-100 mb-2 fw-bold">
+                                <i class="bi bi-credit-card-fill me-2"></i> Choose Payment Method
+                            </a>
+                        @endif
 
                         @if ($status === 'completed')
                             @if ($booking->review)
@@ -249,7 +286,7 @@
                             @endif
                         @endif
 
-                        @if (in_array($status, ['pending', 'confirmed', 'rejected', 'active', 'completed']))
+                        @if (in_array($status, ['pending', 'confirmed']))
                             <form action="{{ route('bookings.cancel', $booking->id) }}" method="POST"
                                 onsubmit="return confirm('Confirm booking cancellation? This action cannot be undone.')">
                                 @csrf

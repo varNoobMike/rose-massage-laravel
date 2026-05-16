@@ -8,7 +8,10 @@ use App\Actions\Booking\SyncBookingStatuses;
 use App\Actions\Booking\StoreBooking;
 use App\Actions\Booking\UpdateBooking;
 use App\Actions\Booking\UpdateBookingStatus;
+use App\Exceptions\BookingDomainException;
+use App\Exceptions\SpaIsClosedException;
 use App\Models\Booking;
+use App\Models\OperatingHour;
 use App\Models\Service;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -100,11 +103,18 @@ class BookingController extends Controller
             'review.images',
         ]);
 
+        $notificationId = request('notification_id');
+
         // mark related notifications as read
-        Auth::user()
-            ->unreadNotifications
-            ->where('data.booking_id', $booking->id)
-            ->markAsRead();
+        if ($notificationId && !session()->has('read_notif_' . $notificationId)) {
+            Auth::user()
+                ->unreadNotifications
+                ->where('data.booking_id', $booking->id)
+                ->markAsRead();
+
+            // prevent re-marking on refresh
+            session()->put('read_notif_' . $notificationId, true);
+        }
 
         return view(
             $this->currentRoleView() . '.bookings.show',
@@ -120,6 +130,7 @@ class BookingController extends Controller
             'admin', 'receptionist' => view('admin.bookings.create'), // future feature, not yet implemented
             'client' => view('user.bookings.create', [
                 'services' => Service::where('status', 'active')->latest()->get(),
+                'operatingHours' => OperatingHour::all(),
             ]),
             default => abort(403, 'Unauthorized action.'),
         };
@@ -129,18 +140,29 @@ class BookingController extends Controller
     {
         $validated = $request->validate([
             'services' => 'required|array|min:1',
+            // Validate core ID constraint
             'services.*.id' => 'required|exists:services,id',
+            // Capture optional metadata fields cleanly so they bypass validation truncation
+            'services.*.name' => 'nullable|string',
+            'services.*.price' => 'nullable|numeric',
+            'services.*.duration' => 'nullable|integer',
             'booking_date' => 'required|date|after_or_equal:today',
-            'start_time' => 'required|date_format:H:i',
+            'start_time' => 'required|string',
             'notes' => 'nullable|string|max:500',
         ]);
 
-        $user = $this->currentUser();
+        $user = Auth::user();
 
-        $booking = $action->execute($user, $validated);
+        try {
+            $booking = $action->execute($user, $validated);
 
-        return to_route('bookings.show', $booking->id)
-            ->with('info', 'Your booking request has been sent. Please wait for confirmation.');
+            return to_route('bookings.show', $booking->id)
+                ->with('info', 'Your booking request has been sent.');
+        } catch (BookingDomainException $th) {
+            return back()
+                ->withInput()
+                ->with('error', $th->getMessage());
+        }
     }
 
     public function edit(Booking $booking, SyncBookingStatuses $syncStatuses)

@@ -215,5 +215,24 @@
             </table>
         </div>
 
+        {{-- PAGINATION --}}
+        @if ($users->hasPages())
+            <div class="card-footer bg-white">
+
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+
+                    <small class="text-muted">
+                        Showing {{ $users->firstItem() }}
+                        to {{ $users->lastItem() }}
+                        of {{ $users->total() }} users
+                    </small>
+
+                    {{ $users->appends(request()->query())->links() }}
+
+                </div>
+
+            </div>
+        @endif
+
     </div>
 @endsection

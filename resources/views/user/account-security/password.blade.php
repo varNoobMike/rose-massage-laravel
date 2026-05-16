@@ -10,7 +10,7 @@
 
 @section('content')
     <div class="container px-lg-5">
-        
+
         <div class="row">
 
             <div class="col-12">
@@ -25,7 +25,7 @@
 
                     <div class="card-body p-4">
 
-                        <form action="{{ route('account.password.update') }}" method="POST">
+                        <form action="{{ route('account-security.password.update') }}" method="POST">
                             @csrf
                             @method('PUT')
 

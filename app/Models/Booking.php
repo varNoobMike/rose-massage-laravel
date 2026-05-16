@@ -60,4 +60,16 @@ class Booking extends Model
     {
         return $this->hasOne(Review::class);
     }
+
+    // A booking can have multiple payment records (attempts, partials, or refunds)
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
+    }
+
+    // Helper accessor to easily see if the booking has a successful payment attached
+    public function isPaid(): bool
+    {
+        return $this->payments()->where('status', 'successful')->exists();
+    }
 }

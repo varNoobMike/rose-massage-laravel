@@ -34,7 +34,7 @@
             <div class="row g-3 align-items-end">
 
                 {{-- SEARCH --}}
-                <div class="col-md-5">
+                <div class="col-md-4">
                     <input type="text" name="search" class="form-control"
                         placeholder="Search by booking ID, client name, email..." value="{{ $filters['search'] ?? '' }}">
                 </div>
@@ -56,24 +56,8 @@
                     </div>
                 </div>
 
-                {{-- ACTIONS --}}
-                <div class="col-12 col-md-3 d-flex gap-2">
-                    <button class="btn btn-dark w-100">
-                        <i class="bi bi-funnel me-1"></i> Filter
-                    </button>
-
-                    <button class="btn btn-primary w-100" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#advancedFilters">
-                        <i class="bi bi-three-dots me-1"></i> More
-                    </button>
-
-                    <a href="{{ route('bookings.index') }}" class="btn btn-outline-secondary w-100">
-                        <i class="bi bi-x-circle me-1"></i> Clear
-                    </a>
-                </div>
-
                 {{-- STATUS --}}
-                <div class="col-md-4 mt-2">
+                <div class="col-md-2 mt-3">
                     <select name="status" class="form-select">
                         <option value="" @selected(empty($filters['status'] ?? null))>All Status</option>
                         <option value="pending" @selected(($filters['status'] ?? null) === 'pending')>Pending</option>
@@ -83,6 +67,13 @@
                         <option value="completed" @selected(($filters['status'] ?? null) === 'completed')>Completed</option>
                         <option value="cancelled" @selected(($filters['status'] ?? null) === 'cancelled')>Cancelled</option>
                     </select>
+                </div>
+
+                <div class="col-md-2 mt-3">
+                    <button class="btn btn-primary w-100" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#advancedFilters">
+                        <i class="bi bi-three-dots me-1"></i> More
+                    </button>
                 </div>
 
             </div>
@@ -151,6 +142,16 @@
 
                 </div>
 
+            </div>
+
+            {{-- ACTIONS --}}
+            <div class="col-12 col-md-3 d-flex gap-2 mt-3">
+                <button class="btn btn-dark w-100">
+                    <i class="bi bi-funnel me-1"></i> Filter
+                </button>
+                <a href="{{ route('bookings.index') }}" class="btn btn-outline-secondary w-100">
+                    <i class="bi bi-x-circle me-1"></i> Clear
+                </a>
             </div>
 
         </form>
@@ -256,7 +257,7 @@
                         <th>Schedule</th>
                         <th class="d-none d-lg-table-cell">Therapist</th>
                         <th class="d-none d-lg-table-cell">Total</th>
-                        <th class="d-none d-lg-table-cell">Status</th>
+                        <th>Status</th>
                         <th class="text-end">Actions</th>
                     </tr>
                 </thead>
@@ -407,7 +408,7 @@
                                                 </li>
                                             @endif
 
-                                            @if (in_array($status, ['confirmed', 'active', 'completed']))
+                                            @if (in_array($status, ['confirmed', 'active', 'completed']) && $booking->items->whereNull('therapist_id')->count() > 0)
                                                 <li>
                                                     <a href="{{ route('therapist-assignments.index', $booking->id) }}"
                                                         class="dropdown-item text-success">

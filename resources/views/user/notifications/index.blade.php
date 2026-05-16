@@ -270,7 +270,9 @@
                                                         $notification->data['booking_id'] ?? null,
                                                     );
 
-                                                    $url = $resource ? route('bookings.show', $resource) : null;
+                                                    $url = $resource
+                                                        ? route('notifications.open', $notification->id)
+                                                        : null;
                                                     break;
 
                                                 case App\Notifications\NewBookingReviewNotification::class:
@@ -278,7 +280,9 @@
                                                         $notification->data['review_id'] ?? null,
                                                     );
 
-                                                    $url = $resource ? route('reviews.show', $resource) : null;
+                                                    $url = $resource
+                                                        ? route('notifications.open', $notification->id)
+                                                        : null;
                                                     break;
 
                                                 case App\Notifications\ReviewApprovedNotification::class:
@@ -286,7 +290,9 @@
                                                         $notification->data['review_id'] ?? null,
                                                     );
 
-                                                    $url = $resource ? route('reviews.show', $resource) : null;
+                                                    $url = $resource
+                                                        ? route('notifications.open', $notification->id)
+                                                        : null;
                                                     break;
 
                                                 case App\Notifications\ReviewRejectedNotification::class:
@@ -294,7 +300,9 @@
                                                         $notification->data['review_id'] ?? null,
                                                     );
 
-                                                    $url = $resource ? route('reviews.show', $resource) : null;
+                                                    $url = $resource
+                                                        ? route('notifications.open', $notification->id)
+                                                        : null;
                                                     break;
 
                                                 case App\Notifications\ReviewDeletedNotification::class:
@@ -308,7 +316,9 @@
                                                         $notification->data['announcement_id'] ?? null,
                                                     );
 
-                                                    $url = $resource ? route('announcements.show', $resource) : null;
+                                                    $url = $resource
+                                                        ? route('notifications.open', $notification->id)
+                                                        : null;
                                                     break;
                                             }
                                         @endphp

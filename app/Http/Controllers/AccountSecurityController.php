@@ -14,7 +14,7 @@ class AccountSecurityController extends Controller
     public function index()
     {
         $user = Auth::user();
-        return view($this->currentRoleView() . '.account.security', compact('user'));
+        return view($this->currentRoleView() . '.account-security.index', compact('user'));
     }
 
     /**
@@ -22,7 +22,7 @@ class AccountSecurityController extends Controller
      */
     public function editPassword()
     {
-        return view($this->currentRoleView() . '.account.password');
+        return view($this->currentRoleView() . '.account-security.password');
     }
 
     /**
@@ -39,7 +39,7 @@ class AccountSecurityController extends Controller
 
         Auth::logoutOtherDevices($validated['password']);
 
-        return to_route('account.security')
+        return to_route('account-security.index')
             ->with('success', 'Password updated successfully.');
     }
 }

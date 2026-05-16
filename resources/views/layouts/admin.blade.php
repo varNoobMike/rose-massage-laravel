@@ -9,12 +9,14 @@
 
     @include('partials.styles')
 
-    <!-- Font Plus Jakarta Sans -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
         body {
             font-family: 'Inter', sans-serif;
+        }
+
+        .table-responsive {
+            min-height: 300px;
         }
     </style>
 
@@ -30,7 +32,7 @@
 
         <div class="row g-0">
 
-            <!-- Sidebar - Desktop -->
+            <!-- Sidebar (desktop) -->
             <div id="sidebar-desktop" class="col-2 bg-white border-end d-none d-lg-block min-vh-100"
                 style="position: sticky; top: 0; height: 100vh; overflow-y: auto;">
                 <div class="py-4 px-3">
@@ -43,6 +45,8 @@
                     </div>
 
                     <ul class="nav flex-column gap-2">
+
+                        <!-- Dashboard -->
                         <li class="nav-item mb-1">
                             <a href="{{ route('dashboard') }}"
                                 class="nav-link {{ request()->routeIs('dashboard') ? 'text-bg-primary fw-bold' : 'text-dark opacity-75' }} px-3 py-2 d-flex align-items-center">
@@ -51,6 +55,7 @@
                             </a>
                         </li>
 
+                        <!-- Bookings -->
                         <li class="nav-item mb-1">
                             <a href="{{ route('bookings.index') }}"
                                 class="nav-link {{ request()->routeIs('bookings*') ? 'text-bg-primary fw-bold' : 'text-dark opacity-75' }} px-3 py-2 d-flex align-items-center">
@@ -59,6 +64,7 @@
                             </a>
                         </li>
 
+                        <!-- Services -->
                         <li class="nav-item mb-1">
                             <a href="{{ route('services.index') }}"
                                 class="nav-link {{ request()->routeIs('services*') ? 'text-bg-primary fw-bold' : 'text-dark opacity-75' }} px-3 py-2 d-flex align-items-center">
@@ -67,9 +73,8 @@
                             </a>
                         </li>
 
-                        @php $role = auth()->user()?->role; @endphp
-
-                        @if ($role === 'admin')
+                        <!-- Users -->
+                        @if (auth()->user()?->role === 'admin')
                             <li class="nav-item mb-1">
                                 <a href="{{ route('users.index') }}"
                                     class="nav-link {{ request()->routeIs('users*') ? 'text-bg-primary fw-bold' : 'text-dark opacity-75' }} px-3 py-2 d-flex align-items-center">
@@ -79,7 +84,8 @@
                             </li>
                         @endif
 
-                        @if ($role === 'owner')
+                        <!-- Clients, Receptionists -->
+                        @if (auth()->user()?->role === 'owner')
                             <li class="nav-item mb-1">
                                 <a href="{{ route('clients.index') }}"
                                     class="nav-link {{ request()->routeIs('clients*') ? 'text-bg-primary fw-bold' : 'text-dark opacity-75' }} px-3 py-2 d-flex align-items-center">
@@ -97,7 +103,8 @@
                             </li>
                         @endif
 
-                        @if ($role === 'owner' || $role === 'receptionist')
+                        <!-- Therapists -->
+                        @if (auth()->user()?->role === 'owner' || auth()->user()?->role === 'receptionist')
                             <li class="nav-item mb-1">
                                 <a href="{{ route('therapists.index') }}"
                                     class="nav-link {{ request()->routeIs('therapists*') ? 'text-bg-primary fw-bold' : 'text-dark opacity-75' }} px-3 py-2 d-flex align-items-center">
@@ -107,7 +114,8 @@
                             </li>
                         @endif
 
-                        @if ($role === 'admin' || $role === 'owner')
+                        <!-- Announcements, Reviews -->
+                        @if (auth()->user()?->role === 'admin' || auth()->user()?->role === 'owner')
                             <li class="nav-item mb-1">
                                 <a href="{{ route('announcements.index') }}"
                                     class="nav-link {{ request()->routeIs('announcements*') ? 'text-bg-primary fw-bold' : 'text-dark opacity-75' }} px-3 py-2 d-flex align-items-center">
@@ -134,6 +142,7 @@
                             </li>
                         @endif
 
+                        <!-- Activity Logs -->
                         <li class="nav-item mb-1">
                             <a href="{{ route('activity-logs.index') }}"
                                 class="nav-link {{ request()->routeIs('activity-logs*') ? 'text-bg-primary fw-bold' : 'text-dark opacity-75' }} px-3 py-2 d-flex align-items-center">
@@ -142,11 +151,22 @@
                             </a>
                         </li>
 
+                        <!-- Settings -->
+                        @if (auth()->user()?->role === 'admin' || auth()->user()?->role === 'owner')
+                            <li class="nav-item mb-1">
+                                <a href="{{ route('settings.index') }}"
+                                    class="nav-link {{ request()->routeIs('settings*') ? 'text-bg-primary fw-bold' : 'text-dark opacity-75' }} px-3 py-2 d-flex align-items-center">
+                                    <i class="bi bi-gear me-3"></i>
+                                    <span>Settings</span>
+                                </a>
+                            </li>
+                        @endif
+
                     </ul>
                 </div>
             </div>
 
-            <!-- Sidebar - Mobile -->
+            <!-- Sidebar (mobile) -->
             <div class="offcanvas offcanvas-start" tabindex="-1" id="sidebar-mobile"
                 aria-labelledby="sidebarOffcanvasLabel">
                 <div class="offcanvas-header border-bottom">
@@ -165,7 +185,6 @@
                                 <span>Dashboard</span>
                             </a>
                         </li>
-
 
                         <!-- Notifications -->
                         <li class="nav-item mb-1">
@@ -204,7 +223,7 @@
                         </li>
 
                         <!-- Users -->
-                        @if ($role === 'admin')
+                        @if (auth()->user()?->role === 'admin')
                             <li class="nav-item mb-1">
                                 <a href="{{ route('users.index') }}"
                                     class="nav-link {{ request()->routeIs('users*') ? 'text-primary bg-light fw-bold' : 'text-dark opacity-75' }} px-3 py-2 d-flex align-items-center">
@@ -215,7 +234,7 @@
                         @endif
 
                         <!-- Clients, Receptionists -->
-                        @if ($role === 'owner')
+                        @if (auth()->user()?->role === 'owner')
                             <li class="nav-item mb-1">
                                 <a href="{{ route('clients.index') }}"
                                     class="nav-link {{ request()->routeIs('clients*') ? 'text-primary bg-light fw-bold' : 'text-dark opacity-75' }} px-3 py-2 d-flex align-items-center">
@@ -234,7 +253,7 @@
                         @endif
 
                         <!-- Therapists -->
-                        @if ($role === 'owner' || $role === 'receptionist')
+                        @if (auth()->user()?->role === 'owner' || auth()->user()?->role === 'receptionist')
                             <li class="nav-item mb-1">
                                 <a href="{{ route('therapists.index') }}"
                                     class="nav-link {{ request()->routeIs('therapists*') ? 'text-primary bg-light fw-bold' : 'text-dark opacity-75' }} px-3 py-2 d-flex align-items-center">
@@ -264,7 +283,7 @@
 
 
                         <!-- Reports -->
-                        @if ($role === 'admin' || $role === 'owner')
+                        @if (auth()->user()?->role === 'admin' || auth()->user()?->role === 'owner')
                             <li class="nav-item mb-1">
                                 <a href="{{ route('reports.bookings') }}"
                                     class="nav-link {{ request()->routeIs('reports*') ? 'text-primary bg-light fw-bold' : 'text-dark opacity-75' }} px-3 py-2 d-flex align-items-center">
@@ -282,6 +301,17 @@
                                 <span>Activity Logs</span>
                             </a>
                         </li>
+
+                        <!-- Settings -->
+                        @if (auth()->user()?->role === 'admin' || auth()->user()?->role === 'owner')
+                            <li class="nav-item mb-1">
+                                <a href=""
+                                    class="nav-link {{ request()->routeIs('settings*') ? 'text-primary bg-light fw-bold' : 'text-dark opacity-75' }} px-3 py-2 d-flex align-items-center">
+                                    <i class="bi bi-gear me-3"></i>
+                                    <span>Settings</span>
+                                </a>
+                            </li>
+                        @endif
 
                     </ul>
 
@@ -318,7 +348,7 @@
                                     </li>
 
                                     <li>
-                                        <a href="{{ route('account.security') }}" class="dropdown-item">
+                                        <a href="{{ route('account-security.index') }}" class="dropdown-item">
                                             <i class="bi bi-shield-lock me-2"></i> Account Security
                                         </a>
                                     </li>
@@ -409,7 +439,7 @@
                                             </li>
 
                                             <li>
-                                                <a href="{{ route('account.security') }}" class="dropdown-item">
+                                                <a href="{{ route('account-security.index') }}" class="dropdown-item">
                                                     <i class="bi bi-shield-lock me-1"></i> Account Security
                                                 </a>
                                             </li>

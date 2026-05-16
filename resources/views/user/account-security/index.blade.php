@@ -35,7 +35,7 @@
 
                         </div>
 
-                        <a href="{{ route('account.password.edit') }}" class="btn btn-outline-primary btn-sm">
+                        <a href="{{ route('account-security.password.edit') }}" class="btn btn-outline-primary btn-sm">
                             <i class="bi bi-arrow-right me-1"></i>
                             Manage
                         </a>

@@ -12,16 +12,40 @@ class TherapistAssignmentController extends Controller
     {
         $booking->load([
             'client',
-            'items.therapist'
+            'items.therapist',
         ]);
 
-        $therapists = User::where('role', User::ROLE_THERAPIST)
-            ->where('status', 'active')
-            ->get();
+        // attach available therapists per service item
+        foreach ($booking->items as $item) {
+
+            $start = $item->start_time;
+            $end   = $item->end_time;
+            $date  = $booking->booking_date;
+
+            $item->available_therapists = User::where('role', User::ROLE_THERAPIST)
+                ->where('status', 'active')
+                ->whereDoesntHave('bookingItems', function ($q) use ($date, $start, $end) {
+
+                    $q->whereHas('booking', function ($b) use ($date) {
+                        $b->where('booking_date', $date);
+                    })
+
+                        ->where(function ($q) use ($start, $end) {
+
+                            $q->whereBetween('start_time', [$start, $end])
+                                ->orWhereBetween('end_time', [$start, $end])
+                                ->orWhere(function ($q) use ($start, $end) {
+                                    $q->where('start_time', '<=', $start)
+                                        ->where('end_time', '>=', $end);
+                                });
+                        });
+                })
+                ->get();
+        }
 
         return view(
             $this->currentRoleView() . '.therapist-assignment.index',
-            compact('booking', 'therapists')
+            compact('booking')
         );
     }
 
@@ -51,8 +75,8 @@ class TherapistAssignmentController extends Controller
             $item->save();
         }
 
-        return redirect()
-            ->back()
+        return
+            to_route('bookings.show', $booking->id)
             ->with('success', 'Therapists assigned successfully.');
     }
 }

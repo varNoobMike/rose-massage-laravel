@@ -54,13 +54,17 @@ class ReviewController extends Controller
 
     public function show(Review $review)
     {
+        $user = Auth::user();
+
         $review->load(['images', 'booking']);
 
-        // mark related notifications as read
-        Auth::user()
-            ->unreadNotifications
-            ->where('data.review_id', $review->id)
-            ->markAsRead();
+        if ($user) {
+            // mark related notifications as read
+            $user
+                ->unreadNotifications
+                ->where('data.review_id', $review->id)
+                ->markAsRead();
+        }
 
         return view(
             $this->currentRoleView() . '.reviews.show',
@@ -128,7 +132,7 @@ class ReviewController extends Controller
         $validated['images'] = $request->file('images', []);
         $validated['existing_images'] = $request->input('existing_images', []);
 
-        $review = $action->execute(
+        $action->execute(
             $validated,
             $review,
             Auth::user()

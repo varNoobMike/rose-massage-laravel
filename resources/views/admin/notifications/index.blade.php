@@ -235,13 +235,13 @@
 
                                     @php $type = $notification->type; @endphp
 
-                                    @if ($type === 'App\Notifications\NewBookingNotification')
-                                        <a href="{{ route('bookings.show', $notification->data['booking_id']) }}"
+                                    @if ($type === 'App\Notifications\NewBookingNotification' || $type === 'App\Notifications\BookingStatusNotification')
+                                        <a href="{{ route('notifications.open', $notification->id) }}"
                                             class="btn btn-sm btn-secondary">
                                             <i class="bi bi-eye"></i>
                                         </a>
                                     @elseif ($type === 'App\Notifications\NewBookingReviewNotification')
-                                        <a href="{{ route('reviews.show', $notification->data['review_id']) }}"
+                                        <a href="{{ route('reviews.show', $notification->data['review_id'] ?? 0) }}"
                                             class="btn btn-sm btn-secondary">
                                             <i class="bi bi-eye"></i>
                                         </a>

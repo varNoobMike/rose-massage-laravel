@@ -90,7 +90,7 @@ class ServiceController extends Controller
             'status' => 'required|in:active,inactive',
         ]);
 
-        $service = $action->execute($service, $validated);
+        $action->execute($service, $validated);
 
         return to_route('services.show', $service->id)
             ->with('success', 'Service updated successfully.');

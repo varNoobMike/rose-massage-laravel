@@ -4,7 +4,7 @@
 
 @section('breadcrumb', true)
 
-@if($review->user_id === auth()->user()?->id)
+@if ($review->user_id === auth()->user()?->id)
     @section('breadcrumb-parent', 'Booking #' . ($review->booking->id ?? ''))
     @section('breadcrumb-parent-url', route('bookings.show', $review->booking_id))
     @section('page-header', true)
@@ -18,14 +18,14 @@
     @section('page-header-subtitle', 'View this customer feedback')
 @endif
 
-
+<!-- note: this layout needs to be fixed -->
 @section('content')
 
     <div class="container px-lg-5">
 
         <div class="row g-4">
 
-            @if($review->user_id === auth()->user()?->id)
+            @if ($review->user_id === auth()->user()?->id)
                 <!-- LEFT: BOOKING SUMMARY -->
                 <div class="col-md-4 order-2 order-md-1">
 
@@ -80,23 +80,25 @@
                         <div class="d-flex justify-content-between align-items-start mb-3">
 
                             <div>
-                                <h5 class="fw-bold mb-1">{{ $review->user_id === auth()->user()?->id ? 'Your' : '' }} Review</h5>
+                                <h5 class="fw-bold mb-1">{{ $review->user_id === auth()->user()?->id ? 'Your' : '' }} Review
+                                </h5>
 
-                            
+
                                 <small class="text-muted">
-                                    @if($review->user_id === auth()->user()?->id)
+                                    @if ($review->user_id === auth()->user()?->id)
                                         Booking #{{ $review->booking_id }}
                                     @else
                                         Review #{{ $review->id }}
                                     @endif
                                 </small>
-                                
+
                             </div>
 
                             <div class="text-end">
 
-                                @if($review->user_id === auth()->user()?->id)
-                                    <span class="badge
+                                @if ($review->user_id === auth()->user()?->id)
+                                    <span
+                                        class="badge
                                         @if ($review->status === 'approved') bg-success
                                         @elseif ($review->status === 'rejected') bg-danger
                                         @elseif ($review->status === 'hidden') bg-dark
@@ -165,10 +167,9 @@
                                 Posted {{ $review->created_at->diffForHumans() }}
                             </small>
 
-                            <div class="d-flex gap-2">             
+                            <div class="d-flex gap-2">
 
-                                @if($review->user_id === auth()->user()?->id)
-
+                                @if ($review->user_id === auth()->user()?->id)
                                     <a href="{{ route('bookings.show', $review->booking_id) }}"
                                         class="btn btn-outline-secondary btn-sm">
                                         Back
@@ -180,9 +181,8 @@
                                     </a>
 
                                     <!-- DELETE -->
-                                    <form action="{{ route('reviews.destroy', $review->id) }}"
-                                          method="POST"
-                                          onsubmit="return confirm('Delete your review? This cannot be undone.')">
+                                    <form action="{{ route('reviews.destroy', $review->id) }}" method="POST"
+                                        onsubmit="return confirm('Delete your review? This cannot be undone.')">
 
                                         @csrf
                                         @method('DELETE')
@@ -193,11 +193,9 @@
 
                                     </form>
                                 @else
-                                    <a href="{{ route('reviews.index') }}"
-                                        class="btn btn-outline-secondary btn-sm">
+                                    <a href="{{ route('reviews.index') }}" class="btn btn-outline-secondary btn-sm">
                                         Back
                                     </a>
-
                                 @endif
 
                             </div>

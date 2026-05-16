@@ -58,7 +58,7 @@
                 </div>
 
                 {{-- status --}}
-                <div class="col-12 col-md-2">
+                <div class="col-12 col-md-3">
                     <select name="status" class="form-select">
                         <option value="">All Status</option>
                         <option value="pending" @selected(($filters['status'] ?? '') === 'pending')>Pending</option>
@@ -69,21 +69,15 @@
                     </select>
                 </div>
 
-                {{-- actions --}}
-                <div class="col-12 col-md-3 d-flex gap-2">
-                    <button class="btn btn-dark w-100">
-                        <i class="bi bi-funnel me-1"></i> Filter
-                    </button>
-
+                {{-- more --}}
+                <div class="col-12 col-md-2">
                     <button class="btn btn-primary w-100" type="button" data-bs-toggle="collapse"
                         data-bs-target="#advancedFilters">
                         <i class="bi bi-three-dots me-1"></i> More
                     </button>
-
-                    <a href="{{ route('bookings.index') }}" class="btn btn-outline-secondary w-100">
-                        <i class="bi bi-x-circle me-1"></i> Clear
-                    </a>
                 </div>
+
+
 
             </div>
 
@@ -108,6 +102,16 @@
 
                 </div>
 
+            </div>
+
+            {{-- actions --}}
+            <div class="col-12 col-md-3 d-flex gap-2 mt-3">
+                <button class="btn btn-dark w-100">
+                    <i class="bi bi-funnel me-1"></i> Filter
+                </button>
+                <a href="{{ route('bookings.index') }}" class="btn btn-outline-secondary w-100">
+                    <i class="bi bi-x-circle me-1"></i> Clear
+                </a>
             </div>
 
         </form>
@@ -167,9 +171,9 @@
                         <tr>
                             <th>Booking ID</th>
                             <th>Schedule</th>
-                            <th>Services</th>
-                            <th class="text-end">Total Services</th>
-                            <th class="text-end">Total Amount</th>
+                            <th class="d-none d-lg-table-cell">Services</th>
+                            <th class="text-end d-none d-lg-table-cell">Total Services</th>
+                            <th class="text-end d-none d-lg-table-cell">Total Amount</th>
                             <th class="text-center">Status</th>
                             <th class="text-end">Option</th>
                         </tr>
@@ -201,7 +205,7 @@
                                 </td>
 
                                 {{-- services --}}
-                                <td>
+                                <td class="d-none d-lg-table-cell">
                                     <div class="fw-bold">
                                         {{ $firstItem->service_name ?? 'No Service' }}
 
@@ -221,12 +225,12 @@
                                 </td>
 
                                 {{-- count --}}
-                                <td class="text-end fw-bold">
+                                <td class="text-end fw-bold d-none d-lg-table-cell">
                                     {{ $items->count() }}
                                 </td>
 
                                 {{-- amount --}}
-                                <td class="text-end fw-bold text-primary">
+                                <td class="text-end fw-bold text-primary d-none d-lg-table-cell">
                                     ₱{{ number_format($booking->total_amount, 2) }}
                                 </td>
 

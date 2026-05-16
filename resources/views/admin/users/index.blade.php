@@ -10,12 +10,6 @@
     <a href="{{ route('users.index') }}" class="btn btn-outline-secondary px-4 shadow-sm">
         <i class="bi bi-arrow-repeat me-2"></i> Sync
     </a>
-
-    @if (auth()->user()?->role !== 'receptionist')
-        <a href="{{ route('users.create') }}" class="btn btn-primary px-4 shadow-sm">
-            <i class="bi bi-plus-lg me-2"></i> New
-        </a>
-    @endif
 @endsection
 
 @section('filter-area', true)
@@ -54,7 +48,7 @@
                             Therapist
                         </option>
 
-                        @if (auth()->user()->role !== 'receptionist')
+                        @if (auth()->user()?->role !== 'receptionist')
                             <option value="receptionist" @selected(($filters['role'] ?? null) === 'receptionist')>
                                 Receptionist
                             </option>
@@ -257,6 +251,25 @@
 
             </table>
         </div>
+
+        {{-- PAGINATION --}}
+        @if ($users->hasPages())
+            <div class="card-footer bg-white">
+
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+
+                    <small class="text-muted">
+                        Showing {{ $users->firstItem() }}
+                        to {{ $users->lastItem() }}
+                        of {{ $users->total() }} users
+                    </small>
+
+                    {{ $users->appends(request()->query())->links() }}
+
+                </div>
+
+            </div>
+        @endif
 
     </div>
 @endsection

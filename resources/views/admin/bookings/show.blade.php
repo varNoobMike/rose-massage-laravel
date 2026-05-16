@@ -194,6 +194,15 @@
                                     <small class="text-muted">
                                         {{ $item->service_duration_minutes }} mins
                                     </small>
+
+                                    @if ($item->start_time && $item->end_time)
+                                        <small class="text-primary d-block mt-1">
+                                            <i class="bi bi-clock me-1"></i>
+                                            {{ \Carbon\Carbon::parse($item->start_time)->format('h:i A') }}
+                                            -
+                                            {{ \Carbon\Carbon::parse($item->end_time)->format('h:i A') }}
+                                        </small>
+                                    @endif
                                 </div>
 
                                 <div class="fw-bold text-primary">
@@ -284,12 +293,14 @@
                             </a>
                         @endif
 
-                        {{-- assign --}}
-                        <a href="{{ route('therapist-assignments.index', $booking->id) }}"
-                            class="btn btn-info text-white w-100 mb-2">
-                            <i class="bi bi-person-plus me-1"></i>
-                            Assign
-                        </a>
+                        @if ($booking->items->whereNull('therapist_id')->count() > 0)
+                            {{-- assign --}}
+                            <a href="{{ route('therapist-assignments.index', $booking->id) }}"
+                                class="btn btn-info text-white w-100 mb-2">
+                                <i class="bi bi-person-plus me-1"></i>
+                                Assign
+                            </a>
+                        @endif
 
                         {{-- cancel --}}
                         <form method="POST" action="{{ route('bookings.cancel', $booking->id) }}"

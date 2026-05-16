@@ -3,7 +3,7 @@
 @section('page-title', 'Change Password')
 
 @section('breadcrumb-parent', 'Security')
-@section('breadcrumb-parent-url', route('account.security'))
+@section('breadcrumb-parent-url', route('account-security.index'))
 
 @section('page-header', true)
 @section('page-header-title-showpage', 'Change Password')
@@ -24,7 +24,7 @@
 
                 <div class="card-body p-4">
 
-                    <form action="{{ route('account.password.update') }}" method="POST">
+                    <form action="{{ route('account-security.password.update') }}" method="POST">
                         @csrf
                         @method('PUT')
 

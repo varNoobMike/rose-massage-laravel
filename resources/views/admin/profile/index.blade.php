@@ -119,26 +119,6 @@
                                     </td>
                                 </tr>
 
-                                <!-- ACTIONS -->
-                                <tr>
-                                    <td class="ps-4 py-4 text-muted small fw-bold text-uppercase">
-                                        Actions
-                                    </td>
-
-                                    <td class="py-4 pe-4">
-
-                                        <div class="d-flex flex-wrap gap-2">
-
-                                            <a href="{{ route('profile.edit') }}" class="btn btn-sm btn-primary">
-                                                <i class="bi bi-pencil-square me-1"></i>
-                                                Edit Your Profile
-                                            </a>
-
-                                        </div>
-
-                                    </td>
-                                </tr>
-
                             </tbody>
                         </table>
 
@@ -181,7 +161,7 @@
 
 
             <!-- PROFILE IMAGE -->
-            <div class="card shadow-sm border overflow-hidden">
+            <div class="card shadow-sm border overflow-hidden mb-4">
                 <div class="card-header bg-white py-3 border-bottom text-center">
                     <h6 class="mb-0 fw-bold small text-muted text-uppercase">
                         Profile Image
@@ -200,6 +180,25 @@
                     @endif
 
                 </div>
+            </div>
+
+
+            <!-- ACTIONS -->
+            <div class="card shadow-sm border">
+
+                <div class="card-header bg-white py-3 border-bottom text-center">
+                    <h6 class="mb-0 fw-bold text-uppercase small text-muted">
+                        Actions
+                    </h6>
+                </div>
+
+                <div class="card-body">
+                    <a href="{{ route('profile.edit') }}" class="btn btn-primary w-100">
+                        <i class="bi bi-pencil-square me-1"></i>
+                        Edit Profile
+                    </a>
+                </div>
+
             </div>
 
         </div>

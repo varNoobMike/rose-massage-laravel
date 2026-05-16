@@ -13,6 +13,8 @@ class BookingItem extends Model
         'booking_id',
         'service_id',
         'therapist_id',
+        'start_time',
+        'end_time',
         'service_name',
         'service_duration_minutes',
         'service_price',

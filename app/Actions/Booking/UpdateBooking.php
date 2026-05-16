@@ -5,8 +5,11 @@ namespace App\Actions\Booking;
 use App\Models\Booking;
 use App\Models\BookingItem;
 use App\Models\Service;
+use App\Models\User;
+use App\Notifications\BookingStatusNotification;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
 
 class UpdateBooking
 {
@@ -81,6 +84,18 @@ class UpdateBooking
                 'end_time' => $endTime->format('H:i:s'),
                 'total_amount' => $totalAmount,
             ]);
+
+            // send notification
+            $recipients = User::whereIn('role', [
+                User::ROLE_ADMIN,
+                User::ROLE_OWNER,
+                User::ROLE_RECEPTIONIST,
+            ])->get();
+
+            // include the owner(client who created the booking) only
+            $recipients->push($booking->client);
+
+            Notification::send($recipients, new BookingStatusNotification($booking, 'updated'));
 
             return $booking;
         });

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\Facades\Auth;
 
 class NotificationController extends Controller
@@ -55,7 +56,63 @@ class NotificationController extends Controller
         );
     }
 
-    public function markAsRead($id)
+    public function open(DatabaseNotification $notification)
+    {
+        // ensure ownership
+        if ($notification->notifiable_id !== Auth::id()) {
+            abort(403);
+        }
+
+        // mark as read
+        $notification->markAsRead();
+
+        return match ($notification->type) {
+
+            \App\Notifications\NewBookingNotification::class,
+            \App\Notifications\BookingStatusNotification::class
+            => $this->openBooking($notification),
+
+            \App\Notifications\NewBookingReviewNotification::class,
+            \App\Notifications\ReviewApprovedNotification::class,
+            \App\Notifications\ReviewRejectedNotification::class,
+            \App\Notifications\ReviewDeletedNotification::class
+            => $this->openReview($notification),
+
+            \App\Notifications\NewAnnouncementNotification::class
+            => $this->openAnnouncement($notification),
+
+            default => redirect()->back(),
+        };
+    }
+
+    private function openBooking(DatabaseNotification $notification)
+    {
+        $bookingId = $notification->data['booking_id'] ?? null;
+
+        return $bookingId
+            ? redirect()->route('bookings.show', $bookingId)
+            : redirect()->back();
+    }
+
+    private function openReview(DatabaseNotification $notification)
+    {
+        $reviewId = $notification->data['review_id'] ?? null;
+
+        return $reviewId
+            ? redirect()->route('reviews.show', $reviewId)
+            : redirect()->back();
+    }
+
+    private function openAnnouncement(DatabaseNotification $notification)
+    {
+        $announcementId = $notification->data['announcement_id'] ?? null;
+
+        return $announcementId
+            ? redirect()->route('announcements.show', $announcementId)
+            : redirect()->back();
+    }
+
+    public function markAsRead(string $id)
     {
         $user = Auth::user();
 
